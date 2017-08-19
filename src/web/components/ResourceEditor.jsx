@@ -1,6 +1,7 @@
 import React from "react";
 import {Button} from "react-bootstrap";
 import {Select, TextInput} from './formControls';
+import states from '../shared/states';
 import {inject, observer} from "mobx-react";
 import _ from "lodash";
 
@@ -15,8 +16,8 @@ export default inject('store')(observer(({store: {resources}}) =>
                     {resources.list.map(r => <option value={r._id} key={r._id}>{r.type} {r.callSign}</option>)}
                 </Select>
                 <Select field={resources.form.$('state')}>
-                    {_.keys(resources.states).map(key => <option key={key}
-                                                                 value={key}>{resources.states[key].name}</option>)}
+                    {_.keys(states).map(key => <option key={key}
+                                                                 value={key}>{states[key].name}</option>)}
                 </Select>
                 <TextInput field={resources.form.$('lastPosition')}/>
                 <TextInput field={resources.form.$('destination')}/>

@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import {inject, observer} from "mobx-react";
 import {Button} from "react-bootstrap";
 import moment from "moment";
+import states from "../shared/states";
 
 @inject('store')
 @observer
@@ -13,7 +14,6 @@ export default class ResourceList extends React.Component {
 
     render() {
         const {resources} = this.props.store;
-        const {states} = resources;
         return <div className="panel panel-default">
             <table className="table table-condensed">
                 <thead>
