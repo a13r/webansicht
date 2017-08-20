@@ -4,10 +4,8 @@ import _ from "lodash";
 import {resources} from '../app';
 
 export default class ResourceAdminStore extends ResourceStore {
-    emptyResource = {
-        state: 0,
-        contact: ''
-    };
+    @observable
+    editorVisible = false;
 
     constructor() {
         super(fields);
@@ -18,9 +16,11 @@ export default class ResourceAdminStore extends ResourceStore {
         reaction(() => this.form.$('type').value, () => this.form.validate());
         reaction(() => this.form.$('callSign').value, () => this.form.validate());
         reaction(() => this.selectedResource, resource => {
-            this.form.update(resource);
-            this.form.validate();
-        }, true);
+            if (resource) {
+                this.form.update(resource);
+                this.showEditor(true);
+            }
+        });
         reaction(() => this.form.$('hidden').value, hidden => {
             const id = this.form.$('_id').value;
             if (id) {
@@ -32,6 +32,7 @@ export default class ResourceAdminStore extends ResourceStore {
     @action
     createResource = () => {
         this.form.clear();
+        this.showEditor(true);
     };
 
     @action
@@ -39,16 +40,20 @@ export default class ResourceAdminStore extends ResourceStore {
         this.list = list;
     }
 
-    remove = () => {
-        resources.remove(this.form.$('_id').value);
-    };
+    @action
+    showEditor(show) {
+        this.editorVisible = show;
+        if (!show) {
+            this.form.clear();
+        }
+    }
 
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
             resources.patch(form.$('_id').value, form.values());
         } else {
-            const newResource = _.assign({}, this.emptyResource, form.values());
+            const newResource = form.values();
             _.unset(newResource, '_id');
             resources.create(newResource)
                 .then(action(r => {
@@ -70,9 +75,6 @@ const fields = {
     callSign: {
         label: 'Kennung *',
         rules: 'required'
-    },
-    contact: {
-        label: 'Kdt./Fahrer'
     },
     hidden: {
         type: 'checkbox'

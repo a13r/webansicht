@@ -49,7 +49,7 @@ export default class ResourceStore {
         } else {
             this.find();
         }
-        if (this.selectedResource._id === data._id) {
+        if (this.selectedResource && this.selectedResource._id === data._id) {
             this.form.set(data);
         }
     };
@@ -76,9 +76,14 @@ export default class ResourceStore {
     get selectedResource() {
         const id = this.form.$('_id').value;
         if (id) {
-            return _.find(this.list, {_id: id}) || {};
+            return _.find(this.list, {_id: id});
         }
-        return {};
+        return null;
+    }
+
+    @computed
+    get selectedResourceId() {
+        return this.form.$('_id').value;
     }
 
     onSuccess = form => {
@@ -99,5 +104,8 @@ const formFields = {
     },
     destination: {
         label: 'Zielort'
+    },
+    contact: {
+        label: 'Kdt./Fahrer'
     }
 };
