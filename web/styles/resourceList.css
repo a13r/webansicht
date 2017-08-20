@@ -3,5 +3,5 @@ tr.resourceRow {
 }
 
 tr.resourceRow:hover {
-    font-weight: 700;
+    border-right: 2px solid #AAAAAA;
 }
