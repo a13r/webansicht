@@ -1,5 +1,5 @@
 import {action, computed, observable, reaction} from 'mobx';
-import {service} from '../app';
+import {resources} from '../app';
 import _ from 'lodash';
 import Form from 'mobx-react-form';
 import validatorjs from 'validatorjs';
@@ -16,9 +16,9 @@ export default class ResourceStore {
 
     constructor(fields = formFields) {
         this.form = new Form({fields}, {onSubmit: this, plugins: {dvr: validatorjs}});
-        service('resources').on('created', action(this.onCreated));
-        service('resources').on('updated', action(this.onUpdated));
-        service('resources').on('patched', action(this.onUpdated));
+        resources.on('created', action(this.onCreated));
+        resources.on('updated', action(this.onUpdated));
+        resources.on('patched', action(this.onUpdated));
     }
 
     init() {
@@ -31,7 +31,7 @@ export default class ResourceStore {
 
     find(query = {}) {
         _.merge(this.query, query);
-        return service('resources')
+        return resources
             .find({query: this.query})
             .then(json => this.updateList(json));
     }
@@ -82,7 +82,7 @@ export default class ResourceStore {
     }
 
     onSuccess = form => {
-        service('resources').patch(form.$('_id').value, form.values());
+        resources.patch(form.$('_id').value, form.values());
     };
 }
 

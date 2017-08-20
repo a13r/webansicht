@@ -3,24 +3,27 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const paths = {
-    src: path.join(__dirname, 'src'),
+    src: path.join(__dirname, 'web'),
     dist: path.join(__dirname, 'public')
 };
 
 const config = {
-    entry: ['react-hot-loader/patch', './web/index.jsx'],
+    entry: ['react-hot-loader/patch', './index.jsx'],
     context: paths.src,
     devtool: 'inline-source-map',
     devServer: {
         hot: true,
         contentBase: paths.dist,
         inline: true,
-        historyApiFallback: true
+        historyApiFallback: true,
+        proxy: [{
+            context: ['/socket.io', '/api'],
+            target: 'http://localhost:3030'
+        }]
     },
     resolve: {
         extensions: ['.js', '.jsx'],
         alias: {
-            web: path.join(paths.src, 'web'),
             '~': paths.src
         }
     },

@@ -1,0 +1,7 @@
+tr.resourceRow {
+    cursor: pointer;
+}
+
+tr.resourceRow:hover {
+    font-weight: 700;
+}

@@ -4,15 +4,16 @@ import socket from 'feathers-socketio/client';
 import io from 'socket.io-client';
 
 const instance = feathers()
-    .configure(socket(io('http://localhost:3030')))
+    .configure(socket(io()))
     .configure(hooks());
 
 export function app() {
     return instance;
 }
 
-export function service(name) {
+function service(name) {
     return instance.service(name);
 }
 
-export const audit = service('audit');
+export const audit = service('api/audit');
+export const resources = service('api/resources');

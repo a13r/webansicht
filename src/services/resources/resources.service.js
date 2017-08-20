@@ -14,10 +14,10 @@ module.exports = function () {
   };
 
   // Initialize our service with any options it requires
-  app.use('/resources', createService(options));
+  app.use('/api/resources', createService(options));
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('resources');
+  const service = app.service('api/resources');
 
   service.hooks(hooks);
 

@@ -1,7 +1,7 @@
 import {action, computed, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
-import {service} from "../app";
 import _ from "lodash";
+import {resources} from '../app';
 
 export default class ResourceAdminStore extends ResourceStore {
     emptyResource = {
@@ -24,7 +24,7 @@ export default class ResourceAdminStore extends ResourceStore {
         reaction(() => this.form.$('hidden').value, hidden => {
             const id = this.form.$('_id').value;
             if (id) {
-                service('resources').patch(id, {hidden});
+                resources.patch(id, {hidden});
             }
         });
     }
@@ -40,17 +40,17 @@ export default class ResourceAdminStore extends ResourceStore {
     }
 
     remove = () => {
-        service('resources').remove(this.form.$('_id').value);
+        resources.remove(this.form.$('_id').value);
     };
 
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
-            service('resources').patch(form.$('_id').value, form.values());
+            resources.patch(form.$('_id').value, form.values());
         } else {
             const newResource = _.assign({}, this.emptyResource, form.values());
             _.unset(newResource, '_id');
-            service('resources').create(newResource)
+            resources.create(newResource)
                 .then(action(r => {
                     this.list.push(r);
                     this.selectResource(r._id);
