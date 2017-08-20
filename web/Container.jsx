@@ -19,7 +19,7 @@ export default class Container extends React.Component {
 
     render() {
         return <Provider store={this.props.store}>
-            <HashRouter>
+            <BrowserRouter>
                 <div className="container-fluid">
                     <Navbar fluid>
                         <Navbar.Header>
@@ -45,7 +45,7 @@ export default class Container extends React.Component {
                     <Route path="/audit" component={Audit}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
-            </HashRouter>
+            </BrowserRouter>
         </Provider>;
     }
 }

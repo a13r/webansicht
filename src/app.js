@@ -9,6 +9,8 @@ const hooks = require('feathers-hooks');
 const rest = require('feathers-rest');
 const socketio = require('feathers-socketio');
 
+const fallback = require('connect-history-api-fallback');
+
 const handler = require('feathers-errors/handler');
 const notFound = require('feathers-errors/not-found');
 
@@ -26,6 +28,7 @@ app.use(helmet());
 app.use(compress());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fallback());
 // Host the public folder
 app.use('/', feathers.static(app.get('public')));
 
