@@ -7,6 +7,7 @@ import ResourceAdminStore from "./stores/resourceAdmin";
 import moment from "moment";
 import AuditStore from "./stores/audit";
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
+import './styles/global.css';
 
 const store = {
     resources: new ResourceListStore(),
@@ -15,6 +16,10 @@ const store = {
 };
 
 MobxReactFormDevTools.register({resourceEditor: store.resources.form, resourceAdmin: store.resourceAdmin.form});
+
+const root = document.createElement('div');
+root.setAttribute('id', 'root');
+document.querySelector('body').appendChild(root);
 
 function renderApp(AppComponent) {
     render(

@@ -2,6 +2,7 @@ import React from "react";
 import {inject, observer} from "mobx-react";
 import {TextInput} from "../components/formControls";
 import {Button, Col, ListGroup, ListGroupItem, Row, FormGroup, Checkbox} from "react-bootstrap";
+import '../styles/admin.css';
 
 export default inject('store')(observer(({store: {resourceAdmin}}) =>
     <Row>

@@ -4,6 +4,7 @@ import {inject, observer} from "mobx-react";
 import moment from "moment";
 import states from "../shared/states";
 import _ from 'lodash';
+import '../styles/resourceList.css';
 
 @inject('store')
 @observer

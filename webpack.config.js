@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const paths = {
     src: path.join(__dirname, 'src'),
@@ -13,7 +14,8 @@ const config = {
     devServer: {
         hot: true,
         contentBase: paths.dist,
-        inline: true
+        inline: true,
+        historyApiFallback: true
     },
     resolve: {
         extensions: ['.js', '.jsx'],
@@ -52,7 +54,8 @@ const config = {
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin()
+        new webpack.NamedModulesPlugin(),
+        new HtmlWebpackPlugin({ title: 'Webansicht' })
     ]
 };
 
