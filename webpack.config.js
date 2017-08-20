@@ -51,14 +51,17 @@ const config = {
         }]
     },
     output: {
-        path: '/',
+        path: paths.dist,
         publicPath: '/',
         filename: 'app.js'
     },
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),
-        new HtmlWebpackPlugin({ title: 'Webansicht' })
+        new HtmlWebpackPlugin({ title: 'Webansicht' }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        })
     ]
 };
 

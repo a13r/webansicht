@@ -43,14 +43,10 @@ class States {
         },
         name: 'Außer Dienst'
     };
-    unknown = {
-        rowStyle: {},
-        name: 'unbekannt'
-    };
 
     get(number) {
         const state = this[parseInt(number)];
-        return state || this.unknown;
+        return state || {rowStyle: {}, name: 'unbekannt'};
     }
 }
 

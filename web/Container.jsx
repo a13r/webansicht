@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap-theme.css";
 import PropTypes from "prop-types";
 import {Nav, Navbar, NavItem} from "react-bootstrap";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
-import {BrowserRouter} from "react-router-dom";
+import {BrowserRouter, HashRouter} from "react-router-dom";
 import {Route} from "react-router";
 import Overview from "./containers/overview";
 import Admin from './containers/admin';
@@ -19,12 +19,14 @@ export default class Container extends React.Component {
 
     render() {
         return <Provider store={this.props.store}>
-            <BrowserRouter>
+            <HashRouter>
                 <div className="container-fluid">
                     <Navbar fluid>
                         <Navbar.Header>
                             <Navbar.Brand>µ-webansicht</Navbar.Brand>
+                            <Navbar.Toggle/>
                         </Navbar.Header>
+                        <Navbar.Collapse>
                         <Nav>
                             <IndexLinkContainer to="/">
                                 <NavItem>Übersicht</NavItem>
@@ -36,13 +38,14 @@ export default class Container extends React.Component {
                                 <NavItem>Protokoll</NavItem>
                             </LinkContainer>
                         </Nav>
+                        </Navbar.Collapse>
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/admin" component={Admin}/>
                     <Route path="/audit" component={Audit}/>
-                    <MobxReactFormDevTools.UI/>
+                    {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
-            </BrowserRouter>
+            </HashRouter>
         </Provider>;
     }
 }

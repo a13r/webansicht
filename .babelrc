@@ -2,10 +2,6 @@
     "presets": ["es2015", "stage-0", "react"],
     "plugins": [
         "transform-decorators-legacy",
-        "transform-class-properties",
-        ["babel-root-import", [{
-            "rootPathPrefix": "~",
-            "rootPathSuffix": "."
-        }]]
+        "transform-class-properties"
     ]
 }

@@ -9,7 +9,7 @@
   ],
   "author": {
     "name": "Andreas Bruckner",
-    "email": "e0929234@student.tuwien.ac.at"
+    "email": "andreas@bruckner.cc"
   },
   "contributors": [],
   "bugs": {},
@@ -23,8 +23,9 @@
   },
   "scripts": {
     "test": "npm run eslint && npm run mocha",
-    "start": "node src/",
-    "devServer": "webpack-dev-server",
+    "start": "cross-env NODE_ENV=development npm run web:build && node src/",
+    "web:build": "cross-env NODE_ENV=production webpack",
+    "web:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "mocha": "mocha test/ --recursive"
   },
   "dependencies": {
@@ -71,8 +72,8 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-root-import": "^4.1.8",
+    "cross-env": "^5.0.5",
     "css-loader": "^0.28.4",
-    "eslint": "^4.4.1",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.30.1",
     "mocha": "^3.5.0",
