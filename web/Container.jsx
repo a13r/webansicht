@@ -34,7 +34,7 @@ export default class Container extends React.Component {
                             <LinkContainer to="/admin">
                                 <NavItem>Ressourcenverwaltung</NavItem>
                             </LinkContainer>
-                            <LinkContainer to="/audit">
+                            <LinkContainer to="/log">
                                 <NavItem>Protokoll</NavItem>
                             </LinkContainer>
                         </Nav>
@@ -42,7 +42,7 @@ export default class Container extends React.Component {
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/admin" component={Admin}/>
-                    <Route path="/audit" component={Audit}/>
+                    <Route path="/log" component={Audit}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </BrowserRouter>
