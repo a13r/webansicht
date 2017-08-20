@@ -1,22 +1,23 @@
 import React from "react";
 import {inject, observer} from "mobx-react";
 import {TextInput} from "../components/formControls";
-import {Button, ListGroup, ListGroupItem, FormGroup} from "react-bootstrap";
+import {Button, Col, ListGroup, ListGroupItem, Row, FormGroup, Checkbox} from "react-bootstrap";
 
 export default inject('store')(observer(({store: {resourceAdmin}}) =>
-    <div className="row">
-        <div className="col-md-3">
+    <Row>
+        <Col md={3}>
             <div className="panel panel-default">
                 <ListGroup>
                     {resourceAdmin.list.map(r =>
                         <ListGroupItem onClick={() => resourceAdmin.selectResource(r._id)}
                                        key={r._id} active={resourceAdmin.selectedResource._id === r._id}>
                             {r.callSign} ({r.type})
+                            {r.hidden && <i className="glyphicon glyphicon-eye-close pull-right"/>}
                         </ListGroupItem>)}
                 </ListGroup>
             </div>
-        </div>
-        <div className="col-md-3">
+        </Col>
+        <Col md={3}>
             <div className="panel panel-default">
                 <div className="panel-heading">
                     <h2 className="panel-title">
@@ -28,19 +29,22 @@ export default inject('store')(observer(({store: {resourceAdmin}}) =>
                         <TextInput field={resourceAdmin.form.$('callSign')}/>
                         <TextInput field={resourceAdmin.form.$('type')}/>
                         <TextInput field={resourceAdmin.form.$('contact')}/>
-                        <div className="btn-toolbar">
-                            <Button bsStyle="primary" type="submit">
-                                <i className="glyphicon glyphicon-save"/> Speichern
-                            </Button>
-                            <Button bsStyle="danger" onClick={resourceAdmin.remove}>
-                                <i className="glyphicon glyphicon-trash"/> Löschen
-                            </Button>
-                            <Button onClick={resourceAdmin.createResource}>
-                                Abbrechen
-                            </Button>
-                        </div>
+                        <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
+                        <FormGroup>
+                            <div className="btn-toolbar">
+                                <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
+                                    <i className="glyphicon glyphicon-save"/> Speichern
+                                </Button>
+                                <Button onClick={resourceAdmin.createResource}>
+                                    Abbrechen
+                                </Button>
+                            </div>
+                        </FormGroup>
+                        {!resourceAdmin.form.isValid && <div className="alert alert-danger">
+                            <b>*</b> Kennung und Typ dürfen nicht leer sein
+                        </div>}
                     </form>
                 </div>
             </div>
-        </div>
-    </div>));
+        </Col>
+    </Row>));

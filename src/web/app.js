@@ -14,3 +14,5 @@ export function app() {
 export function service(name) {
     return instance.service(name);
 }
+
+export const audit = service('audit');

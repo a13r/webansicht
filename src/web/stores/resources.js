@@ -2,6 +2,7 @@ import {action, computed, observable, reaction} from 'mobx';
 import {service} from '../app';
 import _ from 'lodash';
 import Form from 'mobx-react-form';
+import validatorjs from 'validatorjs';
 
 export default class ResourceStore {
     @observable
@@ -13,21 +14,19 @@ export default class ResourceStore {
     };
     form;
 
-    constructor(fields) {
-        fields = fields || formFields;
-        this.form = new Form({fields}, {onSubmit: this});
-        reaction(() => this.selectedResource, resource => {
-            this.form.update(resource);
-        }, true);
-    }
-
-    @action
-    init() {
+    constructor(fields = formFields) {
+        this.form = new Form({fields}, {onSubmit: this, plugins: {dvr: validatorjs}});
         service('resources').on('created', action(this.onCreated));
         service('resources').on('updated', action(this.onUpdated));
         service('resources').on('patched', action(this.onUpdated));
-        service('resources').on('removed', action(this.onRemoved));
-        this.find();
+    }
+
+    init() {
+        reaction(() => this.selectedResource, resource => {
+            this.form.update(resource);
+            this.form.$('state').focus();
+        }, true);
+        this.find({hidden: false});
     }
 
     find(query = {}) {
@@ -45,24 +44,21 @@ export default class ResourceStore {
     @action
     onUpdated = (data) => {
         const existing = _.find(this.list, {_id: data._id});
-        if (existing) {
+        if (existing && existing.hidden === data.hidden) {
             _.extend(existing, data);
+        } else {
+            this.find();
         }
         if (this.selectedResource._id === data._id) {
             this.form.set(data);
         }
     };
 
-    onRemoved = item => {
-        _.remove(this.list, {_id: item._id});
-        this.form.clear();
-    };
-
     @action
     updateList(list) {
         this.list = list;
         if (!this.form.$('_id').value && list.length > 0) {
-            //this.form.$('_id').set(list[0]._id);
+            this.form.$('_id').set(list[0]._id);
         }
     }
 
@@ -70,7 +66,7 @@ export default class ResourceStore {
     selectResource = id => {
         const resource = _.find(this.list, {_id: id});
         if (resource) {
-            this.form.update(resource);
+            this.form.$('_id').set(id);
         } else {
             console.error('selected non-existing resource');
         }
@@ -80,7 +76,7 @@ export default class ResourceStore {
     get selectedResource() {
         const id = this.form.$('_id').value;
         if (id) {
-            return _.find(this.list, {_id: id});
+            return _.find(this.list, {_id: id}) || {};
         }
         return {};
     }

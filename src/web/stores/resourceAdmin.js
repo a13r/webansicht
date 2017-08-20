@@ -1,7 +1,7 @@
 import {action, computed, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
-import {service} from '../app';
-import _ from 'lodash';
+import {service} from "../app";
+import _ from "lodash";
 
 export default class ResourceAdminStore extends ResourceStore {
     emptyResource = {
@@ -11,13 +11,33 @@ export default class ResourceAdminStore extends ResourceStore {
 
     constructor() {
         super(fields);
-        this.init();
+    }
+
+    init() {
+        this.find();
+        reaction(() => this.form.$('type').value, () => this.form.validate());
+        reaction(() => this.form.$('callSign').value, () => this.form.validate());
+        reaction(() => this.selectedResource, resource => {
+            this.form.update(resource);
+            this.form.validate();
+        }, true);
+        reaction(() => this.form.$('hidden').value, hidden => {
+            const id = this.form.$('_id').value;
+            if (id) {
+                service('resources').patch(id, {hidden});
+            }
+        });
     }
 
     @action
     createResource = () => {
         this.form.clear();
     };
+
+    @action
+    updateList(list) {
+        this.list = list;
+    }
 
     remove = () => {
         service('resources').remove(this.form.$('_id').value);
@@ -44,12 +64,17 @@ const fields = {
         label: 'Ressource'
     },
     type: {
-        label: 'Typ'
+        label: 'Typ *',
+        rules: 'required'
     },
     callSign: {
-        label: 'Kennung'
+        label: 'Kennung *',
+        rules: 'required'
     },
     contact: {
         label: 'Kdt./Fahrer'
+    },
+    hidden: {
+        type: 'checkbox'
     }
 };

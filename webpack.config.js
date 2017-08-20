@@ -16,7 +16,11 @@ const config = {
         inline: true
     },
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
+        alias: {
+            web: path.join(paths.src, 'web'),
+            '~': paths.src
+        }
     },
     module: {
         loaders: [{

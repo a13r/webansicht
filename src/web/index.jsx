@@ -1,15 +1,20 @@
-import React from 'react';
-import {render} from 'react-dom';
-import {AppContainer} from 'react-hot-loader';
-import Container from './Container.jsx';
-import ResourceListStore from './stores/resources';
-import ResourceAdminStore from './stores/resourceAdmin';
-import moment from 'moment';
+import React from "react";
+import {render} from "react-dom";
+import {AppContainer} from "react-hot-loader";
+import Container from "./Container.jsx";
+import ResourceListStore from "./stores/resources";
+import ResourceAdminStore from "./stores/resourceAdmin";
+import moment from "moment";
+import AuditStore from "./stores/audit";
+import MobxReactFormDevTools from 'mobx-react-form-devtools';
 
 const store = {
     resources: new ResourceListStore(),
-    resourceAdmin: new ResourceAdminStore()
+    resourceAdmin: new ResourceAdminStore(),
+    audit: new AuditStore()
 };
+
+MobxReactFormDevTools.register({resourceEditor: store.resources.form, resourceAdmin: store.resourceAdmin.form});
 
 function renderApp(AppComponent) {
     render(
@@ -21,6 +26,7 @@ function renderApp(AppComponent) {
 
 renderApp(Container);
 store.resources.init();
+store.resourceAdmin.init();
 moment.locale('de');
 
 if (module.hot) {
