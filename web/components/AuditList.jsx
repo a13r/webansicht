@@ -3,12 +3,23 @@ import React from 'react';
 import states from '../shared/states';
 import moment from 'moment';
 
+const SortToggle = observer(({auditStore}) => {
+    const props = {
+        className: `print-hidden glyphicon glyphicon-arrow-${auditStore.sortOrder === 1 ? 'down' : 'up'}`,
+        onClick: () => auditStore.toggleSortOrder(),
+        style: {
+            cursor: 'pointer'
+        }
+    };
+    return <i {...props}/>;
+});
+
 export default inject('store')(observer(({store}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>
             <tr>
-                <th>Zeitpunkt</th>
+                <th>Zeitpunkt <SortToggle auditStore={store.audit}/></th>
                 <th>Kennung</th>
                 <th>Typ</th>
                 <th>Status</th>

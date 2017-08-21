@@ -1,4 +1,4 @@
-import {action, observable, reaction} from "mobx";
+import {action, computed, observable, reaction} from "mobx";
 import {audit} from "../app";
 import _ from "lodash";
 import {Form} from "mobx-react-form";
@@ -6,6 +6,7 @@ import {Form} from "mobx-react-form";
 export default class AuditStore {
     @observable
     list = [];
+    @observable
     query = {
         $sort: {
             since: -1
@@ -33,6 +34,17 @@ export default class AuditStore {
     updateList = list => {
         this.list = list;
     };
+
+    @computed
+    get sortOrder() {
+        return this.query.$sort.since;
+    }
+
+    @action
+    toggleSortOrder() {
+        this.query.$sort.since = this.query.$sort.since === 1 ? -1 : 1;
+        this.find();
+    }
 }
 
 const fields = {
