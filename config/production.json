@@ -1,4 +1,3 @@
 {
-  "host": "webansicht-app.feathersjs.com",
-  "port": "PORT"
+    "mongoUrl": "mongodb://mongo/webansicht"
 }

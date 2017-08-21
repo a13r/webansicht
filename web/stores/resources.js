@@ -9,6 +9,7 @@ export default class ResourceStore {
     list = [];
     query = {
         $sort: {
+            ordering: 1,
             callSign: 1
         }
     };
@@ -37,7 +38,7 @@ export default class ResourceStore {
 
     onCreated = item => {
         this.list.push(item);
-        this.list = _.orderBy(this.list, ['callSign']);
+        this.list = _.orderBy(this.list, ['ordering', 'callSign']);
     };
 
     @action
@@ -45,6 +46,7 @@ export default class ResourceStore {
         const existing = _.find(this.list, {_id: data._id});
         if (existing && existing.hidden === data.hidden) {
             _.extend(existing, data);
+            this.list = _.orderBy(this.list, ['ordering', 'callSign']);
         } else {
             this.find();
         }

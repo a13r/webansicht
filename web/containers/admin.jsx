@@ -35,7 +35,11 @@ export default inject('store')(observer(({store: {resourceAdmin}}) =>
                     <form onSubmit={resourceAdmin.form.onSubmit}>
                         <TextInput field={resourceAdmin.form.$('callSign')}/>
                         <TextInput field={resourceAdmin.form.$('type')}/>
+                        <TextInput field={resourceAdmin.form.$('ordering')}/>
                         <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
+                        {!resourceAdmin.form.isValid && <div className="alert alert-danger">
+                            Es müssen alle Felder ausgefüllt werden
+                        </div>}
                         <FormGroup>
                             <div className="btn-toolbar">
                                 <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
@@ -44,9 +48,6 @@ export default inject('store')(observer(({store: {resourceAdmin}}) =>
                                 <Button onClick={() => resourceAdmin.showEditor(false)}> abbrechen</Button>
                             </div>
                         </FormGroup>
-                        {!resourceAdmin.form.isValid && <div className="alert alert-danger">
-                            <b>*</b> Kennung und Typ dürfen nicht leer sein
-                        </div>}
                     </form>
                 </div>
             </div>

@@ -1,12 +1,18 @@
-const NeDB = require('nedb');
-const path = require('path');
+const mongoose = require('mongoose');
+
+const schema = new mongoose.Schema({
+    resource_id: String,
+    callSign: String,
+    type: String,
+    state: Number,
+    since: Date,
+    lastPosition: String,
+    destination: String,
+    contact: String,
+    hidden: Boolean,
+    ordering: Number
+});
 
 module.exports = function (app) {
-  const dbPath = app.get('nedb');
-  const Model = new NeDB({
-    filename: path.join(dbPath, 'audit.db'),
-    autoload: true
-  });
-
-  return Model;
+  return mongoose.model('log', schema);
 };

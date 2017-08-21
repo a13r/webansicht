@@ -1,12 +1,5 @@
 const {setNow} = require('feathers-hooks-common');
 const createAuditEntry = require('../../hooks/create-audit-entry')();
-const fillDefaults = require('../../hooks/fill-defaults')({
-    state: 0,
-    lastPosition: '',
-    destination: '',
-    contact: '',
-    hidden: false
-});
 
 const updateSince = setNow('since');
 
@@ -15,7 +8,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [updateSince, fillDefaults],
+    create: [],
     update: [updateSince],
     patch: [updateSince],
     remove: []

@@ -15,6 +15,7 @@ export default class ResourceAdminStore extends ResourceStore {
         this.find();
         reaction(() => this.form.$('type').value, () => this.form.validate());
         reaction(() => this.form.$('callSign').value, () => this.form.validate());
+        reaction(() => this.form.$('ordering').value, () => this.form.validate());
         reaction(() => this.selectedResource, resource => {
             if (resource) {
                 this.form.update(resource);
@@ -58,7 +59,7 @@ export default class ResourceAdminStore extends ResourceStore {
             resources.create(newResource)
                 .then(action(r => {
                     this.list.push(r);
-                    this.selectResource(r._id);
+                    this.form.clear();
                 }));
         }
     };
@@ -69,12 +70,17 @@ const fields = {
         label: 'Ressource'
     },
     type: {
-        label: 'Typ *',
+        label: 'Typ',
         rules: 'required'
     },
     callSign: {
-        label: 'Kennung *',
+        label: 'Kennung',
         rules: 'required'
+    },
+    ordering: {
+        label: 'Reihung',
+        rules: 'required|integer',
+        type: 'number'
     },
     hidden: {
         type: 'checkbox'

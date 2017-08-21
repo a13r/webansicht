@@ -2,6 +2,7 @@ const compress = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const feathers = require('feathers');
 const configuration = require('feathers-configuration');
@@ -22,6 +23,10 @@ const app = feathers();
 
 // Load app configuration
 app.configure(configuration());
+
+mongoose.Promise = global.Promise;
+mongoose.connect(app.get('mongoUrl'), { useMongoClient: true });
+
 // Enable CORS, security, compression, favicon and body parsing
 app.use(cors());
 app.use(helmet());
