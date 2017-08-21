@@ -24,7 +24,6 @@ export default class ResourceStore {
     init() {
         reaction(() => this.selectedResource, resource => {
             this.form.update(resource);
-            this.form.$('state').focus();
         }, true);
         this.find({hidden: false});
     }
