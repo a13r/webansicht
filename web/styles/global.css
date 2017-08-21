@@ -1,3 +1,7 @@
 #root {
     margin-top: 15px;
 }
+
+.panel {
+    overflow-x: scroll;
+}

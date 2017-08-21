@@ -8,10 +8,10 @@ export default inject('store')(observer(({store}) =>
         <table className="table table-condensed">
             <thead>
             <tr>
-                <th width="150px">Zeitpunkt</th>
-                <th width="100px">Kennung</th>
-                <th width="80px">Typ</th>
-                <th width="150px">Status</th>
+                <th>Zeitpunkt</th>
+                <th>Kennung</th>
+                <th>Typ</th>
+                <th>Status</th>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>

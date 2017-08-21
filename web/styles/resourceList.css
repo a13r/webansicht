@@ -3,5 +3,5 @@ tr.resourceRow {
 }
 
 tr.resourceRow:hover {
-    border-right: 2px solid #AAAAAA;
+    opacity: 0.8;
 }

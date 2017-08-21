@@ -21,7 +21,7 @@ export default class Container extends React.Component {
         return <Provider store={this.props.store}>
             <BrowserRouter>
                 <div className="container-fluid">
-                    <Navbar fluid>
+                    <Navbar fluid collapseOnSelect>
                         <Navbar.Header>
                             <Navbar.Brand>µ-webansicht</Navbar.Brand>
                             <Navbar.Toggle/>

@@ -58,7 +58,7 @@ const config = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NamedModulesPlugin(),
-        new HtmlWebpackPlugin({ title: 'Webansicht' }),
+        new HtmlWebpackPlugin({ template: path.join(paths.src, 'index.html') }),
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         })

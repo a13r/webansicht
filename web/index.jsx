@@ -17,10 +17,6 @@ const store = {
 
 MobxReactFormDevTools.register({resourceEditor: store.resources.form, resourceAdmin: store.resourceAdmin.form});
 
-const root = document.createElement('div');
-root.setAttribute('id', 'root');
-document.querySelector('body').appendChild(root);
-
 function renderApp(AppComponent) {
     render(
         <AppContainer>
