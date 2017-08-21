@@ -15,7 +15,7 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [fillDefaults],
+    create: [updateSince, fillDefaults],
     update: [updateSince],
     patch: [updateSince],
     remove: []
