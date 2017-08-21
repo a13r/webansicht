@@ -16,6 +16,7 @@ export default inject('store')(observer(({store: {resources}}) =>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>
+                <th/>
             </tr>
             </thead>
             <tbody>
@@ -25,10 +26,14 @@ export default inject('store')(observer(({store: {resources}}) =>
                     <td>{r.callSign}</td>
                     <td>{r.type}</td>
                     <td>{states.get(r.state).name}</td>
-                    <td>{moment(r.since).format('LT')}</td>
+                    <td>{r.since && moment(r.since).format('LT')}</td>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
+                    <td>
+                        {resources.selectedResourceId === r._id &&
+                        <i className="pull-right glyphicon glyphicon-pencil" style={{color: '#000000'}}/>}
+                    </td>
                 </tr>)}
             </tbody>
         </table>

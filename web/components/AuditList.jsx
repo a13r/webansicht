@@ -21,7 +21,7 @@ export default inject('store')(observer(({store}) =>
             <tbody>
             {store.audit.list.map(r =>
                 <tr style={states.get(r.state).rowStyle} key={r._id}>
-                    <td>{moment(r.since).format('L LT')}</td>
+                    <td>{r.since && moment(r.since).format('L LT')}</td>
                     <td>{r.callSign}</td>
                     <td>{r.type}</td>
                     <td>{states.get(r.state).name}</td>

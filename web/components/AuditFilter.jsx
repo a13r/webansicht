@@ -3,7 +3,7 @@ import React from 'react';
 import {Select} from "./formControls";
 
 export default inject('store')(observer(({store}) =>
-    <div className="panel panel-default">
+    <div className="panel panel-default print-hidden">
         <div className="panel-heading">
             <h2 className="panel-title">Filter</h2>
         </div>

@@ -2,6 +2,14 @@
     margin-top: 15px;
 }
 
-.panel {
-    overflow-x: scroll;
+@media (max-width: 991px) {
+    .panel {
+        overflow-x: scroll;
+    }
+}
+
+@media print {
+    .print-hidden {
+        display: none;
+    }
 }
