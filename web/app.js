@@ -15,5 +15,5 @@ function service(name) {
     return instance.service(name);
 }
 
-export const audit = service('api/audit');
+export const log = service('api/log');
 export const resources = service('api/resources');

@@ -1,9 +1,9 @@
 import {action, computed, observable, reaction} from "mobx";
-import {audit} from "../app";
+import {log} from "../app";
 import _ from "lodash";
 import {Form} from "mobx-react-form";
 
-export default class AuditStore {
+export default class LogStore {
     @observable
     list = [];
     @observable
@@ -15,7 +15,7 @@ export default class AuditStore {
     form;
 
     constructor() {
-        audit.on('created', this.onCreated);
+        log.on('created', this.onCreated);
         this.form = new Form({fields});
         this.find();
         reaction(() => this.form.$('resource_id').value, id => this.find(id ? {resource_id: id} : {}));
@@ -27,7 +27,7 @@ export default class AuditStore {
     };
 
     find(query = {}) {
-        return audit.find({query: _.merge({}, this.query, query)}).then(json => this.updateList(json));
+        return log.find({query: _.merge({}, this.query, query)}).then(json => this.updateList(json));
     }
 
     @action

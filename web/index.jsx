@@ -5,14 +5,14 @@ import Container from "./Container.jsx";
 import ResourceListStore from "./stores/resources";
 import ResourceAdminStore from "./stores/resourceAdmin";
 import moment from "moment";
-import AuditStore from "./stores/audit";
+import LogStore from "./stores/log";
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
 import './styles/global.css';
 
 const store = {
     resources: new ResourceListStore(),
     resourceAdmin: new ResourceAdminStore(),
-    audit: new AuditStore()
+    log: new LogStore()
 };
 
 MobxReactFormDevTools.register({resourceEditor: store.resources.form, resourceAdmin: store.resourceAdmin.form});

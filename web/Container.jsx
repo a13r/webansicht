@@ -9,7 +9,7 @@ import {BrowserRouter, HashRouter} from "react-router-dom";
 import {Route} from "react-router";
 import Overview from "./containers/overview";
 import Admin from './containers/admin';
-import Audit from './containers/audit';
+import Log from './containers/log';
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
 
 export default class Container extends React.Component {
@@ -42,7 +42,7 @@ export default class Container extends React.Component {
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/admin" component={Admin}/>
-                    <Route path="/log" component={Audit}/>
+                    <Route path="/log" component={Log}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </BrowserRouter>

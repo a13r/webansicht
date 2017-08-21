@@ -1,14 +1,14 @@
 import React from "react";
-import AuditList from "../components/AuditList";
+import LogList from "../components/LogList";
 import {Col, Row} from "react-bootstrap";
-import AuditFilter from "../components/AuditFilter";
+import LogFilter from "../components/LogFilter";
 
 export default () =>
     <Row>
         <Col md={9}>
-            <AuditList/>
+            <LogList/>
         </Col>
         <Col md={3}>
-            <AuditFilter/>
+            <LogFilter/>
         </Col>
     </Row>
