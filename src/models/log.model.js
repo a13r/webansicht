@@ -10,7 +10,8 @@ const schema = new mongoose.Schema({
     destination: String,
     contact: String,
     hidden: Boolean,
-    ordering: Number
+    ordering: Number,
+    user_id: String
 });
 
 module.exports = function (app) {

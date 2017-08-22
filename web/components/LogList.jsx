@@ -2,6 +2,7 @@ import {inject, observer} from 'mobx-react';
 import React from 'react';
 import states from '../shared/states';
 import moment from 'moment';
+import _ from 'lodash';
 
 const SortToggle = observer(({logStore}) => {
     const props = {
@@ -27,6 +28,7 @@ export default inject('store')(observer(({store}) =>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>
                 <th>ausgeblendet</th>
+                <th>Benutzer</th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +42,7 @@ export default inject('store')(observer(({store}) =>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
                     <td>{r.hidden && 'ja'}</td>
+                    <td>{_.get(r, 'user.username')}</td>
                 </tr>)}
             </tbody>
         </table>

@@ -1,4 +1,14 @@
 const {authenticate} = require('feathers-authentication').hooks;
+const {populate} = require('feathers-hooks-common');
+
+const logUserSchema = {
+    include: {
+        service: 'users',
+        nameAs: 'user',
+        parentField: 'user_id',
+        childField: '_id'
+    }
+};
 
 module.exports = {
   before: {
@@ -12,7 +22,7 @@ module.exports = {
   },
 
   after: {
-    all: [],
+    all: [populate({schema: logUserSchema})],
     find: [],
     get: [],
     create: [],
