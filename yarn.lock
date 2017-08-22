@@ -1753,7 +1753,7 @@ debug@2.6.7:
   dependencies:
     ms "2.0.0"
 
-debug@2.6.8, debug@^2.1.1, debug@^2.2.0, debug@^2.3.1, debug@^2.3.2, debug@^2.6.0, debug@^2.6.6, debug@^2.6.8, debug@~2.6.4, debug@~2.6.6:
+debug@2.6.8, debug@^2.1.1, debug@^2.2.0, debug@^2.3.1, debug@^2.3.2, debug@^2.6.0, debug@^2.6.4, debug@^2.6.6, debug@^2.6.8, debug@~2.6.4, debug@~2.6.6:
   version "2.6.8"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
@@ -2295,7 +2295,7 @@ feathers-authentication-jwt@^0.3.2:
     lodash.pick "^4.4.0"
     passport-jwt "^2.2.1"
 
-feathers-authentication-local@^0.4.4:
+feathers-authentication-local@^0.4.0, feathers-authentication-local@^0.4.4:
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/feathers-authentication-local/-/feathers-authentication-local-0.4.4.tgz#eed529520f69e68503291adf6ba76e3e4f615872"
   dependencies:
@@ -2307,6 +2307,16 @@ feathers-authentication-local@^0.4.4:
     lodash.omit "^4.5.0"
     lodash.pick "^4.4.0"
     passport-local "^1.0.0"
+
+feathers-authentication-management@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/feathers-authentication-management/-/feathers-authentication-management-0.7.0.tgz#5052f1f3ba66408c9077db0b3c49de593972fee9"
+  dependencies:
+    bcryptjs "^2.3.0"
+    debug "^2.6.4"
+    feathers-authentication-local "^0.4.0"
+    feathers-errors "^2.7.1"
+    feathers-hooks-common "^3.0.0"
 
 feathers-authentication@^1.2.7:
   version "1.2.7"
@@ -2337,13 +2347,13 @@ feathers-configuration@^0.4.1:
     config "^1.21.0"
     debug "^2.2.0"
 
-feathers-errors@^2.0.1, feathers-errors@^2.2.0, feathers-errors@^2.4.0, feathers-errors@^2.5.0, feathers-errors@^2.9.1:
+feathers-errors@^2.0.1, feathers-errors@^2.2.0, feathers-errors@^2.4.0, feathers-errors@^2.5.0, feathers-errors@^2.7.1, feathers-errors@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/feathers-errors/-/feathers-errors-2.9.1.tgz#137f27611275f57d5044ba40353f84409b5aaf10"
   dependencies:
     debug "^2.2.0"
 
-feathers-hooks-common@^3.7.1:
+feathers-hooks-common@^3.0.0, feathers-hooks-common@^3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/feathers-hooks-common/-/feathers-hooks-common-3.7.1.tgz#9d5f7399a206dbf93710e8d5231d7d8c55054765"
   dependencies:
@@ -5697,6 +5707,10 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "~1.0.0"
     spdx-expression-parse "~1.0.0"
+
+validator@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-8.1.0.tgz#89cf6b512ff71eba886afd8d10d47f8dc800eac0"
 
 validatorjs@^3.13.3:
   version "3.13.3"

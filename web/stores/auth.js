@@ -1,16 +1,20 @@
 import {action, observable, reaction} from "mobx";
 import {Form} from "mobx-react-form";
-import {login, client, registerAuthErrorHandler, users} from "../app";
+import {changePassword, client, login, registerAuthErrorHandler, users} from "../app";
+import validator from "validator";
+import {minLength, passwordEqualTo} from "../shared/validators";
 
 export default class AuthStore {
     @observable
     loggedIn = undefined;
     form;
+    changePasswordForm;
     @observable
     user;
 
     constructor() {
-        this.form = new Form({fields}, {onSubmit: this});
+        this.form = new Form({fields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}});
+        this.changePasswordForm = new Form({fields: changePasswordFields}, {onSubmit: this.onSubmitPassword, options});
         client.passport.getJWT().then(this.processToken);
         registerAuthErrorHandler(action(e => {
             console.error(e);
@@ -30,11 +34,24 @@ export default class AuthStore {
         this.loggedIn = false;
     };
 
-    @action
-    onSuccess = () => {
-        login(this.form.values())
-            .then(response => this.processToken(response.accessToken))
-            .catch(e => console.error(e.message));
+    onSubmitLogin = {
+        @action
+        onSuccess: form => {
+            login(form.values())
+                .then(response => this.processToken(response.accessToken))
+                .catch(e => console.error(e.message));
+        }
+    };
+
+    onSubmitPassword = {
+        @action
+        onSuccess: form => {
+            changePassword(this.user.username, form.$('oldPassword').value, form.$('password').value)
+                .then(() => form.clear())
+                .catch(error => {
+                    form.invalidate(error.message);
+                });
+        }
     };
 
     @action
@@ -65,4 +82,26 @@ const fields = {
         label: 'Passwort',
         type: 'password'
     }
+};
+
+const changePasswordFields = {
+    oldPassword: {
+        label: 'Altes Passwort',
+        type: 'password'
+    },
+    password: {
+        label: 'Neues Passwort',
+        type: 'password',
+        validators: [minLength(8)],
+        related: ['passwordRepeat']
+    },
+    passwordRepeat: {
+        label: 'Neues Passwort (wiederholen)',
+        type: 'password',
+        validators: [passwordEqualTo('password')]
+    }
+};
+
+const options = {
+    validateOnChange: true
 };

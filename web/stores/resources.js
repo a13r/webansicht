@@ -2,7 +2,7 @@ import {action, computed, observable, reaction} from 'mobx';
 import {resources} from '../app';
 import _ from 'lodash';
 import Form from 'mobx-react-form';
-import validatorjs from 'validatorjs';
+import validator from 'validator';
 import {auth} from '../stores';
 
 export default class ResourceStore {
@@ -17,7 +17,7 @@ export default class ResourceStore {
     form;
 
     constructor(fields = formFields) {
-        this.form = new Form({fields}, {onSubmit: this, plugins: {dvr: validatorjs}});
+        this.form = new Form({fields}, {onSubmit: this, plugins: {vjf: validator}, options: {validateOnChange: true}});
         resources.on('created', action(this.onCreated));
         resources.on('updated', action(this.onUpdated));
         resources.on('patched', action(this.onUpdated));

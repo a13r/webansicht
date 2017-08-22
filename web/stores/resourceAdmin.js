@@ -3,6 +3,7 @@ import ResourceStore from "./resources";
 import _ from "lodash";
 import {resources} from '../app';
 import {auth} from '../stores';
+import {required} from '../shared/validators';
 
 export default class ResourceAdminStore extends ResourceStore {
     @observable
@@ -13,9 +14,9 @@ export default class ResourceAdminStore extends ResourceStore {
     }
 
     init() {
-        reaction(() => this.form.$('type').value, () => this.form.validate());
-        reaction(() => this.form.$('callSign').value, () => this.form.validate());
-        reaction(() => this.form.$('ordering').value, () => this.form.validate());
+//        reaction(() => this.form.$('type').value, () => this.form.validate());
+//        reaction(() => this.form.$('callSign').value, () => this.form.validate());
+//        reaction(() => this.form.$('ordering').value, () => this.form.validate());
         reaction(() => this.selectedResource, resource => {
             if (resource) {
                 this.form.update(resource);
@@ -37,7 +38,7 @@ export default class ResourceAdminStore extends ResourceStore {
 
     @action
     createResource = () => {
-        this.form.clear();
+        this.form.reset();
         this.showEditor(true);
     };
 
@@ -50,7 +51,7 @@ export default class ResourceAdminStore extends ResourceStore {
     showEditor(show) {
         this.editorVisible = show;
         if (!show) {
-            this.form.clear();
+            this.form.reset();
         }
     }
 
@@ -76,16 +77,17 @@ const fields = {
     },
     type: {
         label: 'Typ',
-        rules: 'required'
+        validators: [required()]
     },
     callSign: {
         label: 'Kennung',
-        rules: 'required'
+        validators: [required()]
     },
     ordering: {
         label: 'Reihung',
-        rules: 'required|integer',
-        type: 'number'
+        default: 0,
+        type: 'number',
+        validators: [required()]
     },
     hidden: {
         type: 'checkbox'

@@ -11,7 +11,16 @@ module.exports = function (app) {
         name: {type: String},
 
         createdAt: {type: Date, default: Date.now},
-        updatedAt: {type: Date, default: Date.now}
+        updatedAt: {type: Date, default: Date.now},
+
+        isVerified: Boolean,
+        verifyToken: String,
+        verifyShortToken: String,
+        verifyExpires: Date,
+        verifyChanges: [String],
+        resetToken: String,
+        resetShortToken: String,
+        resetExpires: Date
     });
 
     return mongooseClient.model('users', users);

@@ -9,12 +9,13 @@ import {Route} from "react-router";
 import Overview from "./containers/overview";
 import Admin from "./containers/admin";
 import Log from "./containers/log";
+import UserSettings from "./containers/userSettings";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import store from "./stores";
 import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
 
-const {auth} = store;
+const {auth} = store;
 
 @observer
 export default class Container extends React.Component {
@@ -42,16 +43,21 @@ export default class Container extends React.Component {
                             </Nav>
                             <Nav pullRight>
                                 {auth.user ?
-                                    <NavDropdown id="user" title={<span><i className="glyphicon glyphicon-user"/> {auth.user.name}</span>}>
-                                    <MenuItem onClick={() => auth.logout()}>Abmelden</MenuItem>
-                                </NavDropdown> :
-                                <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
+                                    <NavDropdown id="user"
+                                                 title={<span><i className="glyphicon glyphicon-user"/> {auth.user.name}</span>}>
+                                        <LinkContainer to="/userSettings">
+                                            <MenuItem>Einstellungen</MenuItem>
+                                        </LinkContainer>
+                                        <MenuItem onClick={() => auth.logout()}>Abmelden</MenuItem>
+                                    </NavDropdown> :
+                                    <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
                             </Nav>
                         </Navbar.Collapse>}
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/admin" component={Admin}/>
                     <Route path="/log" component={Log}/>
+                    <Route path="/userSettings" component={UserSettings}/>
                     {store.auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">

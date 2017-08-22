@@ -1,29 +1,32 @@
 {
-  "port": 3030,
-  "public": "../public/",
-  "authentication": {
-    "secret": "dd1c59384d7d8aa5f8a61cd577d27b2a600dbb9d848e4df31fb2e532aa89f76ee4945faf0806fd050c0892eb043e740d513a7f0f263f072220db0ee06338723eb925ff124bfe3c44946c4efbd2339c08c4436e7b7d94238ae1eabd4a65ba9b6a8887f67d7e19843579cdb64d1cdd87727e90a1f2f902c311a13e99b0f79c12df42a3fb1cd5133b4cb946a9a3b8d69213c1739f0ee236eb6463267863c04e15caeddfca1eca90d61409955975253343ef7c982f3cf394f54b2c206d5182fb1dcfe1710b30b9000121e6774171f9688a16c55f50c48360ad9019fe311a2f9399b4031d368fa3dbb46a323ef0f1f48512984eb2d7a3750ccab79200b026eea17250",
-    "strategies": [
-      "jwt",
-      "local"
-    ],
-    "path": "/authentication",
-    "service": "users",
-    "jwt": {
-      "header": {
-        "type": "access"
-      },
-      "audience": "https://yourdomain.com",
-      "subject": "anonymous",
-      "issuer": "feathers",
-      "algorithm": "HS256",
-      "expiresIn": "1d"
+    "port": 3030,
+    "public": "../public/",
+    "authentication": {
+        "secret": "dd1c59384d7d8aa5f8a61cd577d27b2a600dbb9d848e4df31fb2e532aa89f76ee4945faf0806fd050c0892eb043e740d513a7f0f263f072220db0ee06338723eb925ff124bfe3c44946c4efbd2339c08c4436e7b7d94238ae1eabd4a65ba9b6a8887f67d7e19843579cdb64d1cdd87727e90a1f2f902c311a13e99b0f79c12df42a3fb1cd5133b4cb946a9a3b8d69213c1739f0ee236eb6463267863c04e15caeddfca1eca90d61409955975253343ef7c982f3cf394f54b2c206d5182fb1dcfe1710b30b9000121e6774171f9688a16c55f50c48360ad9019fe311a2f9399b4031d368fa3dbb46a323ef0f1f48512984eb2d7a3750ccab79200b026eea17250",
+        "strategies": [
+            "jwt",
+            "local"
+        ],
+        "path": "/authentication",
+        "service": "users",
+        "jwt": {
+            "header": {
+                "type": "access"
+            },
+            "audience": "https://yourdomain.com",
+            "subject": "anonymous",
+            "issuer": "feathers",
+            "algorithm": "HS256",
+            "expiresIn": "1d"
+        },
+        "local": {
+            "entity": "user",
+            "usernameField": "username",
+            "passwordField": "password"
+        },
+        "management": {
+            "identifyUserProps": ["username", "email"]
+        }
     },
-    "local": {
-      "entity": "user",
-      "usernameField": "username",
-      "passwordField": "password"
-    }
-  },
-  "mongodb": "mongodb://localhost:27017/webansicht"
+    "mongodb": "mongodb://localhost:27017/webansicht"
 }

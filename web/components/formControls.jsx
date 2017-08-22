@@ -1,5 +1,5 @@
 import React from "react";
-import {ControlLabel, FormControl, FormGroup} from "react-bootstrap";
+import {ControlLabel, FormControl, FormGroup, HelpBlock} from "react-bootstrap";
 import {observer} from "mobx-react";
 
 export const Select = observer(({field, children}) =>
@@ -12,5 +12,6 @@ export const TextInput = observer(({field}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
         <FormControl type="text" {...field.bind()}/>
+        {field.hasError && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 

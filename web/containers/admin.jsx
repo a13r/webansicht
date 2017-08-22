@@ -38,9 +38,6 @@ export default authenticate(inject('store')(observer(({store: {resourceAdmin}}) 
                         <TextInput field={resourceAdmin.form.$('type')}/>
                         <TextInput field={resourceAdmin.form.$('ordering')}/>
                         <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
-                        {!resourceAdmin.form.isValid && <div className="alert alert-danger">
-                            Es müssen alle Felder ausgefüllt werden
-                        </div>}
                         <FormGroup>
                             <div className="btn-toolbar">
                                 <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
