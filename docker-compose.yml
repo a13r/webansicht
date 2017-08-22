@@ -1,0 +1,11 @@
+version: "3"
+services:
+  webansicht:
+    build: .
+    ports:
+      - "3030:3030"
+    links:
+      - mongo
+  mongo:
+    image: mongo
+
