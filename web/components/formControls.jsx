@@ -12,6 +12,6 @@ export const TextInput = observer(({field}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
         <FormControl type="text" {...field.bind()}/>
-        {field.hasError && <HelpBlock>{field.error}</HelpBlock>}
+        {field.touched && !field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 

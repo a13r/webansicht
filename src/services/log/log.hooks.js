@@ -1,5 +1,5 @@
 const {authenticate} = require('feathers-authentication').hooks;
-const {populate} = require('feathers-hooks-common');
+const {populate, when, isProvider} = require('feathers-hooks-common');
 
 const logUserSchema = {
     include: {
@@ -12,7 +12,7 @@ const logUserSchema = {
 
 module.exports = {
   before: {
-    all: [authenticate('jwt')],
+    all: [when(isProvider('external'), authenticate('jwt'))],
     find: [],
     get: [],
     create: [],

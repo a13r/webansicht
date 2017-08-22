@@ -24,7 +24,7 @@
   "scripts": {
     "test": "npm run eslint && npm run mocha",
     "start": "cross-env NODE_ENV=production node src/",
-    "api:dev": "cross-env NODE_ENV=development npm run web:build && node src/",
+    "api:dev": "cross-env NODE_ENV=development node src/",
     "web:build": "cross-env NODE_ENV=production webpack",
     "web:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "mocha": "mocha test/ --recursive"

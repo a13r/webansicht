@@ -2,7 +2,9 @@ import {action, observable, reaction} from "mobx";
 import {Form} from "mobx-react-form";
 import {changePassword, client, login, registerAuthErrorHandler, users} from "../app";
 import validator from "validator";
-import {minLength, passwordEqualTo} from "../shared/validators";
+import {minLength, passwordEqualTo, required} from "../shared/validators";
+import _ from "lodash";
+import {clearForms} from "./index";
 
 export default class AuthStore {
     @observable
@@ -15,6 +17,7 @@ export default class AuthStore {
     constructor() {
         this.form = new Form({fields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}});
         this.changePasswordForm = new Form({fields: changePasswordFields}, {onSubmit: this.onSubmitPassword, options});
+        this.createUserForm = new Form({fields: createUserFields}, {onSubmit: this.onSubmitUser, options});
         client.passport.getJWT().then(this.processToken);
         registerAuthErrorHandler(action(e => {
             console.error(e);
@@ -31,6 +34,7 @@ export default class AuthStore {
     @action
     logout = () => {
         client.logout();
+        clearForms();
         this.loggedIn = false;
     };
 
@@ -50,6 +54,18 @@ export default class AuthStore {
                 .then(() => form.clear())
                 .catch(error => {
                     form.invalidate(error.message);
+                });
+        }
+    };
+
+    onSubmitUser = {
+        @action
+        onSuccess: form => {
+            users.create(_.omit(form.values(), 'passwordRepeat'))
+                .then(user => form.clear())
+                .catch(error => {
+                    form.invalidate(error.message);
+                    form.clear();
                 });
         }
     };
@@ -97,6 +113,28 @@ const changePasswordFields = {
     },
     passwordRepeat: {
         label: 'Neues Passwort (wiederholen)',
+        type: 'password',
+        validators: [passwordEqualTo('password')]
+    }
+};
+
+const createUserFields = {
+    username: {
+        label: 'Benutzername',
+        validators: [required()]
+    },
+    name: {
+        label: 'Name',
+        validators: [required()]
+    },
+    password: {
+        label: 'Passwort',
+        type: 'password',
+        validators: [minLength(8)],
+        related: ['passwordRepeat']
+    },
+    passwordRepeat: {
+        label: 'Passwort (wiederholen)',
         type: 'password',
         validators: [passwordEqualTo('password')]
     }
