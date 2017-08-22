@@ -2,6 +2,7 @@ import {action, computed, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
 import _ from "lodash";
 import {resources} from '../app';
+import {auth} from '../stores';
 
 export default class ResourceAdminStore extends ResourceStore {
     @observable
@@ -12,7 +13,6 @@ export default class ResourceAdminStore extends ResourceStore {
     }
 
     init() {
-        this.find();
         reaction(() => this.form.$('type').value, () => this.form.validate());
         reaction(() => this.form.$('callSign').value, () => this.form.validate());
         reaction(() => this.form.$('ordering').value, () => this.form.validate());
@@ -28,6 +28,11 @@ export default class ResourceAdminStore extends ResourceStore {
                 resources.patch(id, {hidden});
             }
         });
+        reaction(() => auth.loggedIn, loggedIn => {
+            if (loggedIn) {
+                this.find();
+            }
+        }, true);
     }
 
     @action

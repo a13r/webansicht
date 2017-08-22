@@ -10,7 +10,7 @@ const paths = {
 const config = {
     entry: ['react-hot-loader/patch', './index.jsx'],
     context: paths.src,
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
     devServer: {
         hot: true,
         contentBase: paths.dist,

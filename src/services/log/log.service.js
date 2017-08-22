@@ -9,10 +9,10 @@ module.exports = function () {
   const Model = createModel(app);
 
   // Initialize our service with any options it requires
-  app.use('/api/log', createService({ Model }));
+  app.use('/log', createService({ Model }));
 
   // Get our initialized service so that we can register hooks and filters
-  const service = app.service('api/log');
+  const service = app.service('log');
 
   service.hooks(hooks);
 

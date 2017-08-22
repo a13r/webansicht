@@ -1,10 +1,11 @@
 import React from "react";
+import authenticate from '../components/authenticate';
 import {inject, observer} from "mobx-react";
 import {TextInput} from "../components/formControls";
 import {Button, Checkbox, Col, FormGroup, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import "../styles/admin.css";
 
-export default inject('store')(observer(({store: {resourceAdmin}}) =>
+export default authenticate(inject('store')(observer(({store: {resourceAdmin}}) =>
     <Row>
         <Col md={3}>
             <FormGroup>
@@ -52,4 +53,4 @@ export default inject('store')(observer(({store: {resourceAdmin}}) =>
                 </div>
             </div>
         </Col>}
-    </Row>));
+    </Row>)));

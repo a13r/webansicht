@@ -6,6 +6,6 @@ module.exports = function (options = {}) { // eslint-disable-line no-unused-vars
         const entry = Object.assign({}, hook.result);
         entry.resource_id = entry._id;
         delete entry._id;
-        app.service('api/log').create(entry);
+        app.service('log').create(entry);
     };
 };

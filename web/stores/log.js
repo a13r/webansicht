@@ -2,6 +2,7 @@ import {action, computed, observable, reaction} from "mobx";
 import {log} from "../app";
 import _ from "lodash";
 import {Form} from "mobx-react-form";
+import {auth} from '../stores';
 
 export default class LogStore {
     @observable
@@ -17,8 +18,11 @@ export default class LogStore {
     constructor() {
         log.on('created', this.onCreated);
         this.form = new Form({fields});
-        this.find();
         reaction(() => this.form.$('resource_id').value, id => this.find(id ? {resource_id: id} : {}));
+    }
+
+    init() {
+        reaction(() => auth.loggedIn, loggedIn => { if(loggedIn) this.find(); });
     }
 
     @action

@@ -3,6 +3,7 @@ import {resources} from '../app';
 import _ from 'lodash';
 import Form from 'mobx-react-form';
 import validatorjs from 'validatorjs';
+import {auth} from '../stores';
 
 export default class ResourceStore {
     @observable
@@ -26,7 +27,11 @@ export default class ResourceStore {
         reaction(() => this.selectedResource, resource => {
             this.form.update(resource);
         }, true);
-        this.find({hidden: false});
+        reaction(() => auth.loggedIn, loggedIn => {
+            if (loggedIn) {
+                this.find({hidden: false});
+            }
+        }, true);
     }
 
     find(query = {}) {

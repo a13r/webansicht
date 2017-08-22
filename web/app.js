@@ -1,19 +1,30 @@
 import feathers from 'feathers/client';
 import hooks from 'feathers-hooks';
+import auth from 'feathers-authentication-client';
 import socket from 'feathers-socketio/client';
 import io from 'socket.io-client';
 
-const instance = feathers()
+export const client = feathers()
+    .configure(hooks())
     .configure(socket(io()))
-    .configure(hooks());
+    .configure(auth({ storage: window.localStorage }));
 
-export function app() {
-    return instance;
+export function login({username, password}) {
+    return client.authenticate({
+        strategy: 'local',
+        username,
+        password
+    });
+}
+
+export function registerAuthErrorHandler(handler) {
+    client.on('reauthentication-error', handler);
 }
 
 function service(name) {
-    return instance.service(name);
+    return client.service(name);
 }
 
-export const log = service('api/log');
-export const resources = service('api/resources');
+export const log = service('log');
+export const resources = service('resources');
+export const users = service('users');

@@ -1,3 +1,7 @@
+body {
+    cursor: default;
+}
+
 #root {
     margin-top: 15px;
 }
