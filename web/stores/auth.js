@@ -39,11 +39,10 @@ export default class AuthStore {
     };
 
     onSubmitLogin = {
-        @action
         onSuccess: form => {
             login(form.values())
                 .then(response => this.processToken(response.accessToken))
-                .catch(e => console.error(e.message));
+                .catch(e => form.invalidate(e.message));
         }
     };
 
