@@ -21,6 +21,17 @@ module.exports = function () {
   // Get our initialized service so that we can register hooks and filters
   const service = app.service('users');
 
+  // create admin user if not exists
+  service.find({query: {username: 'admin'}})
+      .then(found => {
+          if (found.length === 0) {
+              service.create({username: 'admin', name: 'Administrator', password: 'changeme', roles: ['admin']})
+                  .then(adminUser => {
+                      console.log('admin user not found, created with password changeme');
+                  });
+          }
+      });
+
   service.hooks(hooks);
 
   if (service.filter) {
