@@ -2,7 +2,7 @@ import {action, observable, computed, reaction} from 'mobx';
 import {journal} from '../app';
 import {Form} from 'mobx-react-form';
 import _ from 'lodash';
-import {auth} from '../stores';
+import {auth, loginReaction} from '../stores';
 import Mousetrap from 'mousetrap';
 
 export default class JournalStore {
@@ -23,20 +23,13 @@ export default class JournalStore {
         journal.on('created', action(this.onCreated));
         journal.on('updated', action(this.onUpdated));
         journal.on('patched', action(this.onUpdated));
-    }
-
-    init() {
-        reaction(() => auth.loggedIn, loggedIn => {
-            if (loggedIn) {
-                this.find();
-                Mousetrap.bind('ctrl+n', () => {
-                    this.createEntry();
-                    return false;
-                });
-            } else {
-                Mousetrap.unbind('ctrl+n');
-            }
-        }, true);
+        loginReaction(() => {
+            this.find();
+            Mousetrap.bind('ctrl+n', () => {
+                this.createEntry();
+                return false;
+            });
+        }, () => Mousetrap.unbind('ctrl+n'));
     }
 
     find() {

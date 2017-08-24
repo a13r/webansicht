@@ -1,9 +1,9 @@
 import {action, computed, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
 import _ from "lodash";
-import {resources} from '../app';
-import {auth} from '../stores';
-import {required} from '../shared/validators';
+import {resources} from "../app";
+import {required} from "../shared/validators";
+import {loginReaction} from "./index";
 
 export default class ResourceAdminStore extends ResourceStore {
     @observable
@@ -11,26 +11,13 @@ export default class ResourceAdminStore extends ResourceStore {
 
     constructor() {
         super(fields);
-    }
-
-    init() {
-        reaction(() => this.selectedResource, resource => {
-            if (resource) {
-                this.form.update(resource);
-                this.showEditor(true);
-            }
-        });
+        loginReaction(() => this.find());
         reaction(() => this.form.$('hidden').value, hidden => {
             const id = this.form.$('_id').value;
             if (id) {
                 resources.patch(id, {hidden});
             }
         });
-        reaction(() => auth.loggedIn, loggedIn => {
-            if (loggedIn) {
-                this.find();
-            }
-        }, true);
     }
 
     @action
@@ -41,17 +28,22 @@ export default class ResourceAdminStore extends ResourceStore {
     };
 
     @action
-    updateList(list) {
-        this.list = list;
-    }
-
-    @action
     showEditor(show) {
         this.editorVisible = show;
         if (!show) {
             this.form.reset();
         }
     }
+
+    @action
+    selectResource = _id => {
+        const resource = _.find(this.list, {_id});
+        if (resource) {
+            this.form.update(resource);
+            this.showEditor(true);
+            setTimeout(() => this.form.$('callSign').input.focus(), 100);
+        }
+    };
 
     onSuccess = form => {
         const id = form.$('_id').value;

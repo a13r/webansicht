@@ -1,37 +1,31 @@
 import AuthStore from './auth';
 import JournalStore from './journal';
 import LogStore from './log';
-import ResourcesStore from './resources';
+import ResourceListStore from './resourceList';
 import ResourceAdminStore from './resourceAdmin';
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
 import {reaction} from 'mobx';
 import _ from 'lodash';
 
-class Store {
-    auth = new AuthStore();
-    log = new LogStore();
-    resources = new ResourcesStore();
-    resourceAdmin = new ResourceAdminStore();
-    journal = new JournalStore();
-}
+export const auth = new AuthStore();
 
-const store = new Store();
-export const auth = store.auth;
-
-store.resources.init();
-store.resourceAdmin.init();
-store.log.init();
-store.journal.init();
-window.$store = store;
+const stores = {
+    auth,
+    log: new LogStore(),
+    resources: new ResourceListStore(),
+    resourceAdmin: new ResourceAdminStore(),
+    journal: new JournalStore()
+};
+export default stores;
 
 const forms = {
-    resourceEditor: store.resources.form,
-    resourceAdmin: store.resourceAdmin.form,
-    logFilter: store.log.form,
-    loginForm: store.auth.form,
-    changePasswordForm: store.auth.changePasswordForm,
-    createUserForm: store.auth.createUserForm,
-    journalForm: store.journal.form
+    resourceEditor: stores.resources.form,
+    resourceAdmin: stores.resourceAdmin.form,
+    logFilter: stores.log.form,
+    loginForm: stores.auth.form,
+    changePasswordForm: stores.auth.changePasswordForm,
+    createUserForm: stores.auth.createUserForm,
+    journalForm: stores.journal.form
 };
 
 MobxReactFormDevTools.register(forms);
@@ -40,4 +34,12 @@ export function clearForms() {
     _.values(forms).forEach(form => form.clear());
 }
 
-export default store;
+export function loginReaction(onLogin, onLogout) {
+    reaction(() => auth.loggedIn, loggedIn => {
+        if (loggedIn) {
+            _.isFunction(onLogin) && onLogin();
+        } else {
+            _.isFunction(onLogout) && onLogout();
+        }
+    }, true);
+}
