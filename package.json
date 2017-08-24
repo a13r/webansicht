@@ -59,6 +59,7 @@
     "moment": "^2.18.1",
     "momentjs": "^2.0.0",
     "mongoose": "^4.11.8",
+    "mongoose-auto-increment": "^5.0.1",
     "mousetrap": "^1.6.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
