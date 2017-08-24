@@ -43,7 +43,7 @@ export default class Container extends React.Component {
                                     <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
                                 </LinkContainer>
                                 <NavItem onClick={() => store.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer Protokolleintrag (Strg+N)
+                                    <i className="fa fa-plus-circle"/> Neuer Protokolleintrag <kbd>Strg + N</kbd>
                                 </NavItem>
                             </Nav>
                             <Nav pullRight>
