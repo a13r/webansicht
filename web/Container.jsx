@@ -1,7 +1,7 @@
 import React from "react";
 import {observer, Provider} from "mobx-react";
 import "bootstrap/dist/css/bootstrap.css";
-import "bootstrap/dist/css/bootstrap-theme.css";
+import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 import {BrowserRouter} from "react-router-dom";
@@ -15,6 +15,7 @@ import MobxReactFormDevTools from "mobx-react-form-devtools";
 import store from "./stores";
 import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
+import JournalEditor from "./components/JournalEditor";
 
 const {auth} = store;
 
@@ -33,26 +34,29 @@ export default class Container extends React.Component {
                         <Navbar.Collapse>
                             <Nav>
                                 <IndexLinkContainer to="/">
-                                    <NavItem><i className="glyphicon glyphicon-list"/> Übersicht</NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Übersicht</NavItem>
                                 </IndexLinkContainer>
-                                <LinkContainer to="/admin">
-                                    <NavItem><i className="glyphicon glyphicon-cog"/> Ressourcenverwaltung</NavItem>
+                                <LinkContainer to="/journal">
+                                    <NavItem><i className="fa fa-list"/> Einsatzprotokoll</NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/log">
-                                    <NavItem><i className="glyphicon glyphicon-time"/> Änderungsverlauf</NavItem>
+                                    <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
                                 </LinkContainer>
-                                <LinkContainer to="/journal">
-                                    <NavItem>Einsatzprotokoll</NavItem>
-                                </LinkContainer>
+                                <NavItem onClick={() => store.journal.createEntry()}>
+                                    <i className="fa fa-plus-circle"/> Neuer Protokolleintrag (Strg+N)
+                                </NavItem>
                             </Nav>
                             <Nav pullRight>
+                                <LinkContainer to="/admin">
+                                    <NavItem><i className="fa fa-cog"/> Ressourcenverwaltung</NavItem>
+                                </LinkContainer>
                                 {auth.user ?
                                     <NavDropdown id="user"
-                                                 title={<span><i className="glyphicon glyphicon-user"/> {auth.user.name}</span>}>
+                                                 title={<span><i className="fa fa-user-circle"/> {auth.user.name}</span>}>
                                         <LinkContainer to="/userSettings">
-                                            <MenuItem>Einstellungen</MenuItem>
+                                            <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
                                         </LinkContainer>
-                                        <MenuItem onClick={() => auth.logout()}>Abmelden</MenuItem>
+                                        <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
                                     </NavDropdown> :
                                     <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
                             </Nav>
@@ -69,6 +73,7 @@ export default class Container extends React.Component {
                             <LoginForm/>
                         </div>
                     </div>}
+                    <JournalEditor/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </BrowserRouter>

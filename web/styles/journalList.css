@@ -3,3 +3,7 @@
     table-layout: fixed;
     min-width: 100em;
 }
+
+tr.journal-list {
+    cursor: pointer;
+}

@@ -10,7 +10,7 @@ export default authenticate(inject('store')(observer(({store: {resourceAdmin}}) 
         <Col md={3}>
             <FormGroup>
                 <Button onClick={resourceAdmin.createResource}>
-                    <i className="glyphicon glyphicon-plus"/> Neue Ressource
+                    <i className="fa fa-plus-circle"/> Neue Ressource
                 </Button>
             </FormGroup>
             <div className="panel panel-default">
@@ -19,7 +19,7 @@ export default authenticate(inject('store')(observer(({store: {resourceAdmin}}) 
                         <ListGroupItem onClick={() => resourceAdmin.selectResource(r._id)}
                                        key={r._id} active={resourceAdmin.selectedResourceId === r._id}>
                             {r.callSign} ({r.type})
-                            {r.hidden && <i className="glyphicon glyphicon-eye-close pull-right"/>}
+                            {r.hidden && <i className="fa fa-eye-slash pull-right"/>}
                         </ListGroupItem>)}
                 </ListGroup>
             </div>
@@ -41,9 +41,9 @@ export default authenticate(inject('store')(observer(({store: {resourceAdmin}}) 
                         <FormGroup>
                             <div className="btn-toolbar">
                                 <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
-                                    <i className="glyphicon glyphicon-save"/> Speichern
+                                    <i className="fa fa-save"/> Speichern
                                 </Button>
-                                <Button onClick={() => resourceAdmin.showEditor(false)}> abbrechen</Button>
+                                <Button onClick={() => resourceAdmin.showEditor(false)}> Abbrechen</Button>
                             </div>
                         </FormGroup>
                     </form>

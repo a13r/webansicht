@@ -3,7 +3,7 @@ import React from 'react';
 
 export const SortToggle = observer(({store}) => {
     const props = {
-        className: `print-hidden glyphicon glyphicon-arrow-${store.sortOrder === 1 ? 'down' : 'up'}`,
+        className: `print-hidden fa fa-sort-${store.sortOrder === 1 ? 'asc' : 'desc'}`,
         onClick: () => store.toggleSortOrder(),
         style: {
             cursor: 'pointer'

@@ -7,7 +7,7 @@ import "../styles/journalList.css";
 
 export default inject('store')(observer(({store: {journal}}) =>
     <div className="panel panel-default">
-        <table className="table table-condensed table-striped journal-table">
+        <table className="table table-condensed table-hover journal-table">
             <thead>
             <tr>
                 <th style={{width: '10em'}}>Zeitpunkt <SortToggle store={journal}/></th>
@@ -18,13 +18,12 @@ export default inject('store')(observer(({store: {journal}}) =>
                 <th style={{width: '5em'}}>Priorität</th>
                 <th style={{width: '5em'}}>Status</th>
                 <th style={{width: '15%'}}>Vermerk</th>
-                <th style={{width: '5em'}}>Benutzer</th>
-                <th style={{width: '2em'}}/>
+                <th style={{width: '6em'}}>Benutzer</th>
             </tr>
             </thead>
             <tbody>
             {journal.list.map(e =>
-                <tr className="resourceRow" key={e._id} onClick={() => journal.selectEntry(e._id)}>
+                <tr className="journal-list" key={e._id} onClick={() => journal.selectEntry(e._id)}>
                     <td>{moment(e.createdAt).format('L LT')}</td>
                     <td>{e.text}</td>
                     <td>{e.reporter}</td>
@@ -34,10 +33,6 @@ export default inject('store')(observer(({store: {journal}}) =>
                     <td>{e.state}</td>
                     <td>{e.comment}</td>
                     <td>{e.user.username}</td>
-                    <td>
-                        {journal.selectedEntryId === e._id &&
-                        <i className="pull-right glyphicon glyphicon-pencil"/>}
-                    </td>
                 </tr>)}
             </tbody>
         </table>

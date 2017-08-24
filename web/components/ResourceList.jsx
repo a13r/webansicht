@@ -32,7 +32,7 @@ export default inject('store')(observer(({store: {resources}}) =>
                     <td>{r.contact}</td>
                     <td>
                         {resources.selectedResourceId === r._id &&
-                        <i className="pull-right glyphicon glyphicon-pencil" style={{color: '#000000'}}/>}
+                        <i className="pull-right fa fa-pencil" style={{color: '#000000'}}/>}
                     </td>
                 </tr>)}
             </tbody>

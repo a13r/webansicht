@@ -3,6 +3,7 @@ import {journal} from '../app';
 import {Form} from 'mobx-react-form';
 import _ from 'lodash';
 import {auth} from '../stores';
+import Mousetrap from 'mousetrap';
 
 export default class JournalStore {
     @observable
@@ -28,6 +29,12 @@ export default class JournalStore {
         reaction(() => auth.loggedIn, loggedIn => {
             if (loggedIn) {
                 this.find();
+                Mousetrap.bind('ctrl+n', () => {
+                    this.createEntry();
+                    return false;
+                });
+            } else {
+                Mousetrap.unbind('ctrl+n');
             }
         }, true);
     }
@@ -70,7 +77,14 @@ export default class JournalStore {
     @action
     createEntry = () => {
         this.form.reset();
-        this.form.$('text').input.focus();
+        this.editorVisible = true;
+        setTimeout(() => this.form.$('text').input.focus(), 100);
+    };
+
+    @action
+    closeEditor = () => {
+        this.editorVisible = false;
+        this.form.reset();
     };
 
     @action
@@ -78,6 +92,8 @@ export default class JournalStore {
         const entry = _.find(this.list, {_id: id});
         if (entry) {
             this.form.update(entry);
+            this.editorVisible = true;
+            setTimeout(() => this.form.$('text').input.focus(), 100);
         }
     };
 

@@ -1,21 +1,22 @@
 import React from "react";
-import {Button} from "react-bootstrap";
+import {Button, Modal} from "react-bootstrap";
 import {Select, TextInput} from "./formControls";
 import {inject, observer} from "mobx-react";
 import {selectOptions} from "../stores/journal";
+import authenticate from "./authenticate";
 
 const SelectWithOptions = ({field, options}) =>
     <Select field={field}>
         {options.map(v => <option key={v}>{v}</option>)}
     </Select>;
 
-export default inject('store')(observer(({store: {journal}}) =>
-    <div className="panel panel-default">
-        <div className="panel-heading">
-            <h2 className="panel-title">Eintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</h2>
-        </div>
-        <div className="panel-body">
-            <form onSubmit={journal.form.onSubmit}>
+export default authenticate(inject('store')(observer(({store: {journal}}) =>
+    <Modal show={journal.editorVisible} onHide={journal.closeEditor}>
+        <form onSubmit={journal.form.onSubmit}>
+            <Modal.Header closeButton>
+                <Modal.Title>Protokolleintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
                 <TextInput field={journal.form.$('text')}/>
                 <TextInput field={journal.form.$('reporter')}/>
                 <SelectWithOptions field={journal.form.$('reportedVia')}
@@ -27,12 +28,11 @@ export default inject('store')(observer(({store: {journal}}) =>
                 <SelectWithOptions field={journal.form.$('state')}
                                    options={selectOptions.state}/>
                 <TextInput field={journal.form.$('comment')}/>
-                <div className="btn-toolbar">
-                    <Button type="submit" bsStyle="primary">speichern</Button>
-                    <Button onClick={() => journal.createEntry()}>
-                        abbrechen/neu
-                    </Button>
-                </div>
-            </form>
-        </div>
-    </div>));
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={journal.createEntry}>Neuer Eintrag</Button>
+                <Button onClick={journal.closeEditor}>Abbrechen</Button>
+                <Button type="submit" bsStyle="primary">Speichern</Button>
+            </Modal.Footer>
+        </form>
+    </Modal>)));
