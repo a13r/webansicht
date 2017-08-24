@@ -99,11 +99,11 @@ export default class JournalStore {
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
-            journal.patch(id, form.values());
+            journal.patch(id, form.values()).then(this.closeEditor);
         } else {
             const entry = form.values();
             _.unset(entry, '_id');
-            journal.create(entry).then(this.createEntry);
+            journal.create(entry).then(this.closeEditor);
         }
     };
 }
