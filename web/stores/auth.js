@@ -64,7 +64,9 @@ export default class AuthStore {
     onSubmitUser = {
         @action
         onSuccess: form => {
-            users.create(_.omit(form.values(), 'passwordRepeat'))
+            const newUser = form.values();
+            _.unset(newUser, 'passwordRepeat');
+            users.create(newUser)
                 .then(user => form.clear())
                 .catch(error => {
                     form.invalidate(error.message);
@@ -85,11 +87,6 @@ export default class AuthStore {
                 this.loggedIn = true;
                 this.user = user;
             }));
-    };
-
-    @action
-    setUser = user => {
-        this.user = user;
     };
 }
 
@@ -128,6 +125,10 @@ const createUserFields = {
     },
     name: {
         label: 'Name',
+        validators: [required()]
+    },
+    initials: {
+        label: 'Kürzel',
         validators: [required()]
     },
     password: {

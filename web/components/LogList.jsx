@@ -1,9 +1,8 @@
-import {inject, observer} from 'mobx-react';
-import React from 'react';
-import states from '../shared/states';
-import moment from 'moment';
-import {SortToggle} from './SortToggle';
-import _ from 'lodash';
+import {inject, observer} from "mobx-react";
+import React from "react";
+import states from "../shared/states";
+import moment from "moment";
+import {SortToggle} from "./SortToggle";
 
 export default inject('store')(observer(({store}) =>
     <div className="panel panel-default">
@@ -31,8 +30,8 @@ export default inject('store')(observer(({store}) =>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
-                    <td>{r.hidden && 'ja'}</td>
-                    <td>{_.get(r, 'user.username')}</td>
+                    <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
+                    <td>{r.user.initials}</td>
                 </tr>)}
             </tbody>
         </table>

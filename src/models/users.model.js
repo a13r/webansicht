@@ -9,6 +9,7 @@ module.exports = function (app) {
         username: {type: String, unique: true},
         password: {type: String},
         name: {type: String},
+        initials: {type: String, unique: true},
         roles: [String],
 
         createdAt: {type: Date, default: Date.now},

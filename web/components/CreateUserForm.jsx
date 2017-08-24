@@ -13,6 +13,7 @@ export default restrictToRoles(['admin'])(inject('store')(observer(({store: {aut
             <form onSubmit={form.onSubmit}>
                 <TextInput field={form.$('username')}/>
                 <TextInput field={form.$('name')}/>
+                <TextInput field={form.$('initials')}/>
                 <TextInput field={form.$('password')}/>
                 <TextInput field={form.$('passwordRepeat')}/>
                 {form.error && <div className="alert alert-danger">{form.error}</div>}

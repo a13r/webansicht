@@ -18,7 +18,7 @@ export default inject('store')(observer(({store: {journal}}) =>
                 <th style={{width: '5em'}}>Priorität</th>
                 <th style={{width: '5em'}}>Status</th>
                 <th style={{width: '15%'}}>Vermerk</th>
-                <th style={{width: '6em'}}>Benutzer</th>
+                <th style={{width: '5em'}}>Kürzel</th>
             </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@ export default inject('store')(observer(({store: {journal}}) =>
                     <td>{e.priority}</td>
                     <td>{e.state}</td>
                     <td>{e.comment}</td>
-                    <td>{e.user.username}</td>
+                    <td>{e.user.initials}</td>
                 </tr>)}
             </tbody>
         </table>
