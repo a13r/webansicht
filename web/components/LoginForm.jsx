@@ -15,7 +15,7 @@ export default inject('store')(observer(({store: {auth: {form}}}) =>
                 <FormGroup>
                     <Button type="submit">Anmelden</Button>
                 </FormGroup>
-                {form.hasError && <Alert bsStyle="danger">{form.error}</Alert>}
+                {form.error && <Alert bsStyle="danger">{form.error}</Alert>}
             </form>
         </div>
     </div>

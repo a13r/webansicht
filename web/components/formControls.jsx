@@ -5,13 +5,13 @@ import {observer} from "mobx-react";
 export const Select = observer(({field, children}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
-        <FormControl componentClass="select" {...field.bind()}>{children}</FormControl>
+        <FormControl componentClass="select" {...field.bind()} inputRef={i => field.input = i}>{children}</FormControl>
     </FormGroup>);
 
 export const TextInput = observer(({field}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
-        <FormControl type="text" {...field.bind()}/>
-        {field.touched && !field.isValid && <HelpBlock>{field.error}</HelpBlock>}
+        <FormControl type="text" {...field.bind()} inputRef={i => field.input = i}/>
+        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 

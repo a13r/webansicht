@@ -14,9 +14,6 @@ export default class ResourceAdminStore extends ResourceStore {
     }
 
     init() {
-//        reaction(() => this.form.$('type').value, () => this.form.validate());
-//        reaction(() => this.form.$('callSign').value, () => this.form.validate());
-//        reaction(() => this.form.$('ordering').value, () => this.form.validate());
         reaction(() => this.selectedResource, resource => {
             if (resource) {
                 this.form.update(resource);
@@ -40,6 +37,7 @@ export default class ResourceAdminStore extends ResourceStore {
     createResource = () => {
         this.form.reset();
         this.showEditor(true);
+        setTimeout(() => this.form.$('callSign').input.focus(), 100);
     };
 
     @action
@@ -59,6 +57,7 @@ export default class ResourceAdminStore extends ResourceStore {
         const id = form.$('_id').value;
         if (id) {
             resources.patch(form.$('_id').value, form.values());
+            this.createResource();
         } else {
             const newResource = form.values();
             _.unset(newResource, '_id');
@@ -67,6 +66,7 @@ export default class ResourceAdminStore extends ResourceStore {
                     this.list.push(r);
                     this.form.clear();
                 }));
+            this.createResource();
         }
     };
 }

@@ -73,6 +73,9 @@ export default class ResourceStore {
         const resource = _.find(this.list, {_id: id});
         if (resource) {
             this.form.$('_id').set(id);
+            if (this.form.$('state')) {
+                this.form.$('state').input.focus();
+            }
         } else {
             console.error('selected non-existing resource');
         }
