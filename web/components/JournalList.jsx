@@ -5,6 +5,20 @@ import "../styles/resourceList.css";
 import {SortToggle} from "./SortToggle";
 import "../styles/journalList.css";
 
+function priorityClass(e) {
+    if (e.priority === 'hoch')
+        return 'bg-danger';
+}
+
+function stateClass(e) {
+    if (e.state === 'erledigt')
+        return 'bg-success';
+    if (e.state === 'bearb.')
+        return 'bg-warning';
+    if (e.state === 'offen')
+        return 'bg-danger';
+}
+
 export default inject('store')(observer(({store: {journal}}) =>
     <div className="panel panel-default">
         <table className="table table-condensed table-hover journal-table">
@@ -29,8 +43,8 @@ export default inject('store')(observer(({store: {journal}}) =>
                     <td>{e.reporter}</td>
                     <td>{e.reportedVia}</td>
                     <td>{e.direction}</td>
-                    <td>{e.priority}</td>
-                    <td>{e.state}</td>
+                    <td className={priorityClass(e)}>{e.priority}</td>
+                    <td className={stateClass(e)}>{e.state}</td>
                     <td>{e.comment}</td>
                     <td>{e.user.initials}</td>
                 </tr>)}
