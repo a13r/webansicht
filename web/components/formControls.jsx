@@ -11,7 +11,7 @@ export const Select = observer(({field, children}) =>
 export const TextInput = observer(({field}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
-        <FormControl type="text" {...field.bind()} inputRef={i => field.input = i}/>
+        <FormControl {...field.bind()} inputRef={i => field.input = i}/>
         {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 

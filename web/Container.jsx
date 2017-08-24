@@ -10,6 +10,7 @@ import Overview from "./containers/overview";
 import Admin from "./containers/admin";
 import Log from "./containers/log";
 import UserSettings from "./containers/userSettings";
+import Journal from "./containers/journal";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import store from "./stores";
 import "./styles/global.css";
@@ -40,6 +41,9 @@ export default class Container extends React.Component {
                                 <LinkContainer to="/log">
                                     <NavItem><i className="glyphicon glyphicon-time"/> Änderungsverlauf</NavItem>
                                 </LinkContainer>
+                                <LinkContainer to="/journal">
+                                    <NavItem>Einsatzprotokoll</NavItem>
+                                </LinkContainer>
                             </Nav>
                             <Nav pullRight>
                                 {auth.user ?
@@ -58,6 +62,7 @@ export default class Container extends React.Component {
                     <Route path="/admin" component={Admin}/>
                     <Route path="/log" component={Log}/>
                     <Route path="/userSettings" component={UserSettings}/>
+                    <Route path="/journal" component={Journal}/>
                     {store.auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">

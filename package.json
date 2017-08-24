@@ -57,7 +57,7 @@
     "mobx-react-form-devtools": "^1.7.0",
     "moment": "^2.18.1",
     "momentjs": "^2.0.0",
-    "mongoose": "^4.11.7",
+    "mongoose": "^4.11.8",
     "mousetrap": "^1.6.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",

@@ -19,7 +19,9 @@ const config = {
         proxy: [{
             context: ['/socket.io', '/api'],
             target: 'http://localhost:3030'
-        }]
+        }],
+        host: '0.0.0.0',
+        disableHostCheck: true
     },
     resolve: {
         extensions: ['.js', '.jsx'],

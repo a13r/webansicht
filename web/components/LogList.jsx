@@ -2,25 +2,15 @@ import {inject, observer} from 'mobx-react';
 import React from 'react';
 import states from '../shared/states';
 import moment from 'moment';
+import {SortToggle} from './SortToggle';
 import _ from 'lodash';
-
-const SortToggle = observer(({logStore}) => {
-    const props = {
-        className: `print-hidden glyphicon glyphicon-arrow-${logStore.sortOrder === 1 ? 'down' : 'up'}`,
-        onClick: () => logStore.toggleSortOrder(),
-        style: {
-            cursor: 'pointer'
-        }
-    };
-    return <i {...props}/>;
-});
 
 export default inject('store')(observer(({store}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>
             <tr>
-                <th>Zeitpunkt <SortToggle logStore={store.log}/></th>
+                <th>Zeitpunkt <SortToggle store={store.log}/></th>
                 <th>Kennung</th>
                 <th>Typ</th>
                 <th>Status</th>
