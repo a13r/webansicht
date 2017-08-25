@@ -45,5 +45,8 @@ const fields = {
     },
     contact: {
         label: 'Kdt./Fahrer'
+    },
+    info: {
+        label: 'Info'
     }
 };

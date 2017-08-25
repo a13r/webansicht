@@ -16,6 +16,7 @@ export default inject('store')(observer(({store: {resources}}) =>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>
+                <th>Info</th>
                 <th/>
             </tr>
             </thead>
@@ -30,6 +31,7 @@ export default inject('store')(observer(({store: {resources}}) =>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
+                    <td>{r.info}</td>
                     <td>
                         {resources.selectedResourceId === r._id &&
                         <i className="pull-right fa fa-pencil" style={{color: '#000000'}}/>}

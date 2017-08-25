@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
     lastPosition: String,
     destination: String,
     contact: String,
+    info: String,
     hidden: Boolean,
     ordering: Number
 });
