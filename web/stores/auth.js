@@ -4,7 +4,7 @@ import {changePassword, client, login, registerAuthErrorHandler, users} from "..
 import validator from "validator";
 import {minLength, passwordEqualTo, required} from "../shared/validators";
 import _ from "lodash";
-import {clearForms} from "./index";
+import {clearForms, router} from "./index";
 import {notification} from '../stores';
 
 export default class AuthStore {
@@ -36,6 +36,7 @@ export default class AuthStore {
     logout = () => {
         client.logout();
         clearForms();
+        router.push('/');
         this.loggedIn = false;
     };
 

@@ -3672,6 +3672,10 @@ mobx-react-form@^1.31.16:
   dependencies:
     lodash "^4.16.2"
 
+mobx-react-router@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/mobx-react-router/-/mobx-react-router-4.0.1.tgz#72f67b5c637d187595415500e8afa5cddb2231ab"
+
 mobx-react@^4.2.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-4.2.2.tgz#db9cc3cafefbd830d0584c1149af5aae67829201"

@@ -5,15 +5,18 @@ import NotificationStore from './notification';
 import ResourceListStore from './resourceList';
 import ResourceAdminStore from './resourceAdmin';
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
+import {RouterStore} from 'mobx-react-router';
 import {reaction} from 'mobx';
 import _ from 'lodash';
 
+export const router = new RouterStore();
 export const auth = new AuthStore();
 export const notification = new NotificationStore();
 
 const stores = {
     auth,
     notification,
+    router,
     log: new LogStore(),
     resources: new ResourceListStore(),
     resourceAdmin: new ResourceAdminStore(),

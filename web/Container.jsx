@@ -5,7 +5,7 @@ import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 import {BrowserRouter} from "react-router-dom";
-import {Route} from "react-router";
+import {Redirect, Route} from "react-router";
 import Overview from "./containers/overview";
 import Admin from "./containers/admin";
 import Log from "./containers/log";
@@ -17,14 +17,18 @@ import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
 import JournalEditor from "./components/JournalEditor";
 import NotificationSystem from 'react-notification-system';
+import createBrowserHistory from 'history/createBrowserHistory';
+import {syncHistoryWithStore} from 'mobx-react-router';
 
-const {auth} = stores;
+const {auth, router} = stores;
+const browserHistory = createBrowserHistory();
+const history = syncHistoryWithStore(browserHistory, router);
 
 @observer
 export default class Container extends React.Component {
     render() {
         return <Provider store={stores}>
-            <BrowserRouter>
+            <BrowserRouter history={history}>
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>
                         <Navbar.Header>
@@ -70,6 +74,7 @@ export default class Container extends React.Component {
                     <Route path="/journal" component={Journal}/>
                     {stores.auth.loggedIn === false &&
                     <div className="row">
+                        <Redirect to="/"/>
                         <div className="col-md-2 col-md-offset-5">
                             <LoginForm/>
                         </div>
