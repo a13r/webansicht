@@ -24,7 +24,11 @@ export default class LogStore {
 
     @action
     onCreated = item => {
-        this.list.unshift(item);
+        if (this.sortOrder === 1) {
+            this.list.push(item);
+        } else {
+            this.list.unshift(item);
+        }
     };
 
     find(query = {}) {
