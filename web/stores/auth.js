@@ -89,6 +89,10 @@ export default class AuthStore {
             .then(action(user => {
                 this.loggedIn = true;
                 this.user = user;
+            }))
+            .catch(action(error => {
+                this.loggedIn = false;
+                console.error(error);
             }));
     };
 }
