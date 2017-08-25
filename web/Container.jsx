@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
-import {BrowserRouter} from "react-router-dom";
+import {Router} from "react-router-dom";
 import {Redirect, Route} from "react-router";
 import Overview from "./containers/overview";
 import Admin from "./containers/admin";
@@ -28,7 +28,7 @@ const history = syncHistoryWithStore(browserHistory, router);
 export default class Container extends React.Component {
     render() {
         return <Provider store={stores}>
-            <BrowserRouter history={history}>
+            <Router history={history}>
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>
                         <Navbar.Header>
@@ -39,16 +39,16 @@ export default class Container extends React.Component {
                         <Navbar.Collapse>
                             <Nav>
                                 <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-ambulance"/> Übersicht</NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Übersicht <kbd>F1</kbd></NavItem>
                                 </IndexLinkContainer>
                                 <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
+                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch <kbd>F2</kbd></NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/log">
-                                    <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
+                                    <NavItem><i className="fa fa-history"/> Statusverlauf <kbd>F3</kbd></NavItem>
                                 </LinkContainer>
                                 <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>Strg + N</kbd>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>F4</kbd>
                                 </NavItem>
                             </Nav>
                             <Nav pullRight>
@@ -83,7 +83,7 @@ export default class Container extends React.Component {
                     <NotificationSystem ref={ns => stores.notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
-            </BrowserRouter>
+            </Router>
         </Provider>;
     }
 }

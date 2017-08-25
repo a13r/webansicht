@@ -25,14 +25,7 @@ export default class JournalStore {
         journal.on('patched', action(this.onUpdated));
         loginReaction(() => {
             this.find();
-            Mousetrap.bind('ctrl+n', (e) => {
-                if (_.isFunction(e.preventDefault)) {
-                    e.preventDefault();
-                }
-                this.createEntry();
-                return false;
-            });
-        }, () => Mousetrap.unbind('ctrl+n'));
+        });
     }
 
     find() {

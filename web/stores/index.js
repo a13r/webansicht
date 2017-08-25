@@ -8,6 +8,8 @@ import MobxReactFormDevTools from 'mobx-react-form-devtools';
 import {RouterStore} from 'mobx-react-router';
 import {reaction} from 'mobx';
 import _ from 'lodash';
+import Mousetrap from 'mousetrap';
+import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -35,6 +37,26 @@ const forms = {
 };
 
 MobxReactFormDevTools.register(forms);
+
+loginReaction(() => {
+    bind('f1', '/');
+    bind('f2', '/journal');
+    bind('f3', '/log');
+    bind('f4', stores.journal.createEntry);
+}, () => Mousetrap.reset());
+
+function bind(key, pathOrAction) {
+    Mousetrap.bindGlobal(key, (e) => {
+        if (_.isFunction(e.preventDefault)) {
+            e.preventDefault();
+        }
+        if (_.isFunction(pathOrAction)) {
+            pathOrAction();
+        } else {
+            router.push(pathOrAction);
+        }
+    });
+}
 
 export function clearForms() {
     _.values(forms).forEach(form => form.clear());
