@@ -22,7 +22,7 @@ module.exports = {
   },
 
   after: {
-    all: [populate({schema: logUserSchema})],
+    all: [when(isProvider('external'), populate({schema: logUserSchema}))],
     find: [],
     get: [],
     create: [],
