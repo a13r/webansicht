@@ -14,7 +14,7 @@ export default authenticate(inject('store')(observer(({store: {journal}}) =>
     <Modal show={journal.editorVisible} onHide={journal.closeEditor}>
         <form onSubmit={journal.form.onSubmit}>
             <Modal.Header closeButton>
-                <Modal.Title>Protokolleintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</Modal.Title>
+                <Modal.Title>ETB-Eintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <TextInput field={journal.form.$('text')}/>

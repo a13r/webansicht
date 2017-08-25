@@ -42,13 +42,13 @@ export default class Container extends React.Component {
                                     <NavItem><i className="fa fa-ambulance"/> Übersicht</NavItem>
                                 </IndexLinkContainer>
                                 <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatzprotokoll</NavItem>
+                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
                                 </LinkContainer>
                                 <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer Protokolleintrag <kbd>Strg + N</kbd>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>Strg + N</kbd>
                                 </NavItem>
                             </Nav>
                             <Nav pullRight>
