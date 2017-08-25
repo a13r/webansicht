@@ -8,4 +8,6 @@ services:
       - mongo
   mongo:
     image: mongo
+    volumes:
+      - ./data:/data
 
