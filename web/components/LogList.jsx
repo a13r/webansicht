@@ -16,7 +16,8 @@ export default inject('store')(observer(({store}) =>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>
-                <th>ausgeblendet</th>
+                <th>Info</th>
+                <th><i className="fa fa-eye-slash"/></th>
                 <th>Benutzer</th>
             </tr>
             </thead>
@@ -30,6 +31,7 @@ export default inject('store')(observer(({store}) =>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
+                    <td>{r.info}</td>
                     <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
                     <td>{r.user.initials}</td>
                 </tr>)}
