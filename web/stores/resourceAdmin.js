@@ -3,7 +3,7 @@ import ResourceStore from "./resources";
 import _ from "lodash";
 import {resources} from "../app";
 import {required} from "../shared/validators";
-import {loginReaction} from "./index";
+import {loginReaction, notification} from "./index";
 
 export default class ResourceAdminStore extends ResourceStore {
     @observable
@@ -48,14 +48,15 @@ export default class ResourceAdminStore extends ResourceStore {
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
-            resources.patch(form.$('_id').value, form.values());
-            this.createResource();
+            resources.patch(form.$('_id').value, form.values())
+                .then(r => notification.success(`Die Ressource ${r.callSign} wurde geändert`));
         } else {
             const newResource = form.values();
             _.unset(newResource, '_id');
             resources.create(newResource)
                 .then(action(r => {
                     this.list.push(r);
+                    notification.success(`Die Ressource ${r.callSign} wurde erstellt`);
                     this.form.clear();
                 }));
             this.createResource();

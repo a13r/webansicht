@@ -2,7 +2,7 @@ import {action, observable, computed, reaction} from 'mobx';
 import {journal} from '../app';
 import {Form} from 'mobx-react-form';
 import _ from 'lodash';
-import {auth, loginReaction} from '../stores';
+import {auth, loginReaction, notification} from '../stores';
 import Mousetrap from 'mousetrap';
 
 export default class JournalStore {
@@ -99,11 +99,15 @@ export default class JournalStore {
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
-            journal.patch(id, form.values()).then(this.closeEditor);
+            journal.patch(id, form.values())
+                .then(() => notification.success('Protokolleintrag gespeichert'))
+                .then(this.closeEditor);
         } else {
             const entry = form.values();
             _.unset(entry, '_id');
-            journal.create(entry).then(this.closeEditor);
+            journal.create(entry)
+                .then(() => notification.success('Protokolleintrag erstellt'))
+                .then(this.closeEditor);
         }
     };
 }

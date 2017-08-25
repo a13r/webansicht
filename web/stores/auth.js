@@ -5,6 +5,7 @@ import validator from "validator";
 import {minLength, passwordEqualTo, required} from "../shared/validators";
 import _ from "lodash";
 import {clearForms} from "./index";
+import {notification} from '../stores';
 
 export default class AuthStore {
     @observable
@@ -54,9 +55,12 @@ export default class AuthStore {
         @action
         onSuccess: form => {
             changePassword(this.user.username, form.$('oldPassword').value, form.$('password').value)
-                .then(() => form.clear())
+                .then(() => notification.success('Das Passwort wurde geändert'))
+                .then(() => clearFormWithoutValidation(form))
                 .catch(error => {
-                    form.invalidate(error.message);
+                    notification.error(error.message, 'Das Passwort wurde nicht geändert');
+                    form.$('oldPassword').clear();
+                    form.$('oldPassword').input.focus();
                 });
         }
     };
@@ -67,11 +71,10 @@ export default class AuthStore {
             const newUser = form.values();
             _.unset(newUser, 'passwordRepeat');
             users.create(newUser)
-                .then(user => form.clear())
-                .catch(error => {
-                    form.invalidate(error.message);
-                    form.clear();
-                });
+                .then(user => notification.success(`${user.name} wurde erfolgreich erstellt.`))
+                .then(() => form.$('username').input.focus())
+                .then(() => clearFormWithoutValidation(form))
+                .catch(error => notification.error(error.message, 'Fehler beim Erstellen des Benutzers'));
         }
     };
 
@@ -88,6 +91,13 @@ export default class AuthStore {
                 this.user = user;
             }));
     };
+}
+
+function clearFormWithoutValidation(form) {
+    const oldValue = form.state.options.get('validateOnChange');
+    form.state.options.set({validateOnChange: false});
+    form.clear();
+    form.state.options.set({validateOnChange: oldValue});
 }
 
 const fields = {

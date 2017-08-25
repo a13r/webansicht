@@ -12,17 +12,18 @@ import Log from "./containers/log";
 import UserSettings from "./containers/userSettings";
 import Journal from "./containers/journal";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
-import store from "./stores";
+import stores from "./stores";
 import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
 import JournalEditor from "./components/JournalEditor";
+import NotificationSystem from 'react-notification-system';
 
-const {auth} = store;
+const {auth} = stores;
 
 @observer
 export default class Container extends React.Component {
     render() {
-        return <Provider store={store}>
+        return <Provider store={stores}>
             <BrowserRouter>
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>
@@ -42,7 +43,7 @@ export default class Container extends React.Component {
                                 <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
                                 </LinkContainer>
-                                <NavItem onClick={() => store.journal.createEntry()}>
+                                <NavItem onClick={() => stores.journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer Protokolleintrag <kbd>Strg + N</kbd>
                                 </NavItem>
                             </Nav>
@@ -67,13 +68,14 @@ export default class Container extends React.Component {
                     <Route path="/log" component={Log}/>
                     <Route path="/userSettings" component={UserSettings}/>
                     <Route path="/journal" component={Journal}/>
-                    {store.auth.loggedIn === false &&
+                    {stores.auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">
                             <LoginForm/>
                         </div>
                     </div>}
                     <JournalEditor/>
+                    <NotificationSystem ref={ns => stores.notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </BrowserRouter>

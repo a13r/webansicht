@@ -1,6 +1,7 @@
 import AuthStore from './auth';
 import JournalStore from './journal';
 import LogStore from './log';
+import NotificationStore from './notification';
 import ResourceListStore from './resourceList';
 import ResourceAdminStore from './resourceAdmin';
 import MobxReactFormDevTools from 'mobx-react-form-devtools';
@@ -8,9 +9,11 @@ import {reaction} from 'mobx';
 import _ from 'lodash';
 
 export const auth = new AuthStore();
+export const notification = new NotificationStore();
 
 const stores = {
     auth,
+    notification,
     log: new LogStore(),
     resources: new ResourceListStore(),
     resourceAdmin: new ResourceAdminStore(),
