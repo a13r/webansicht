@@ -11,19 +11,21 @@ const journalUserSchema = {
     }
 };
 
+const setUser = [associateCurrentUser(), populate({schema: journalUserSchema})];
+
 module.exports = {
     before: {
         all: [when(isProvider('external'), authenticate('jwt'))],
         find: [],
         get: [],
-        create: [associateCurrentUser()],
-        update: [associateCurrentUser(), setNow('updatedAt')],
-        patch: [associateCurrentUser(), setNow('updatedAt')],
+        create: [...setUser],
+        update: [...setUser, setNow('updatedAt')],
+        patch: [...setUser, setNow('updatedAt')],
         remove: []
     },
 
     after: {
-        all: [populate({schema: journalUserSchema})],
+        all: [],
         find: [],
         get: [],
         create: [],

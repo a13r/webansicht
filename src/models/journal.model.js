@@ -18,7 +18,11 @@ module.exports = function (app) {
         priority: {type: String},
         state: {type: String},
         comment: {type: String},
-        userId: {type: String}
+        user: {
+            username: String,
+            name: String,
+            initials: String
+        }
     });
 
     journal.plugin(autoIncrement.plugin, {model: 'journal', field: 'serial', startAt: 1});
