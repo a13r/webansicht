@@ -15,14 +15,14 @@ module.exports = {
     all: [when(isProvider('external'), authenticate('jwt'))],
     find: [],
     get: [],
-    create: [],
+    create: [populate({schema: logUserSchema})],
     update: [],
     patch: [],
     remove: []
   },
 
   after: {
-    all: [when(isProvider('external'), populate({schema: logUserSchema}))],
+    all: [],
     find: [],
     get: [],
     create: [],
