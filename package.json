@@ -59,7 +59,6 @@
     "mobx-react-router": "^4.0.1",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
-    "momentjs": "^2.0.0",
     "mongoose": "^4.11.8",
     "mongoose-auto-increment": "^5.0.1",
     "mousetrap": "^1.6.1",
