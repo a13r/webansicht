@@ -14,6 +14,8 @@ export default class AuthStore {
     changePasswordForm;
     @observable
     user;
+    @observable
+    token;
 
     constructor() {
         this.form = new Form({fields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}, options: loginOptions});
@@ -85,6 +87,7 @@ export default class AuthStore {
             this.loggedIn = false;
             return;
         }
+        this.token = token;
         client.passport.verifyJWT(token)
             .then(payload => client.authenticate().then(() => users.get(payload.userId)))
             .then(action(user => {

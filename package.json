@@ -58,6 +58,7 @@
     "mobx-react-form-devtools": "^1.7.0",
     "mobx-react-router": "^4.0.1",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "momentjs": "^2.0.0",
     "mongoose": "^4.11.8",
     "mongoose-auto-increment": "^5.0.1",
@@ -74,7 +75,8 @@
     "serve-favicon": "^2.4.3",
     "validator": "^8.1.0",
     "validatorjs": "^3.13.3",
-    "winston": "^2.3.1"
+    "winston": "^2.3.1",
+    "xlsx": "^0.11.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

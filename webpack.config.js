@@ -17,7 +17,7 @@ const config = {
         inline: true,
         historyApiFallback: true,
         proxy: [{
-            context: ['/socket.io', '/api'],
+            context: ['/socket.io', '/export.xlsx'],
             target: 'http://localhost:3030'
         }],
         host: '0.0.0.0',
