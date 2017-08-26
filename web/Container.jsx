@@ -83,7 +83,7 @@ export default class Container extends React.Component {
                             <LoginForm/>
                         </div>
                     </div>}
-                    <JournalEditor/>
+                    {stores.auth.isDispo && <JournalEditor/>}
                     <NotificationSystem ref={ns => stores.notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
