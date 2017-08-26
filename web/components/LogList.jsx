@@ -10,6 +10,7 @@ export default inject('store')(observer(({store}) =>
             <thead>
             <tr>
                 <th>Zeitpunkt <SortToggle store={store.log}/></th>
+                <th>TETRA</th>
                 <th>Kennung</th>
                 <th>Typ</th>
                 <th>Status</th>
@@ -25,6 +26,7 @@ export default inject('store')(observer(({store}) =>
             {store.log.list.map(r =>
                 <tr style={states.get(r.state).rowStyle} key={r._id}>
                     <td>{r.since && moment(r.since).format('L LT')}</td>
+                    <td>{r.tetra}</td>
                     <td>{r.callSign}</td>
                     <td>{r.type}</td>
                     <td>{states.get(r.state).name}</td>
