@@ -36,6 +36,13 @@ class States {
         },
         name: 'Frei Funk'
     };
+    7 = {
+        rowStyle: {
+            backgroundColor: '#FFFFFF',
+            color: '#FF0000'
+        },
+        name: 'Pause'
+    };
     0 = {
         rowStyle: {
             backgroundColor: '#FFFFFF',
