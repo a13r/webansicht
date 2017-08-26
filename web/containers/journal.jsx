@@ -1,10 +1,10 @@
 import React from "react";
 import JournalList from "../components/JournalList";
 import {Col, Row} from "react-bootstrap";
-import authenticate from "../components/authenticate";
 import ExportButton from "../components/ExportButton";
+import restrictToRoles from "../components/restrictToRoles";
 
-export default authenticate(() =>
+export default restrictToRoles(['dispo'])(() =>
     <div>
         <Row>
             <Col md={12}>

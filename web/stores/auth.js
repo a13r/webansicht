@@ -1,4 +1,4 @@
-import {action, observable, reaction} from "mobx";
+import {action, computed, observable, reaction} from "mobx";
 import {Form} from "mobx-react-form";
 import {changePassword, client, login, registerAuthErrorHandler, users} from "../app";
 import validator from "validator";
@@ -32,6 +32,11 @@ export default class AuthStore {
                 this.form.$('username').focus();
             }
         }, true);
+    }
+
+    @computed
+    get isDispo() {
+        return this.user && _.indexOf(this.user.roles, 'dispo') >= 0;
     }
 
     @action

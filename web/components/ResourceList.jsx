@@ -4,7 +4,7 @@ import moment from "moment";
 import states from "../shared/states";
 import "../styles/resourceList.css";
 
-export default inject('store')(observer(({store: {resources}}) =>
+export default inject('store')(observer(({store: {auth, resources}}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>
@@ -17,13 +17,13 @@ export default inject('store')(observer(({store: {resources}}) =>
                 <th>Zielort</th>
                 <th>Kdt./Fahrer</th>
                 <th>Info</th>
-                <th/>
+                {auth.isDispo && <th/>}
             </tr>
             </thead>
             <tbody>
             {resources.list.map(r =>
-                <tr style={states.get(r.state).rowStyle} className="resourceRow"
-                    key={r._id} onClick={() => resources.selectResource(r._id)}>
+                <tr style={states.get(r.state).rowStyle} className={auth.isDispo ? 'resourceRow' : ''}
+                    key={r._id} onClick={auth.isDispo ? () => resources.selectResource(r._id) : null}>
                     <td>{r.callSign}</td>
                     <td>{r.type}</td>
                     <td>{states.get(r.state).name}</td>
@@ -32,10 +32,10 @@ export default inject('store')(observer(({store: {resources}}) =>
                     <td>{r.destination}</td>
                     <td>{r.contact}</td>
                     <td>{r.info}</td>
-                    <td>
+                    {auth.isDispo && <td>
                         {resources.selectedResourceId === r._id &&
                         <i className="pull-right fa fa-pencil" style={{color: '#000000'}}/>}
-                    </td>
+                    </td>}
                 </tr>)}
             </tbody>
         </table>

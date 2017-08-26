@@ -16,9 +16,9 @@ import stores from "./stores";
 import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
 import JournalEditor from "./components/JournalEditor";
-import NotificationSystem from 'react-notification-system';
-import createBrowserHistory from 'history/createBrowserHistory';
-import {syncHistoryWithStore} from 'mobx-react-router';
+import NotificationSystem from "react-notification-system";
+import createBrowserHistory from "history/createBrowserHistory";
+import {syncHistoryWithStore} from "mobx-react-router";
 
 const {auth, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -37,6 +37,7 @@ export default class Container extends React.Component {
                         </Navbar.Header>
                         {auth.loggedIn &&
                         <Navbar.Collapse>
+                            {auth.isDispo &&
                             <Nav>
                                 <IndexLinkContainer to="/">
                                     <NavItem><i className="fa fa-ambulance"/> Übersicht <kbd>F1</kbd></NavItem>
@@ -50,17 +51,20 @@ export default class Container extends React.Component {
                                 <NavItem onClick={() => stores.journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>F4</kbd>
                                 </NavItem>
-                            </Nav>
+                            </Nav>}
                             <Nav pullRight>
+                                {auth.isDispo &&
                                 <LinkContainer to="/admin">
                                     <NavItem><i className="fa fa-cog"/> Ressourcenverwaltung</NavItem>
-                                </LinkContainer>
+                                </LinkContainer>}
                                 {auth.user ?
                                     <NavDropdown id="user"
-                                                 title={<span><i className="fa fa-user-circle"/> {auth.user.name}</span>}>
+                                                 title={<span><i
+                                                     className="fa fa-user-circle"/> {auth.user.name}</span>}>
+                                        {auth.isDispo &&
                                         <LinkContainer to="/userSettings">
                                             <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
-                                        </LinkContainer>
+                                        </LinkContainer>}
                                         <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
                                     </NavDropdown> :
                                     <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
