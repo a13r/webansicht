@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
     resource_id: String,
+    tetra: String,
     callSign: String,
     type: String,
     state: Number,
