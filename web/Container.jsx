@@ -40,7 +40,7 @@ export default class Container extends React.Component {
                             {auth.isDispo &&
                             <Nav>
                                 <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-ambulance"/> Übersicht <kbd>F1</kbd></NavItem>
+                                    <NavItem><i className="fa fa-home"/> Übersicht <kbd>F1</kbd></NavItem>
                                 </IndexLinkContainer>
                                 <LinkContainer to="/journal">
                                     <NavItem><i className="fa fa-list"/> Einsatztagebuch <kbd>F2</kbd></NavItem>
@@ -51,12 +51,11 @@ export default class Container extends React.Component {
                                 <NavItem onClick={() => stores.journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>F4</kbd>
                                 </NavItem>
+                                <LinkContainer to="/resources">
+                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <kbd>F5</kbd></NavItem>
+                                </LinkContainer>
                             </Nav>}
                             <Nav pullRight>
-                                {auth.isDispo &&
-                                <LinkContainer to="/admin">
-                                    <NavItem><i className="fa fa-cog"/> Ressourcenverwaltung</NavItem>
-                                </LinkContainer>}
                                 {auth.user ?
                                     <NavDropdown id="user"
                                                  title={<span><i
@@ -72,7 +71,7 @@ export default class Container extends React.Component {
                         </Navbar.Collapse>}
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
-                    <Route path="/admin" component={Admin}/>
+                    <Route path="/resources" component={Admin}/>
                     <Route path="/log" component={Log}/>
                     <Route path="/userSettings" component={UserSettings}/>
                     <Route path="/journal" component={Journal}/>

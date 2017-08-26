@@ -9,13 +9,13 @@ export default inject('store')(observer(({store: {auth, resources}}) =>
         <table className="table table-condensed">
             <thead>
             <tr>
+                <th>TETRA</th>
                 <th>Kennung</th>
                 <th>Typ</th>
                 <th>Status</th>
                 <th>seit</th>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
-                <th>Kdt./Fahrer</th>
                 <th>Info</th>
                 {auth.isDispo && <th/>}
             </tr>
@@ -24,13 +24,13 @@ export default inject('store')(observer(({store: {auth, resources}}) =>
             {resources.list.map(r =>
                 <tr style={states.get(r.state).rowStyle} className={auth.isDispo ? 'resourceRow' : ''}
                     key={r._id} onClick={auth.isDispo ? () => resources.selectResource(r._id) : null}>
+                    <td>{r.tetra}</td>
                     <td>{r.callSign}</td>
                     <td>{r.type}</td>
                     <td>{states.get(r.state).name}</td>
                     <td>{r.since && moment(r.since).format('LT')}</td>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
-                    <td>{r.contact}</td>
                     <td>{r.info}</td>
                     {auth.isDispo && <td>
                         {resources.selectedResourceId === r._id &&

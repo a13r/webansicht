@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const schema = new mongoose.Schema({
     callSign: String,
     type: String,
+    tetra: String,
     state: Number,
     since: {type: Date, default: Date.now},
     lastPosition: String,

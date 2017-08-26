@@ -43,6 +43,7 @@ loginReaction(() => {
     bind('f2', '/journal');
     bind('f3', '/log');
     bind('f4', stores.journal.createEntry);
+    bind('f5', '/resources');
 }, () => Mousetrap.reset());
 
 function bind(key, pathOrAction) {

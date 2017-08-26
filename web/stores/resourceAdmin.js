@@ -76,6 +76,12 @@ const fields = {
         label: 'Kennung',
         validators: [required()]
     },
+    tetra: {
+        label: 'Tetra'
+    },
+    contact: {
+        label: 'Kommandant / Fahrer'
+    },
     ordering: {
         label: 'Reihung',
         default: 0,

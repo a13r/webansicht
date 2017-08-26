@@ -21,7 +21,6 @@ export default inject('store')(observer(({store: {resources}}) =>
                 </Select>
                 <TextInput field={resources.form.$('lastPosition')}/>
                 <TextInput field={resources.form.$('destination')}/>
-                <TextInput field={resources.form.$('contact')}/>
                 <TextInput field={resources.form.$('info')}/>
                 <Button type="submit">Speichern</Button>
             </form>

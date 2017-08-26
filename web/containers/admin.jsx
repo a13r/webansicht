@@ -7,21 +7,37 @@ import "../styles/admin.css";
 
 export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {resourceAdmin}}) =>
     <Row>
-        <Col md={3}>
+        <Col md={9}>
             <FormGroup>
                 <Button onClick={resourceAdmin.createResource}>
                     <i className="fa fa-plus-circle"/> Neue Ressource
                 </Button>
             </FormGroup>
             <div className="panel panel-default">
-                <ListGroup>
+                <table className="table table-condensed table-hover">
+                    <thead>
+                    <tr>
+                        <th>TETRA</th>
+                        <th>Kennung</th>
+                        <th>Typ</th>
+                        <th>Kdt./Fahrer</th>
+                        <th>Reihung</th>
+                        <th>ausgeblendet</th>
+                    </tr>
+                    </thead>
+                    <tbody>
                     {resourceAdmin.list.map(r =>
-                        <ListGroupItem onClick={() => resourceAdmin.selectResource(r._id)}
-                                       key={r._id} active={resourceAdmin.selectedResourceId === r._id}>
-                            {r.callSign} ({r.type})
-                            {r.hidden && <i className="fa fa-eye-slash pull-right"/>}
-                        </ListGroupItem>)}
-                </ListGroup>
+                        <tr onClick={() => resourceAdmin.selectResource(r._id)}
+                            className={'resourceRow' + (resourceAdmin.selectedResourceId === r._id ? ' active' : '')}>
+                            <td>{r.tetra}</td>
+                            <td>{r.callSign}</td>
+                            <td>{r.type}</td>
+                            <td>{r.contact}</td>
+                            <td>{r.ordering}</td>
+                            <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
+                        </tr>)}
+                    </tbody>
+                </table>
             </div>
         </Col>
         {resourceAdmin.editorVisible &&
@@ -36,6 +52,8 @@ export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {res
                     <form onSubmit={resourceAdmin.form.onSubmit}>
                         <TextInput field={resourceAdmin.form.$('callSign')}/>
                         <TextInput field={resourceAdmin.form.$('type')}/>
+                        <TextInput field={resourceAdmin.form.$('tetra')}/>
+                        <TextInput field={resourceAdmin.form.$('contact')}/>
                         <TextInput field={resourceAdmin.form.$('ordering')}/>
                         <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
                         <FormGroup>
