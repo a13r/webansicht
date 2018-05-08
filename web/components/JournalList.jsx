@@ -24,7 +24,6 @@ export default inject('store')(observer(({store: {journal}}) =>
         <table className="table table-condensed table-hover journal-table">
             <thead>
             <tr>
-                <th style={{width: '3em'}}>LNr.</th>
                 <th style={{width: '10em'}}>Zeitpunkt <SortToggle store={journal}/></th>
                 <th style={{}}>Eintrag</th>
                 <th style={{width: '10%'}}>Melder</th>
@@ -38,8 +37,7 @@ export default inject('store')(observer(({store: {journal}}) =>
             </thead>
             <tbody>
             {journal.list.map(e =>
-                <tr className="journal-list" key={e._id} onClick={() => journal.selectEntry(e._id)}>
-                    <td>{e.serial}</td>
+                <tr className={`journal-list ${priorityClass(e)}`} key={e._id} onClick={() => journal.selectEntry(e._id)}>
                     <td>{moment(e.createdAt).format('L LT')}</td>
                     <td>{e.text}</td>
                     <td>{e.reporter}</td>
