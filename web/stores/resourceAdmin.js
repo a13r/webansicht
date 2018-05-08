@@ -55,7 +55,6 @@ export default class ResourceAdminStore extends ResourceStore {
             _.unset(newResource, '_id');
             resources.create(newResource)
                 .then(action(r => {
-                    this.list.push(r);
                     notification.success(`Die Ressource ${r.callSign} wurde erstellt`);
                     this.form.clear();
                 }));
