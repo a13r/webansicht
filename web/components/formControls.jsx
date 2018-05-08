@@ -1,5 +1,5 @@
 import React from "react";
-import {ControlLabel, FormControl, FormGroup, HelpBlock} from "react-bootstrap";
+import {Button, ControlLabel, FormControl, FormGroup, HelpBlock, InputGroup} from "react-bootstrap";
 import {observer} from "mobx-react";
 
 export const Select = observer(({field, children}) =>
@@ -15,3 +15,14 @@ export const TextInput = observer(({field}) =>
         {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 
+export const HomeTextInput = observer(({field, onClick}) =>
+    <FormGroup>
+        <ControlLabel>{field.label}</ControlLabel>
+        <InputGroup>
+            <FormControl {...field.bind()} inputRef={i => field.input = i}/>
+            <InputGroup.Button>
+                <Button onClick={onClick}><i className="glyphicon glyphicon-home"/></Button>
+            </InputGroup.Button>
+        </InputGroup>
+        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
+    </FormGroup>);

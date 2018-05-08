@@ -19,6 +19,7 @@ export default class ResourceListStore extends ResourceStore {
     selectResource = _id => {
         const resource = _.find(this.list, {_id});
         if (resource) {
+            this.form.clear();
             this.form.update(resource);
             this.form.$('state').input.focus();
         }
@@ -26,6 +27,10 @@ export default class ResourceListStore extends ResourceStore {
 
     onSuccess = form => {
         resources.patch(form.$('_id').value, form.values());
+    };
+
+    setHome = field => {
+        this.form.$(field).set(this.form.$('home').value);
     };
 }
 
@@ -48,5 +53,8 @@ const fields = {
     },
     info: {
         label: 'Info'
+    },
+    home: {
+        label: 'Heimatstandort'
     }
 };

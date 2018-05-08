@@ -22,6 +22,7 @@ export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {res
                         <th>Typ</th>
                         <th>Kdt./Fahrer</th>
                         <th>Reihung</th>
+                        <th>Heimatstandort</th>
                         <th>ausgeblendet</th>
                     </tr>
                     </thead>
@@ -34,6 +35,7 @@ export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {res
                             <td>{r.type}</td>
                             <td>{r.contact}</td>
                             <td>{r.ordering}</td>
+                            <td>{r.home}</td>
                             <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
                         </tr>)}
                     </tbody>
@@ -55,6 +57,7 @@ export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {res
                         <TextInput field={resourceAdmin.form.$('tetra')}/>
                         <TextInput field={resourceAdmin.form.$('contact')}/>
                         <TextInput field={resourceAdmin.form.$('ordering')}/>
+                        <TextInput field={resourceAdmin.form.$('home')}/>
                         <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
                         <FormGroup>
                             <div className="btn-toolbar">

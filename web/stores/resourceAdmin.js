@@ -39,6 +39,7 @@ export default class ResourceAdminStore extends ResourceStore {
     selectResource = _id => {
         const resource = _.find(this.list, {_id});
         if (resource) {
+            this.form.clear();
             this.form.update(resource);
             this.showEditor(true);
             setTimeout(() => this.form.$('callSign').input.focus(), 100);
@@ -89,5 +90,8 @@ const fields = {
     },
     hidden: {
         type: 'checkbox'
+    },
+    home: {
+        label: 'Heimatstandort'
     }
 };

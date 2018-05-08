@@ -11,7 +11,8 @@ const schema = new mongoose.Schema({
     contact: String,
     info: String,
     hidden: Boolean,
-    ordering: Number
+    ordering: Number,
+    home: String
 });
 
 module.exports = function (app) {
