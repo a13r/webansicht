@@ -37,7 +37,8 @@ export default inject('store')(observer(({store: {journal}}) =>
             </thead>
             <tbody>
             {journal.list.map(e =>
-                <tr className={`journal-list ${priorityClass(e)}`} key={e._id} onClick={() => journal.selectEntry(e._id)}>
+                <tr className={`journal-list ${e.state !== 'erledigt' ? priorityClass(e) : ''}`}
+                    key={e._id} onClick={() => journal.selectEntry(e._id)}>
                     <td>{moment(e.createdAt).format('L LT')}</td>
                     <td>{e.text}</td>
                     <td>{e.reporter}</td>

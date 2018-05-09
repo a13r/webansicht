@@ -3,7 +3,10 @@ import {journal} from '../app';
 import {Form} from 'mobx-react-form';
 import _ from 'lodash';
 import {auth, loginReaction, notification} from '../stores';
+import moment from 'moment';
 import Mousetrap from 'mousetrap';
+import validator from "validator";
+import {required, date} from "../shared/validators";
 
 export default class JournalStore {
     @observable
@@ -19,7 +22,7 @@ export default class JournalStore {
     editorVisible = false;
 
     constructor() {
-        this.form = new Form({fields}, {onSubmit: this});
+        this.form = new Form({fields}, {onSubmit: this, plugins: {vjf: validator}});
         journal.on('created', action(this.onCreated));
         journal.on('updated', action(this.onUpdated));
         journal.on('patched', action(this.onUpdated));
@@ -39,11 +42,12 @@ export default class JournalStore {
         } else {
             this.list.unshift(entry);
         }
+        this.list = _.orderBy(this.list, ['createdAt'], [this.sortOrder === 1 ? 'asc' : 'desc']);
     };
 
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
-        if (existing) {
+        if (existing && existing.createdAt === entry.createdAt) {
             _.extend(existing, entry);
             if (this.selectedEntryId === entry._id) {
                 this.form.update(entry);
@@ -80,7 +84,7 @@ export default class JournalStore {
     selectEntry = id => {
         const entry = _.find(this.list, {_id: id});
         if (entry) {
-            this.form.update(entry);
+            this.form.update({...entry, createdAt: moment(entry.createdAt).format('L LT')});
             this.editorVisible = true;
             setTimeout(() => this.form.$('text').input.focus(), 100);
         }
@@ -94,12 +98,13 @@ export default class JournalStore {
 
     onSuccess = form => {
         const id = form.$('_id').value;
+        const entry = form.values();
+        entry.createdAt = moment(entry.createdAt, 'L LT').toISOString();
         if (id) {
-            journal.patch(id, form.values())
+            journal.patch(id, entry)
                 .then(() => notification.success('Protokolleintrag gespeichert'))
                 .then(this.closeEditor);
         } else {
-            const entry = form.values();
             _.unset(entry, '_id');
             journal.create(entry)
                 .then(() => notification.success('Protokolleintrag erstellt'))
@@ -126,6 +131,11 @@ export const selectOptions = {
 const fields = {
     _id: {
         label: 'ID'
+    },
+    createdAt: {
+        label: 'Zeitpunkt',
+        value: moment().format('L LT'),
+        validators: [required(), date('L LT')]
     },
     text: {
         label: 'Eintrag'

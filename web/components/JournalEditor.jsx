@@ -17,6 +17,7 @@ export default authenticate(inject('store')(observer(({store: {journal}}) =>
                 <Modal.Title>ETB-Eintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
+                <TextInput field={journal.form.$('createdAt')}/>
                 <TextInput field={journal.form.$('text')}/>
                 <TextInput field={journal.form.$('reporter')}/>
                 <SelectWithOptions field={journal.form.$('reportedVia')}

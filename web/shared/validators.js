@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export function minLength(length) {
     return ({field}) => {
         return [field.value.length >= length, `${field.label} muss mind. ${length} Zeichen lang sein`];
@@ -14,5 +16,11 @@ export function passwordEqualTo(target) {
 export function required() {
     return ({field}) => {
         return [field.value.toString().length, `${field.label} ist erforderlich`];
+    }
+}
+
+export function date(format) {
+    return ({field}) => {
+        return [moment(field.value, format).isValid(), `Datum und Uhrzeit erforderlich`];
     }
 }
