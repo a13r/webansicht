@@ -43,6 +43,13 @@ class States {
         },
         name: 'Pause'
     };
+    8 = {
+        rowStyle: {
+            backgroundColor: '#C1FFC1',
+            color: '#FF0000'
+        },
+        name: 'Standort halten'
+    };
     0 = {
         rowStyle: {
             backgroundColor: '#FFFFFF',
