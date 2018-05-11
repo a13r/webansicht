@@ -22,7 +22,14 @@ module.exports = function (app) {
             username: String,
             name: String,
             initials: String
-        }
+        },
+        auditLog: [{
+            changedAt: Date,
+            initials: String,
+            field: String,
+            before: Schema.Types.Mixed,
+            after: Schema.Types.Mixed
+        }]
     });
 
     journal.plugin(autoIncrement.plugin, {model: 'journal', field: 'serial', startAt: 1});

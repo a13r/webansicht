@@ -8,6 +8,8 @@ import Mousetrap from 'mousetrap';
 import validator from "validator";
 import {required, date} from "../shared/validators";
 
+moment.locale('de');
+
 export default class JournalStore {
     @observable
     list = [];

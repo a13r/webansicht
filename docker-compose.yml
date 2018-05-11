@@ -1,6 +1,7 @@
 version: "3"
 services:
   webansicht:
+    image: a13r/webansicht
     build: .
     ports:
       - "3030:3030"

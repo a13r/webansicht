@@ -1,6 +1,7 @@
 const {authenticate} = require('feathers-authentication').hooks;
 const {associateCurrentUser} = require('feathers-authentication-hooks');
-const {when, isProvider, populate, setNow} = require('feathers-hooks-common');
+const {when, isProvider, populate, setNow, stashBefore} = require('feathers-hooks-common');
+const createAuditEntry = require('../../hooks/create-audit-entry');
 
 const journalUserSchema = {
     include: {
@@ -12,6 +13,7 @@ const journalUserSchema = {
 };
 
 const setUser = [associateCurrentUser(), populate({schema: journalUserSchema})];
+const auditLog = when(isProvider('external'), createAuditEntry());
 
 module.exports = {
     before: {
@@ -19,8 +21,8 @@ module.exports = {
         find: [],
         get: [],
         create: [...setUser],
-        update: [...setUser, setNow('updatedAt')],
-        patch: [...setUser, setNow('updatedAt')],
+        update: [...setUser, setNow('updatedAt'), stashBefore()],
+        patch: [...setUser, setNow('updatedAt'), stashBefore()],
         remove: []
     },
 
@@ -29,8 +31,8 @@ module.exports = {
         find: [],
         get: [],
         create: [],
-        update: [],
-        patch: [],
+        update: [auditLog],
+        patch: [auditLog],
         remove: []
     },
 
