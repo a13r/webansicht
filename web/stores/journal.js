@@ -72,6 +72,7 @@ export default class JournalStore {
     @action
     createEntry = () => {
         this.form.reset();
+        this.form.$('createdAt').set(moment().format('L LT'));
         this.editorVisible = true;
         setTimeout(() => this.form.$('text').input.focus(), 100);
     };
