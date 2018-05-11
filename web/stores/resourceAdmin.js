@@ -40,7 +40,8 @@ export default class ResourceAdminStore extends ResourceStore {
         const resource = _.find(this.list, {_id});
         if (resource) {
             this.form.clear();
-            this.form.update(resource);
+            this.form.set(resource);
+            this.form.validate();
             this.showEditor(true);
             setTimeout(() => this.form.$('callSign').input.focus(), 100);
         }
