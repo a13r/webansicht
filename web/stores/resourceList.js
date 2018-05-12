@@ -13,17 +13,19 @@ export default class ResourceListStore extends ResourceStore {
                 this.form.update(this.list[0]);
             }
         });
+        reaction(() => this.form.$('_id').value, _id => {
+            const resource = _.find(this.list, {_id});
+            console.log('selecting resource', _id);
+            if (resource) {
+                this.form.clear();
+                this.form.update(resource);
+                this.form.$('state').input.focus();
+            }
+        });
     }
 
     @action
-    selectResource = _id => {
-        const resource = _.find(this.list, {_id});
-        if (resource) {
-            this.form.clear();
-            this.form.update(resource);
-            this.form.$('state').input.focus();
-        }
-    };
+    selectResource = _id => this.form.set({_id});
 
     onSuccess = form => {
         resources.patch(form.$('_id').value, form.values());
