@@ -1,5 +1,3 @@
-const autoIncrement = require('mongoose-auto-increment');
-
 // journal-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
