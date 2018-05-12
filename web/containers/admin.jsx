@@ -28,7 +28,7 @@ export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {res
                     </thead>
                     <tbody>
                     {resourceAdmin.list.map(r =>
-                        <tr onClick={() => resourceAdmin.selectResource(r._id)}
+                        <tr onClick={() => resourceAdmin.selectResource(r._id)} key={r._id}
                             className={'resourceRow' + (resourceAdmin.selectedResourceId === r._id ? ' active' : '')}>
                             <td>{r.tetra}</td>
                             <td>{r.callSign}</td>

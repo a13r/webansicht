@@ -21,6 +21,8 @@ export default class JournalStore {
     };
     form;
     @observable
+    selectedEntry;
+    @observable
     editorVisible = false;
 
     constructor() {
@@ -71,6 +73,7 @@ export default class JournalStore {
 
     @action
     createEntry = () => {
+        this.selectedEntry = null;
         this.form.reset();
         this.form.$('createdAt').set(moment().format('L LT'));
         this.editorVisible = true;
@@ -87,6 +90,7 @@ export default class JournalStore {
     selectEntry = id => {
         const entry = _.find(this.list, {_id: id});
         if (entry) {
+            this.selectedEntry = entry;
             this.form.update({...entry, createdAt: moment(entry.createdAt).format('L LT')});
             this.editorVisible = true;
             setTimeout(() => this.form.$('text').input.focus(), 100);

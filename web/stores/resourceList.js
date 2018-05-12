@@ -7,19 +7,15 @@ import _ from "lodash";
 export default class ResourceListStore extends ResourceStore {
     constructor() {
         super(fields);
-        loginReaction(() => this.find({hidden: false}));
-        reaction(() => this.list.length, length => {
-            if (length > 0 && !this.form.$('_id').value) {
-                this.form.update(this.list[0]);
-            }
-        });
+        loginReaction(() => this.find({hidden: false}).then(() => this.selectResource(this.list[0]._id)));
         reaction(() => this.form.$('_id').value, _id => {
             const resource = _.find(this.list, {_id});
-            console.log('selecting resource', _id);
             if (resource) {
                 this.form.clear();
                 this.form.update(resource);
-                this.form.$('state').input.focus();
+                if (this.form.$('state').input) {
+                    this.form.$('state').input.focus();
+                }
             }
         });
     }
