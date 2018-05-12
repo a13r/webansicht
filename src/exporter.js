@@ -22,10 +22,10 @@ module.exports = function() {
 };
 
 function journalEntriesToRows(entries) {
-    return entries.map((entry) => {
+    return entries.map((entry, index) => {
         let m = moment(entry.createdAt).tz('Europe/Vienna');
         return {
-            'LNr.': entry.serial,
+            'LNr.': index + 1,
             'Datum': m.toDate(),
             'Uhrzeit': m.format('HH:mm'),
             'Eintrag': entry.text,
