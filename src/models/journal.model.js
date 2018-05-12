@@ -8,7 +8,6 @@ module.exports = function (app) {
     const mongooseClient = app.get('mongooseClient');
     const {Schema} = mongooseClient;
     const journal = new Schema({
-        serial: {type: Number},
         text: {type: String},
         createdAt: {type: Date, default: Date.now},
         updatedAt: {type: Date, default: Date.now},
@@ -31,8 +30,6 @@ module.exports = function (app) {
             after: Schema.Types.Mixed
         }]
     });
-
-    journal.plugin(autoIncrement.plugin, {model: 'journal', field: 'serial', startAt: 1});
 
     return mongooseClient.model('journal', journal);
 };
