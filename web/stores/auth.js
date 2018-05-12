@@ -90,7 +90,7 @@ export default class AuthStore {
     processToken = token => {
         if (!token) {
             this.loggedIn = false;
-            return;
+            throw new Error('invalid token');
         }
         this.token = token;
         client.passport.verifyJWT(token)
