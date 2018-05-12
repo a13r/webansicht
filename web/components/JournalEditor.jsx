@@ -13,7 +13,7 @@ const SelectWithOptions = ({field, options}) =>
     </Select>;
 
 const AuditList = restrictToRoles(['admin'])(inject('store')(observer(({store: {journal}}) =>
-    journal.selectedEntry &&
+    journal.selectedEntry && journal.selectedEntry.auditLog && journal.selectedEntry.auditLog.length &&
     <table className="table table-condensed table-bordered">
         <thead>
         <tr>
@@ -34,7 +34,7 @@ const AuditList = restrictToRoles(['admin'])(inject('store')(observer(({store: {
                 <td>{log.initials}</td>
             </tr>)}
         </tbody>
-    </table>)));
+    </table> || null)));
 
 export default authenticate(inject('store')(observer(({store: {journal}}) =>
     <Modal show={journal.editorVisible} onHide={journal.closeEditor}>
