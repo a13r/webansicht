@@ -1,54 +1,34 @@
 # webansicht
 
-> 
-
 ## About
 
-This project uses [Feathers](http://feathersjs.com). An open source web framework for building modern real-time applications.
+This project uses
 
-## Getting Started
+* [Feathers](http://feathersjs.com)
+* [NodeJS](https://nodejs.org/)
+* [React](https://reactjs.org/)
+* [React-Bootstrap](https://react-bootstrap.github.io/)
+* [MobX](https://github.com/mobxjs/mobx) with [mobx-react](https://github.com/mobxjs/mobx-react) and [mobx-react-form](https://github.com/foxhound87/mobx-react-form)
+* [Docker](https://www.docker.com/)
 
-Getting up and running is as easy as 1, 2, 3.
+## Running production
 
-1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-2. Install your dependencies
-
-    ```
-    cd path/to/webansicht; npm install
-    ```
-
-3. Start your app
+1. Run docker containers
 
     ```
-    npm start
+    docker-compose up
     ```
 
-## Testing
+2. Open app in browser [http://localhost:3030](http://localhost:3030)
 
-Simply run `npm test` and all your tests in the `test/` directory will be run.
+## Development
 
-## Scaffolding
+You can run development instances of frontend and backend separately (with frontend supporting hot-reloading)
 
-Feathers has a powerful command line interface. Here are a few things it can do:
-
-```
-$ npm install -g feathers-cli             # Install Feathers CLI
-
-$ feathers generate service               # Generate a new Service
-$ feathers generate hook                  # Generate a new Hook
-$ feathers generate model                 # Generate a new Model
-$ feathers help                           # Show all commands
-```
-
-## Help
-
-For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
-
-## Changelog
-
-__0.1.0__
-
-- Initial release
+    ```
+    npm run api:dev
+    npm run web:dev
+    ```
 
 ## License
 
