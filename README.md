@@ -30,6 +30,8 @@ Make sure a [Mongo DB](https://www.mongodb.com/) server is running locally.
     npm run api:dev
     npm run web:dev
     ```
+    
+If no user exists, a new user admin with password `changeme` is created automatically.
 
 ## License
 

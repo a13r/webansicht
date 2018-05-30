@@ -25,7 +25,7 @@ module.exports = function () {
   service.find({query: {username: 'admin'}})
       .then(found => {
           if (found.length === 0) {
-              service.create({username: 'admin', name: 'Administrator', password: 'changeme', roles: ['admin']})
+              service.create({username: 'admin', name: 'Administrator', password: 'changeme', roles: ['admin','dispo']})
                   .then(adminUser => {
                       console.log('admin user not found, created with password changeme');
                   });
