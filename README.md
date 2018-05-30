@@ -23,7 +23,8 @@ This project uses
 
 ## Development
 
-You can run development instances of frontend and backend separately (with frontend supporting hot-reloading)
+You can run development instances of frontend and backend separately (with frontend supporting hot-reloading).
+Make sure a [Mongo DB](https://www.mongodb.com/) server is running locally.
 
     ```
     npm run api:dev
