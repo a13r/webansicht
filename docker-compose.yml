@@ -7,8 +7,10 @@ services:
       - "3030:3030"
     links:
       - mongo
+    restart: always
   mongo:
     image: mongo
     volumes:
       - ./data:/data
+    restart: always
 
