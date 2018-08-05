@@ -1,4 +1,4 @@
-const {authenticate} = require('feathers-authentication').hooks;
+const {authenticate} = require('@feathersjs/authentication').hooks;
 const {associateCurrentUser} = require('feathers-authentication-hooks');
 const {when, isProvider, populate, setNow, stashBefore} = require('feathers-hooks-common');
 const createAuditEntry = require('../../hooks/create-audit-entry');

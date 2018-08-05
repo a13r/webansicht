@@ -1,4 +1,4 @@
-const {authenticate} = require('feathers-authentication').hooks;
+const {authenticate} = require('@feathersjs/authentication').hooks;
 const {setNow} = require('feathers-hooks-common');
 const createLogEntry = require('../../hooks/create-log-entry')();
 const dedup = require('../../hooks/dedup')();

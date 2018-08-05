@@ -1,7 +1,7 @@
-const authentication = require('feathers-authentication');
+const authentication = require('@feathersjs/authentication');
 const authManagement = require('feathers-authentication-management');
-const jwt = require('feathers-authentication-jwt');
-const local = require('feathers-authentication-local');
+const jwt = require('@feathersjs/authentication-jwt');
+const local = require('@feathersjs/authentication-local');
 
 
 module.exports = function () {

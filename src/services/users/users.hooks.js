@@ -1,8 +1,9 @@
-const { authenticate } = require('feathers-authentication').hooks;
-const {when, discard, isProvider} = require('feathers-hooks-common');
-const { restrictToOwner, restrictToRoles } = require('feathers-authentication-hooks');
+const { authenticate } = require('@feathersjs/authentication').hooks;
+const {when, isProvider} = require('feathers-hooks-common');
+const { restrictToOwner } = require('feathers-authentication-hooks');
+const {Forbidden} = require('@feathersjs/errors');
+const { hashPassword, protect } = require('@feathersjs/authentication-local').hooks;
 
-const { hashPassword } = require('feathers-authentication-local').hooks;
 const restrict = [
   authenticate('jwt'),
   restrictToOwner({
@@ -11,12 +12,22 @@ const restrict = [
   })
 ];
 
+const restrictToAdmin = async context => {
+    const {user} = context.params;
+
+    if (!user.roles.includes('admin')) {
+        throw new Forbidden('Restricted to admins');
+    }
+
+    return context;
+};
+
 module.exports = {
   before: {
     all: [],
     find: [ when(isProvider('external'), authenticate('jwt')) ],
     get: [ ...restrict ],
-    create: [ restrictToRoles({roles: ['admin']}), hashPassword() ],
+    create: [ restrictToAdmin, hashPassword() ],
     update: [ ...restrict, hashPassword() ],
     patch: [ ...restrict, when(isProvider('external'), hashPassword()) ],
     remove: [ ...restrict ]
@@ -24,10 +35,7 @@ module.exports = {
 
   after: {
     all: [
-      when(
-        hook => hook.params.provider,
-        discard('password')
-      )
+      protect('password')
     ],
     find: [],
     get: [],

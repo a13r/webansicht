@@ -30,27 +30,29 @@ const config = {
         }
     },
     module: {
-        loaders: [{
-            test: /\.css$/,
-            use: ['style-loader', 'css-loader']
-        }, {
-            test: /\.jsx?$/,
-            exclude: /node_modules/,
-            loaders: ['babel-loader']
-        }, {
-            'test': /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?/,
-            loader: 'url-loader',
-            query: {
-                prefix: 'font/',
-                limit: 10000,
-                mimetype: 'application/font-woff'
+        rules: [
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            }, {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                loaders: ['babel-loader']
+            }, {
+                'test': /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?/,
+                loader: 'url-loader',
+                query: {
+                    prefix: 'font/',
+                    limit: 10000,
+                    mimetype: 'application/font-woff'
+                }
+                // include: PATHS.fonts,
+            }, {
+                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?/,
+                loader: 'url-loader'
+                // include: PATHS.fonts,
             }
-            // include: PATHS.fonts,
-        }, {
-            test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?/,
-            loader: 'url-loader'
-            // include: PATHS.fonts,
-        }]
+        ]
     },
     output: {
         path: paths.dist,

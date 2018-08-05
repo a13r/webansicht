@@ -3,15 +3,15 @@ const cors = require('cors');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
 
-const feathers = require('feathers');
-const configuration = require('feathers-configuration');
-const hooks = require('feathers-hooks');
-const rest = require('feathers-rest');
-const socketio = require('feathers-socketio');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+const configuration = require('@feathersjs/configuration');
+const rest = require('@feathersjs/express/rest');
+const socketio = require('@feathersjs/socketio');
 
 const fallback = require('connect-history-api-fallback');
 
-const handler = require('feathers-errors/handler');
+const handler = require('@feathersjs/express/errors');
 const notFound = require('feathers-errors/not-found');
 
 const middleware = require('./middleware');
@@ -19,11 +19,12 @@ const services = require('./services');
 const appHooks = require('./app.hooks');
 
 const authentication = require('./authentication');
+const channels = require('./channels');
 
 const mongoose = require('./mongoose');
 const exporter = require('./exporter');
 
-const app = feathers();
+const app = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
@@ -36,10 +37,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fallback());
 // Host the public folder
-app.use('/', feathers.static(app.get('public')));
+app.use('/', express.static(app.get('public')));
 
-// Set up Plugins and providers
-app.configure(hooks());
 app.configure(mongoose);
 app.configure(rest());
 app.configure(socketio());
@@ -49,6 +48,7 @@ app.configure(middleware);
 app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
+app.configure(channels);
 app.configure(exporter);
 
 // Configure a middleware for 404s and the error handler

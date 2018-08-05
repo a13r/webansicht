@@ -1,4 +1,4 @@
-const auth = require('feathers-authentication');
+const auth = require('@feathersjs/authentication');
 const X = require('xlsx');
 const moment = require('moment-timezone');
 
