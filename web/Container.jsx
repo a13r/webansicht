@@ -11,6 +11,7 @@ import Admin from "./containers/admin";
 import Log from "./containers/log";
 import UserSettings from "./containers/userSettings";
 import Journal from "./containers/journal";
+import Stations from "./containers/stations";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import stores from "./stores";
 import "./styles/global.css";
@@ -48,12 +49,15 @@ export default class Container extends React.Component {
                                 <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf <kbd>F3</kbd></NavItem>
                                 </LinkContainer>
-                                <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>F4</kbd>
-                                </NavItem>
                                 <LinkContainer to="/resources">
-                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <kbd>F5</kbd></NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <kbd>F4</kbd></NavItem>
                                 </LinkContainer>
+                                <LinkContainer to="/stations">
+                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts <kbd>F5</kbd></NavItem>
+                                </LinkContainer>
+                                <NavItem onClick={() => stores.journal.createEntry()}>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>CTRL+E</kbd>
+                                </NavItem>
                             </Nav>}
                             <Nav pullRight>
                                 {auth.user ?
@@ -75,6 +79,7 @@ export default class Container extends React.Component {
                     <Route path="/log" component={Log}/>
                     <Route path="/userSettings" component={UserSettings}/>
                     <Route path="/journal" component={Journal}/>
+                    <Route path="/stations" component={Stations}/>
                     {stores.auth.loggedIn === false &&
                     <div className="row">
                         <Redirect to="/"/>

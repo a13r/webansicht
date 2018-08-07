@@ -18,7 +18,8 @@ const config = {
         historyApiFallback: true,
         proxy: [{
             context: ['/socket.io', '/export.xlsx'],
-            target: 'http://localhost:3030'
+            target: 'http://localhost:3030',
+            ws: true
         }],
         host: '0.0.0.0',
         disableHostCheck: true

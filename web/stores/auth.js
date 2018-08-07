@@ -18,7 +18,7 @@ export default class AuthStore {
     token;
 
     constructor() {
-        this.form = new Form({fields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}, options: loginOptions});
+        this.form = new Form({fields: loginFields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}, options: loginOptions});
         this.changePasswordForm = new Form({fields: changePasswordFields}, {onSubmit: this.onSubmitPassword, options});
         this.createUserForm = new Form({fields: createUserFields}, {onSubmit: this.onSubmitUser, options});
         client.passport.getJWT().then(this.processToken);
@@ -113,7 +113,7 @@ function clearFormWithoutValidation(form) {
     form.state.options.set({validateOnChange: oldValue});
 }
 
-const fields = {
+const loginFields = {
     username: {
         label: 'Benutzername'
     },
