@@ -27,7 +27,7 @@ module.exports = {
     all: [],
     find: [ when(isProvider('external'), authenticate('jwt')) ],
     get: [ ...restrict ],
-    create: [ restrictToAdmin, hashPassword() ],
+    create: [ when(isProvider('external'), restrictToAdmin), hashPassword() ],
     update: [ ...restrict, hashPassword() ],
     patch: [ ...restrict, when(isProvider('external'), hashPassword()) ],
     remove: [ ...restrict ]
