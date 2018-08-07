@@ -10,7 +10,8 @@ module.exports = function (app) {
         contact: {type: String},
         currentPatients: {type: Number},
         maxPatients: {type: Number},
-        ordering: {type: Number}
+        ordering: {type: Number},
+        deleted: {type: Boolean}
     }, {
         timestamps: true
     });

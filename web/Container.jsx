@@ -28,7 +28,7 @@ const history = syncHistoryWithStore(browserHistory, router);
 @observer
 export default class Container extends React.Component {
     render() {
-        return <Provider store={stores}>
+        return <Provider store={stores} {...stores}>
             <Router history={history}>
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>

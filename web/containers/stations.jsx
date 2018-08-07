@@ -1,13 +1,10 @@
 import React from "react";
 import restrictToRoles from "~/components/restrictToRoles";
-import {Col, Row} from "react-bootstrap";
+import StationList from "~/components/StationList";
+import StationCreateButton from "~/components/StationCreateButton";
 
 export default restrictToRoles(['dispo', 'station'])(() =>
     <div>
-        <Row>
-            <Col md={12}>
-                SanHiSt
-            </Col>
-        </Row>
-    </div>
-);
+        <StationCreateButton/>
+        <StationList/>
+    </div>);
