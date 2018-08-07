@@ -21,11 +21,11 @@
         },
         "local": {
             "entity": "user",
-            "usernameField": "username",
+            "usernameField": "\\username",
             "passwordField": "password"
         },
         "management": {
-            "identifyUserProps": ["username"]
+            "identifyUserProps": ["\\username"]
         }
     },
     "mongodb": "mongodb://localhost:27017/webansicht"
