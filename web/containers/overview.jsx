@@ -7,15 +7,14 @@ import authenticate from "../components/authenticate";
 
 export default authenticate(inject('store', 'stations')(observer(({store: {auth}, stations}) =>
     <Row>
-        <Col md={auth.isDispo ? 9 : 12}>
+        <Col md={9}>
             <ResourceList/>
         </Col>
-        {auth.isDispo &&
         <Col md={3}>
-            <ResourceEditor/>
+            {auth.isDispo && <ResourceEditor/>}
             {stations.list.map(s =>
                 <Panel key={s._id} header={s.nameValue}>
                     <ProgressBar now={s.loadPercentage} label={s.loadLabel} style={{marginBottom: 0}}/>
                 </Panel>)}
-        </Col>}
+        </Col>
     </Row>)));

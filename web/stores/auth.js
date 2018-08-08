@@ -39,6 +39,11 @@ export default class AuthStore {
         return this.user && _.indexOf(this.user.roles, 'dispo') >= 0;
     }
 
+    @computed
+    get isStation() {
+        return this.user && this.user.roles.includes('station');
+    }
+
     @action
     logout = () => {
         client.logout();

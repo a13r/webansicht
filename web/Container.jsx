@@ -61,6 +61,15 @@ export default class Container extends React.Component {
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
                                 </NavItem>
                             </Nav>}
+                            {auth.isStation &&
+                            <Nav>
+                                <IndexLinkContainer to="/">
+                                    <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
+                                </IndexLinkContainer>
+                                <LinkContainer to="/stations">
+                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
+                                </LinkContainer>
+                            </Nav>}
                             <Nav pullRight>
                                 {auth.user ?
                                     <NavDropdown id="user"
