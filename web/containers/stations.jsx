@@ -1,10 +1,10 @@
 import React from "react";
 import restrictToRoles from "~/components/restrictToRoles";
 import StationList from "~/components/StationList";
-import StationCreateButton from "~/components/StationCreateButton";
+import StationAdminRow from "~/components/StationAdminRow";
 
-export default restrictToRoles(['dispo', 'station'])(() =>
+export default restrictToRoles(['admin', 'dispo', 'station'])(() =>
     <div>
-        <StationCreateButton/>
+        <StationAdminRow/>
         <StationList/>
     </div>);

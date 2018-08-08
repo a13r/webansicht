@@ -11,7 +11,7 @@ module.exports = function (app) {
         currentPatients: {type: Number},
         maxPatients: {type: Number},
         ordering: {type: Number},
-        deleted: {type: Boolean}
+        deleted: {type: Boolean, default: false}
     }, {
         timestamps: true
     });

@@ -1,8 +1,8 @@
-import {observable, action, computed} from "mobx";
+import {observable, action, computed, reaction} from "mobx";
 import {stations} from "~/app";
 import _ from "lodash";
 import {loginReaction} from "~/stores/index";
-import * as validator from "validator";
+import validatorjs from "validatorjs";
 import {Form} from "mobx-react-form";
 
 export default class StationStore {
@@ -10,24 +10,26 @@ export default class StationStore {
     list = [];
     @observable
     selected;
+    @observable
+    showDeleted = false;
 
     constructor() {
-        this.form = new Form({fields}, {onSubmit: this.hooks, plugins: {vjf: validator}});
         stations.on('created', this.onCreated);
         stations.on('updated', this.onUpdated);
         stations.on('patched', this.onUpdated);
         loginReaction(() => this.find());
+        reaction(() => this.showDeleted, () => this.find());
     }
 
     find() {
         stations
-            .find({query: {$sort: {ordering: 1}}})
+            .find({query: {$sort: {ordering: 1, name: 1}, deleted: this.showDeleted ? undefined : false}})
             .then(action(list => this.list = list.map(s => new Station(s))));
     }
 
     @action
     onCreated = entry => {
-        this.list = _.orderBy(this.list.concat(new Station(entry)), ['ordering']);
+        this.list = _.orderBy(this.list.concat(new Station(entry)), ['orderingValue', 'nameValue']);
     };
 
     @action
@@ -35,6 +37,14 @@ export default class StationStore {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing) {
             existing.form.update(entry);
+            if (entry.deleted !== existing.deleted) {
+                if (entry.deleted && !this.showDeleted) {
+                    _.remove(this.list, {_id: entry._id});
+                } else if (this.showDeleted) {
+                    this.list = this.list.concat(new Station(entry));
+                }
+            }
+            this.list = _.orderBy(this.list, ['orderingValue', 'nameValue']);
         } else {
             this.find();
         }
@@ -51,15 +61,29 @@ export default class StationStore {
     removeNew = station => {
         _.remove(this.list, s => s === station);
     };
-}
 
-export const StationStoreInstance = new StationStore();
+    @action
+    submitNew = (station, e) => {
+        e.preventDefault();
+        station.form.submit().then(() => {
+            if (station.isNew) {
+                this.removeNew(station);
+            }
+        });
+    };
+
+    @action
+    setShowDeleted = event => {
+        console.log(event.target.checked);
+        this.showDeleted = !!event.target.checked;
+    };
+}
 
 export class Station {
     form;
 
     constructor(values) {
-        this.form = new Form({fields}, {onSubmit: this, plugins: {vjf: validator}});
+        this.form = new Form({fields}, {onSubmit: this, plugins: {dvr: validatorjs}});
         this.form.update(values);
     }
 
@@ -67,13 +91,8 @@ export class Station {
         const values = _.merge({}, form.values());
         if (!values._id) {
             delete values._id;
-            return stations.create(values)
-                .then(entry => {
-                    form.reset();
-                    form.update(entry);
-                });
+            return stations.create(values);
         } else {
-            console.log(values);
             return stations.patch(values._id, values)
                 .then(entry => {
                     form.reset();
@@ -82,8 +101,17 @@ export class Station {
         }
     };
 
+    get _id() {
+        return this.form.$('_id').value;
+    }
+
     get name() {
         return this.form.$('name');
+    }
+
+    @computed
+    get nameValue() {
+        return this.name.value;
     }
 
     get contact() {
@@ -96,6 +124,19 @@ export class Station {
 
     get maxPatients() {
         return this.form.$('maxPatients');
+    }
+
+    get ordering() {
+        return this.form.$('ordering');
+    }
+
+    @computed
+    get orderingValue() {
+        return this.ordering.value;
+    }
+
+    get deleted() {
+        return this.form.$('deleted');
     }
 
     @computed
@@ -114,7 +155,8 @@ const fields = {
         label: 'ID'
     },
     name: {
-        label: 'Name'
+        label: 'Name',
+        rules: 'required'
     },
     contact: {
         label: 'Kontakt'
@@ -130,5 +172,9 @@ const fields = {
     ordering: {
         label: 'Reihenfolge',
         type: 'number'
+    },
+    deleted: {
+        label: 'ausgeblendet',
+        type: 'checkbox'
     }
 };

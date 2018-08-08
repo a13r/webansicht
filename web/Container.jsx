@@ -25,6 +25,8 @@ const {auth, router} = stores;
 const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, router);
 
+const K = ({children}) => <kbd className="hidden-xs hidden-sm hidden-md">{children}</kbd>;
+
 @observer
 export default class Container extends React.Component {
     render() {
@@ -41,22 +43,22 @@ export default class Container extends React.Component {
                             {auth.isDispo &&
                             <Nav>
                                 <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-home"/> Übersicht <kbd>F1</kbd></NavItem>
+                                    <NavItem><i className="fa fa-home"/> Übersicht <K>F1</K></NavItem>
                                 </IndexLinkContainer>
                                 <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch <kbd>F2</kbd></NavItem>
+                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch <K>F2</K></NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/log">
-                                    <NavItem><i className="fa fa-history"/> Statusverlauf <kbd>F3</kbd></NavItem>
+                                    <NavItem><i className="fa fa-history"/> Statusverlauf <K>F3</K></NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/resources">
-                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <kbd>F4</kbd></NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <K>F4</K></NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/stations">
-                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts <kbd>F5</kbd></NavItem>
+                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts <K>F5</K></NavItem>
                                 </LinkContainer>
                                 <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <kbd>CTRL+E</kbd>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
                                 </NavItem>
                             </Nav>}
                             <Nav pullRight>
