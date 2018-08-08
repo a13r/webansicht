@@ -40,8 +40,6 @@ export default class StationStore {
             if (entry.deleted !== existing.deleted) {
                 if (entry.deleted && !this.showDeleted) {
                     _.remove(this.list, {_id: entry._id});
-                } else if (this.showDeleted) {
-                    this.list = this.list.concat(new Station(entry));
                 }
             }
             this.list = _.orderBy(this.list, ['orderingValue', 'nameValue']);
@@ -73,10 +71,7 @@ export default class StationStore {
     };
 
     @action
-    setShowDeleted = event => {
-        console.log(event.target.checked);
-        this.showDeleted = !!event.target.checked;
-    };
+    setShowDeleted = event => this.showDeleted = !!event.target.checked;
 }
 
 export class Station {
