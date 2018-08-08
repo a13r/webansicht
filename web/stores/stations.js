@@ -148,6 +148,11 @@ export class Station {
     get loadPercentage() {
         return this.currentPatients.value / this.maxPatients.value * 100;
     }
+
+    @computed
+    get loadLabel() {
+        return this.currentPatients.value + '/' + this.maxPatients.value;
+    }
 }
 
 const fields = {

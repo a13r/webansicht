@@ -1,11 +1,11 @@
 import React from "react";
 import ResourceList from "../components/ResourceList";
 import ResourceEditor from "../components/ResourceEditor";
-import {Col, Row} from "react-bootstrap";
+import {Col, Panel, ProgressBar, Row} from "react-bootstrap";
 import {inject, observer} from "mobx-react";
 import authenticate from "../components/authenticate";
 
-export default authenticate(inject('store')(observer(({store: {auth}}) =>
+export default authenticate(inject('store', 'stations')(observer(({store: {auth}, stations}) =>
     <Row>
         <Col md={auth.isDispo ? 9 : 12}>
             <ResourceList/>
@@ -13,5 +13,9 @@ export default authenticate(inject('store')(observer(({store: {auth}}) =>
         {auth.isDispo &&
         <Col md={3}>
             <ResourceEditor/>
+            {stations.list.map(s =>
+                <Panel key={s._id} header={s.nameValue}>
+                    <ProgressBar now={s.loadPercentage} label={s.loadLabel} style={{marginBottom: 0}}/>
+                </Panel>)}
         </Col>}
     </Row>)));
