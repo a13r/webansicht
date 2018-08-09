@@ -6,11 +6,22 @@ const { hashPassword, protect } = require('@feathersjs/authentication-local').ho
 
 const restrict = [
   authenticate('jwt'),
-  restrictToOwner({
+  restrictToAdminOrOwner({
     idField: '_id',
     ownerField: '_id'
   })
 ];
+
+function restrictToAdminOrOwner(args) {
+    return context => {
+        const {user} = context.params;
+        if (user && user.roles.includes('admin')) {
+            return context;
+        }
+
+        return restrictToOwner(args)(context);
+    }
+}
 
 const restrictToAdmin = async context => {
     const {user} = context.params;

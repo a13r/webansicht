@@ -6,6 +6,12 @@ export function minLength(length) {
     }
 }
 
+export function minLengthIfNew(length) {
+    return ({field, form}) => {
+        return [field.value.length >= length || form.$('_id').value, `${field.label} muss mind. ${length} Zeichen lang sein`]
+    }
+}
+
 export function passwordEqualTo(target) {
     return ({field, form}) => {
         const passwordsEqual = (form.$(target).value === field.value);
@@ -16,6 +22,12 @@ export function passwordEqualTo(target) {
 export function required() {
     return ({field}) => {
         return [field.value.toString().length, `${field.label} ist erforderlich`];
+    }
+}
+
+export function requiredIf(otherField) {
+    return ({field, form}) => {
+        return [field.value.length > 0 || !form.$(otherField).value, `${field.label} muss bei Disponenten gesetzt sein`];
     }
 }
 

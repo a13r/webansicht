@@ -1,15 +1,16 @@
 import * as React from "react";
 import authenticate from "../components/authenticate";
 import ChangePasswordForm from "../components/ChangePasswordForm";
-import CreateUserForm from "../components/CreateUserForm";
+import {Col, Row} from "react-bootstrap";
+import ManageUserForm from "~/components/ManageUserForm";
 
 export default authenticate(() =>
-    <div className="row">
-        <div className="col-md-3">
-            <CreateUserForm/>
-        </div>
-        <div className="col-md-3 col-md-offset-6">
+    <Row>
+        <Col md={3}>
+            <ManageUserForm/>
+        </Col>
+        <Col md={3} mdOffset={6}>
             <ChangePasswordForm/>
-        </div>
-    </div>
+        </Col>
+    </Row>
 );

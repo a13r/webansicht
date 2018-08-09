@@ -6,21 +6,25 @@ import {minLength, passwordEqualTo, required} from "../shared/validators";
 import _ from "lodash";
 import {clearForms, router} from "./index";
 import {notification} from '../stores';
+import {minLengthIfNew, requiredIf} from "~/shared/validators";
 
 export default class AuthStore {
     @observable
     loggedIn = undefined;
     form;
     changePasswordForm;
+    manageUserForm;
     @observable
     user;
     @observable
     token;
+    @observable
+    userList = [];
 
     constructor() {
         this.form = new Form({fields: loginFields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}, options: loginOptions});
         this.changePasswordForm = new Form({fields: changePasswordFields}, {onSubmit: this.onSubmitPassword, options});
-        this.createUserForm = new Form({fields: createUserFields}, {onSubmit: this.onSubmitUser, options});
+        this.manageUserForm = new Form({fields: manageUserFields}, {onSubmit: this.onSubmitManageUser});
         client.passport.getJWT().then(this.processToken);
         registerAuthErrorHandler(action(e => {
             console.error(e);
@@ -30,13 +34,63 @@ export default class AuthStore {
             if (!loggedIn) {
                 this.form.clear();
                 this.form.$('username').focus();
+            } else {
+                if (this.isAdmin) {
+                    users.find().then(action(users => this.userList = users));
+                    users.on('created', action(user => this.userList.push(user)));
+                    users.on('patched', this.updateUser);
+                    users.on('updated', this.updateUser);
+                }
             }
         }, true);
+        reaction(() => this.manageUserForm.$('_id').value, id => {
+            this.selectUser(id);
+        });
+    }
+
+    @action
+    updateUser = user => {
+        const existing = _.find(this.userList, {_id: user._id});
+        if (existing) {
+            _.assign(existing, user);
+            if (this.manageUserForm.$('_id').value === user._id) {
+                this.selectUser(user._id);
+            }
+        } else {
+            this.userList.push(user);
+        }
+    };
+
+    selectUser = _id => {
+        if (!_id) {
+            this.manageUserForm.clear();
+            return;
+        }
+        const user = _.find(this.userList, {_id});
+        if (!user) {
+            return;
+        }
+        this.manageUserForm.clear();
+        this.manageUserForm.set({
+            admin: user.roles.includes('admin'),
+            dispo: user.roles.includes('dispo'),
+            station: user.roles.includes('station'),
+            ...user
+        });
+    };
+
+    createUser = () => {
+        this.manageUserForm.clear();
+    };
+
+    @computed
+    get isAdmin() {
+        return this.user && this.user.roles.includes('admin');
     }
 
     @computed
     get isDispo() {
-        return this.user && _.indexOf(this.user.roles, 'dispo') >= 0;
+        return this.user && this.user.roles.includes('dispo');
     }
 
     @computed
@@ -78,16 +132,32 @@ export default class AuthStore {
         }
     };
 
-    onSubmitUser = {
-        @action
+    onSubmitManageUser = {
         onSuccess: form => {
-            const newUser = form.values();
-            _.unset(newUser, 'passwordRepeat');
-            users.create(newUser)
-                .then(user => notification.success(`${user.name} wurde erfolgreich erstellt.`))
-                .then(() => form.$('username').input.focus())
-                .then(() => clearFormWithoutValidation(form))
-                .catch(error => notification.error(error.message, 'Fehler beim Erstellen des Benutzers'));
+            const {_id, admin, dispo, station, username, name, initials, password} = form.values();
+            const roles = [];
+            if (admin) roles.push('admin');
+            if (dispo) roles.push('dispo');
+            if (station) roles.push('station');
+
+            const data = {roles, username, name, initials};
+            if (password.length) {
+                data.password = password;
+            }
+            if (!initials) {
+                data.initials = username;
+            }
+            if (_id) {
+                return users.patch(_id, data)
+                    .then(user => notification.success(`${user.name} wurde geändert`))
+                    .then(() => form.$('_id').input.focus())
+                    .catch(error => notification.error(error.message, 'Fehler beim Ändern des Benutzers'));
+            } else {
+                return users.create(data)
+                    .then(() => form.$('_id').input.focus())
+                    .then(user => notification.success(`${user.name} wurde erfolgreich erstellt.`))
+                    .catch(error => notification.error(error.message, 'Fehler beim Erstellen des Benutzers'));
+            }
         }
     };
 
@@ -146,7 +216,23 @@ const changePasswordFields = {
     }
 };
 
-const createUserFields = {
+const manageUserFields = {
+    _id: {
+        label: 'Benutzer'
+    },
+    admin: {
+        label: 'Administrator',
+        type: 'checkbox'
+    },
+    dispo: {
+        label: 'Disponent',
+        type: 'checkbox',
+        related: ['initials']
+    },
+    station: {
+        label: 'SanHiSt',
+        type: 'checkbox'
+    },
     username: {
         label: 'Benutzername',
         validators: [required()]
@@ -157,18 +243,18 @@ const createUserFields = {
     },
     initials: {
         label: 'Kürzel',
-        validators: [required()]
+        validators: [requiredIf('dispo')]
     },
     password: {
-        label: 'Passwort',
+        label: 'Neues Passwort',
         type: 'password',
-        validators: [minLength(8)],
+        validators: [minLengthIfNew(8)],
         related: ['passwordRepeat']
     },
     passwordRepeat: {
-        label: 'Passwort (wiederholen)',
+        label: 'Neues Passwort (wdh.)',
         type: 'password',
-        validators: [passwordEqualTo('password')]
+        valudators: [passwordEqualTo('password')]
     }
 };
 

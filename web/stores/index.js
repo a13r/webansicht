@@ -34,7 +34,7 @@ const forms = {
     logFilter: stores.log.form,
     loginForm: stores.auth.form,
     changePasswordForm: stores.auth.changePasswordForm,
-    createUserForm: stores.auth.createUserForm,
+    manageUserForm: stores.auth.manageUserForm,
     journalForm: stores.journal.form
 };
 
