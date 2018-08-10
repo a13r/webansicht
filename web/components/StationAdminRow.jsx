@@ -7,6 +7,6 @@ export default restrictToRoles(['admin'])(inject('stations')(observer(({stations
     <Row>
         <Col md={12}>
             <Button className="mb-16" onClick={stations.create}><i className="fa fa-plus-circle"/> hinzufügen</Button>
-            <Checkbox onChange={e => stations.setShowDeleted(e)} className="pull-right">ausgeblendete anzeigen</Checkbox>
+            <Checkbox onChange={e => stations.setShowDeleted(e)} checked={stations.showDeleted} className="pull-right">ausgeblendete anzeigen</Checkbox>
         </Col>
     </Row>)));
