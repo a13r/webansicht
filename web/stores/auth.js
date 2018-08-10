@@ -1,17 +1,18 @@
 import {action, computed, observable, reaction} from "mobx";
 import {Form} from "mobx-react-form";
-import {changePassword, client, login, registerAuthErrorHandler, users} from "../app";
-import validator from "validator";
-import {minLength, passwordEqualTo, required} from "../shared/validators";
+import {client, registerAuthErrorHandler, users} from "../app";
+import {passwordEqualTo, required} from "../forms/validators";
 import _ from "lodash";
 import {clearForms, router} from "./index";
-import {notification} from '../stores';
-import {minLengthIfNew, requiredIf} from "~/shared/validators";
+import {notification} from '../stores';
+import {minLengthIfNew, requiredIf} from "~/forms/validators";
+import {LoginForm} from "~/forms/login";
+import {ChangePasswordForm} from "~/forms/changePassword";
 
 export default class AuthStore {
     @observable
     loggedIn = undefined;
-    form;
+    loginForm;
     changePasswordForm;
     manageUserForm;
     @observable
@@ -22,9 +23,9 @@ export default class AuthStore {
     userList = [];
 
     constructor() {
-        this.form = new Form({fields: loginFields}, {onSubmit: this.onSubmitLogin, plugins: {vjf: validator}, options: loginOptions});
-        this.changePasswordForm = new Form({fields: changePasswordFields}, {onSubmit: this.onSubmitPassword, options});
-        this.manageUserForm = new Form({fields: manageUserFields}, {onSubmit: this.onSubmitManageUser});
+        this.loginForm = new LoginForm();
+        this.changePasswordForm = new ChangePasswordForm();
+        this.manageUserForm = new Form({fields: manageUserFields}, {hooks: this.onSubmitManageUser});
         client.passport.getJWT().then(this.processToken);
         registerAuthErrorHandler(action(e => {
             console.error(e);
@@ -32,8 +33,8 @@ export default class AuthStore {
         }));
         reaction(() => this.loggedIn, loggedIn => {
             if (!loggedIn) {
-                this.form.clear();
-                this.form.$('username').focus();
+                this.loginForm.clear();
+                this.loginForm.$('username').focus();
             } else {
                 if (this.isAdmin) {
                     users.find().then(action(users => this.userList = users));
@@ -106,32 +107,6 @@ export default class AuthStore {
         this.loggedIn = false;
     };
 
-    onSubmitLogin = {
-        onSuccess: form => {
-            login(form.values())
-                .then(response => this.processToken(response.accessToken))
-                .catch(e => {
-                    this.form.$('username').input.focus();
-                    this.form.reset();
-                    form.invalidate(e.message);
-                });
-        }
-    };
-
-    onSubmitPassword = {
-        @action
-        onSuccess: form => {
-            changePassword(this.user.username, form.$('oldPassword').value, form.$('password').value)
-                .then(() => notification.success('Das Passwort wurde geändert'))
-                .then(() => clearFormWithoutValidation(form))
-                .catch(error => {
-                    notification.error(error.message, 'Das Passwort wurde nicht geändert');
-                    form.$('oldPassword').clear();
-                    form.$('oldPassword').input.focus();
-                });
-        }
-    };
-
     onSubmitManageUser = {
         onSuccess: form => {
             const {_id, admin, dispo, station, username, name, initials, password, stationId} = form.values();
@@ -184,41 +159,6 @@ export default class AuthStore {
     };
 }
 
-function clearFormWithoutValidation(form) {
-    const oldValue = form.state.options.get('validateOnChange');
-    form.state.options.set({validateOnChange: false});
-    form.clear();
-    form.state.options.set({validateOnChange: oldValue});
-}
-
-const loginFields = {
-    username: {
-        label: 'Benutzername'
-    },
-    password: {
-        label: 'Passwort',
-        type: 'password'
-    }
-};
-
-const changePasswordFields = {
-    oldPassword: {
-        label: 'Altes Passwort',
-        type: 'password'
-    },
-    password: {
-        label: 'Neues Passwort',
-        type: 'password',
-        validators: [minLength(8)],
-        related: ['passwordRepeat']
-    },
-    passwordRepeat: {
-        label: 'Neues Passwort (wiederholen)',
-        type: 'password',
-        validators: [passwordEqualTo('password')]
-    }
-};
-
 const manageUserFields = {
     _id: {
         label: 'Benutzer'
@@ -262,13 +202,4 @@ const manageUserFields = {
         type: 'password',
         validators: [passwordEqualTo('password')]
     }
-};
-
-const options = {
-    validateOnChange: true
-};
-
-const loginOptions = {
-    validateOnChange: false,
-    validateOnBlur: false
 };

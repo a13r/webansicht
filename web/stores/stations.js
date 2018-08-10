@@ -1,11 +1,10 @@
-import {observable, action, computed, reaction} from "mobx";
+import {action, computed, observable, reaction} from "mobx";
 import {stations} from "~/app";
 import {auth} from "~/stores";
 import _ from "lodash";
 import {loginReaction, notification} from "~/stores/index";
-import validator from "validator";
-import {Form} from "mobx-react-form";
-import {required} from "~/shared/validators";
+import {required} from "~/forms/validators";
+import {BaseForm} from "~/forms/baseForm";
 
 export default class StationStore {
     @observable
@@ -122,23 +121,23 @@ export class Station {
     }
 }
 
-export class StationForm extends Form {
+export class StationForm extends BaseForm {
     constructor(station) {
-        super({fields}, {
-            onSubmit: {
-                onSuccess: form => {
-                    if (!station._id) {
-                        return stations.create(form.values())
-                            .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
-                    } else {
-                        return stations.patch(station._id, form.values())
-                            .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
-                    }
-                }
-            },
-            plugins: {dvr: validator}
-        });
+        super({fields});
+        this.station = station;
     }
+
+    hooks = () => ({
+        onSuccess: form => {
+            if (!this.station._id) {
+                return stations.create(form.values())
+                    .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
+            } else {
+                return stations.patch(this.station._id, form.values())
+                    .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
+            }
+        }
+    });
 
     @computed
     get loadPercentage() {

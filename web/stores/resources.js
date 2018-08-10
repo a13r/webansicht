@@ -16,7 +16,7 @@ export default class ResourceStore {
     form;
 
     constructor(fields) {
-        this.form = new Form({fields}, {onSubmit: this, plugins: {vjf: validator}, options});
+        this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}, options});
         resources.on('created', this.onCreated);
         resources.on('updated', this.onUpdated);
         resources.on('patched', this.onUpdated);

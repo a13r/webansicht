@@ -32,7 +32,7 @@ const forms = {
     resourceEditor: stores.resources.form,
     resourceAdmin: stores.resourceAdmin.form,
     logFilter: stores.log.form,
-    loginForm: stores.auth.form,
+    loginForm: stores.auth.loginForm,
     changePasswordForm: stores.auth.changePasswordForm,
     manageUserForm: stores.auth.manageUserForm,
     journalForm: stores.journal.form

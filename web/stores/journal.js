@@ -6,7 +6,7 @@ import {auth, loginReaction, notification} from '../stores';
 import moment from 'moment';
 import Mousetrap from 'mousetrap';
 import validator from "validator";
-import {required, date} from "../shared/validators";
+import {required, date} from "../forms/validators";
 
 moment.locale('de');
 
@@ -26,7 +26,7 @@ export default class JournalStore {
     editorVisible = false;
 
     constructor() {
-        this.form = new Form({fields}, {onSubmit: this, plugins: {vjf: validator}});
+        this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}});
         journal.on('created', action(this.onCreated));
         journal.on('updated', action(this.onUpdated));
         journal.on('patched', action(this.onUpdated));

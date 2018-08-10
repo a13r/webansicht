@@ -2,7 +2,7 @@ import {action, computed, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
 import _ from "lodash";
 import {resources} from "../app";
-import {required} from "../shared/validators";
+import {required} from "../forms/validators";
 import {loginReaction, notification} from "./index";
 
 export default class ResourceAdminStore extends ResourceStore {

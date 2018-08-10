@@ -3,7 +3,7 @@ import {inject, observer} from 'mobx-react';
 import {Alert, Button, FormGroup} from 'react-bootstrap';
 import {TextInput} from './formControls';
 
-export default inject('store')(observer(({store: {auth: {form}}}) =>
+export default inject('auth')(observer(({auth: {loginForm: form}}) =>
     <div className="panel panel-default">
         <div className="panel-heading">
             <h2 className="panel-title">Anmelden</h2>
