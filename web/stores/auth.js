@@ -24,6 +24,7 @@ export default class AuthStore {
         }));
         reaction(() => this.loggedIn, loggedIn => {
             if (!loggedIn) {
+                this.user = null;
                 this.loginForm.clear();
                 this.loginForm.$('username').focus();
             }
