@@ -50,7 +50,9 @@ export default class AuthStore {
         client.logout();
         // import async to prevent cyclic module dependency
         import('~/forms').then(module => module.clearForms());
-        router.push('/');
+        if (router.location.pathname !== '/') {
+            router.push('/');
+        }
         this.loggedIn = false;
     };
 
@@ -58,7 +60,6 @@ export default class AuthStore {
     processToken = token => {
         if (!token) {
             this.loggedIn = false;
-            throw new Error('invalid token');
         }
         this.token = token;
         client.passport.verifyJWT(token)
@@ -69,7 +70,6 @@ export default class AuthStore {
             }))
             .catch(action(error => {
                 this.loggedIn = false;
-                console.error(error);
             }));
     };
 }

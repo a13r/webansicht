@@ -94,7 +94,6 @@ export default class Container extends React.Component {
                     <Route path="/stations" component={Stations}/>
                     {stores.auth.loggedIn === false &&
                     <div className="row">
-                        <Redirect to="/"/>
                         <div className="col-md-2 col-md-offset-5">
                             <LoginForm/>
                         </div>
