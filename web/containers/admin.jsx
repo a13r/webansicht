@@ -2,8 +2,13 @@ import React from "react";
 import restrictToRoles from '../components/restrictToRoles';
 import {inject, observer} from "mobx-react";
 import {TextInput} from "../components/formControls";
-import {Button, Checkbox, Col, FormGroup, ListGroup, ListGroupItem, Row} from "react-bootstrap";
+import {Button, Checkbox, Col, FormGroup, Row} from "react-bootstrap";
 import "../styles/admin.css";
+
+const DeleteButton = restrictToRoles(['admin'])(inject('resourceAdmin')(({resourceAdmin}) =>
+    <Button bsStyle="danger" onClick={resourceAdmin.showDeleteModal}>
+        <i className="fa fa-trash"/> Löschen
+    </Button>));
 
 export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({resourceAdmin}) =>
     <Row>
@@ -64,6 +69,7 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                                 <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
                                     <i className="fa fa-save"/> Speichern
                                 </Button>
+                                <DeleteButton/>
                                 <Button onClick={() => resourceAdmin.showEditor(false)}> Abbrechen</Button>
                             </div>
                         </FormGroup>

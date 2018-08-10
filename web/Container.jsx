@@ -21,8 +21,9 @@ import JournalEditor from "./components/JournalEditor";
 import NotificationSystem from "react-notification-system";
 import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
+import DeleteResourceModal from "~/components/DeleteResourceModal";
 
-const {auth, router} = stores;
+const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, router);
 
@@ -92,14 +93,15 @@ export default class Container extends React.Component {
                     <Route path="/userSettings" component={UserSettings}/>
                     <Route path="/journal" component={Journal}/>
                     <Route path="/stations" component={Stations}/>
-                    {stores.auth.loggedIn === false &&
+                    {auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">
                             <LoginForm/>
                         </div>
                     </div>}
-                    {stores.auth.isDispo && <JournalEditor/>}
-                    <NotificationSystem ref={ns => stores.notification.system = ns}/>
+                    {auth.isDispo && <JournalEditor/>}
+                    <DeleteResourceModal/>
+                    <NotificationSystem ref={ns => notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </Router>

@@ -9,7 +9,8 @@ const forms = {
     loginForm: stores.auth.loginForm,
     changePasswordForm: stores.auth.changePasswordForm,
     manageUserForm: stores.manageUser.form,
-    journalForm: stores.journal.form
+    journalForm: stores.journal.form,
+    deleteResourceForm: stores.resourceAdmin.deleteResourceForm
 };
 export default forms;
 

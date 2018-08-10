@@ -4,18 +4,23 @@ import _ from "lodash";
 import {resources} from "../app";
 import {required} from "../forms/validators";
 import {loginReaction, notification} from "./index";
+import {DeleteResourceForm} from "~/forms/deleteResourceForm";
 
 export default class ResourceAdminStore extends ResourceStore {
     @observable
     editorVisible = false;
+    deleteResourceForm;
 
     constructor() {
         super(fields);
-        loginReaction(() => this.find());
+        this.deleteResourceForm = new DeleteResourceForm();
+        loginReaction(() => this.find(), () => {
+            this.editorVisible = false;
+            this.deleteResourceForm.hide();
+        });
         reaction(() => this.form.$('hidden').value, hidden => {
-            const id = this.form.$('_id').value;
-            if (id) {
-                resources.patch(id, {hidden});
+            if (this.selectedResource && this.selectedResource.hidden !== hidden) {
+                resources.patch(this.selectedResourceId, {hidden});
             }
         });
     }
@@ -47,6 +52,11 @@ export default class ResourceAdminStore extends ResourceStore {
         }
     };
 
+    @computed
+    get selectedResource() {
+        return _.find(this.list, {_id: this.selectedResourceId});
+    }
+
     onSuccess = form => {
         const id = form.$('_id').value;
         if (id) {
@@ -62,6 +72,10 @@ export default class ResourceAdminStore extends ResourceStore {
                 }));
             this.createResource();
         }
+    };
+
+    showDeleteModal = () => {
+        this.deleteResourceForm.show(this.selectedResource);
     };
 }
 

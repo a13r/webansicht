@@ -20,6 +20,7 @@ export default class ResourceStore {
         resources.on('created', this.onCreated);
         resources.on('updated', this.onUpdated);
         resources.on('patched', this.onUpdated);
+        resources.on('removed', this.onRemoved);
     }
 
     find(query = {}) {
@@ -47,6 +48,11 @@ export default class ResourceStore {
         if (this.selectedResourceId === item._id) {
             this.form.update(item);
         }
+    };
+
+    @action
+    onRemoved = item => {
+        _.remove(this.list, {_id: item._id});
     };
 
     @computed

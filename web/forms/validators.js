@@ -12,6 +12,13 @@ export function minLengthIfNew(length) {
     }
 }
 
+export function isEqualTo(target) {
+    return ({field, form}) => {
+        const equal = (form.$(target).value === field.value);
+        return [equal, `${form.$(target).label} stimmt nicht überein`];
+    }
+}
+
 export function passwordEqualTo(target) {
     return ({field, form}) => {
         const passwordsEqual = (form.$(target).value === field.value);

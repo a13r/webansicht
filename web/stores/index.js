@@ -17,6 +17,7 @@ export const router = new RouterStore();
 export const auth = new AuthStore();
 export const notification = new NotificationStore();
 export const manageUser = new ManageUserStore();
+export const resourceAdmin = new ResourceAdminStore();
 
 const stores = {
     auth,
@@ -24,7 +25,7 @@ const stores = {
     router,
     log: new LogStore(),
     resources: new ResourceListStore(),
-    resourceAdmin: new ResourceAdminStore(),
+    resourceAdmin,
     journal: new JournalStore(),
     stations: new StationStore(),
     manageUser
