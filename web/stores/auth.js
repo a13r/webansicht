@@ -1,6 +1,6 @@
 import {action, computed, observable, reaction} from "mobx";
 import {client, registerAuthErrorHandler, users} from "../app";
-import {clearForms, router} from "./index";
+import {router} from "./index";
 import {LoginForm} from "~/forms/login";
 import {ChangePasswordForm} from "~/forms/changePassword";
 
@@ -48,7 +48,8 @@ export default class AuthStore {
     @action
     logout = () => {
         client.logout();
-        clearForms();
+        // import async to prevent cyclic module dependency
+        import('~/forms').then(module => module.clearForms());
         router.push('/');
         this.loggedIn = false;
     };

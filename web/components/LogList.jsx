@@ -4,12 +4,12 @@ import states from "../shared/states";
 import moment from "moment";
 import {SortToggle} from "./SortToggle";
 
-export default inject('store')(observer(({store}) =>
+export default inject('log')(observer(({log}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>
             <tr>
-                <th>Zeitpunkt <SortToggle store={store.log}/></th>
+                <th>Zeitpunkt <SortToggle store={log}/></th>
                 <th>TETRA</th>
                 <th>Kennung</th>
                 <th>Typ</th>
@@ -23,7 +23,7 @@ export default inject('store')(observer(({store}) =>
             </tr>
             </thead>
             <tbody>
-            {store.log.list.map(r =>
+            {log.list.map(r =>
                 <tr style={states.get(r.state).rowStyle} key={r._id}>
                     <td>{r.since && moment(r.since).format('L LT')}</td>
                     <td>{r.tetra}</td>

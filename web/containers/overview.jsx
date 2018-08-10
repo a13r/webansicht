@@ -6,7 +6,7 @@ import {inject, observer} from "mobx-react";
 import authenticate from "../components/authenticate";
 import StationLoad from "~/components/StationLoad";
 
-export default authenticate(inject('store', 'stations')(observer(({store: {auth}, stations}) =>
+export default authenticate(inject('auth', 'stations')(observer(({auth, stations}) =>
     <Row>
         <Col md={9}>
             <ResourceList/>

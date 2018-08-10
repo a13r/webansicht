@@ -8,7 +8,7 @@ function styleForPercentage(now) {
     if (now > 70) {
         return "warning";
     }
-    return "default";
+    return "success";
 }
 
 export default ({now, ...props}) => <ProgressBar now={Math.min(now, 100)} bsStyle={styleForPercentage(now)} {...props}/>;

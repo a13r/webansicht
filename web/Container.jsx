@@ -14,6 +14,7 @@ import Journal from "./containers/journal";
 import Stations from "./containers/stations";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import stores from "./stores";
+import forms from "./forms";
 import "./styles/global.css";
 import LoginForm from "./components/LoginForm";
 import JournalEditor from "./components/JournalEditor";
@@ -30,7 +31,7 @@ const K = ({children}) => <kbd className="hidden-xs hidden-sm hidden-md">{childr
 @observer
 export default class Container extends React.Component {
     render() {
-        return <Provider store={stores} {...stores}>
+        return <Provider {...stores} {...forms}>
             <Router history={history}>
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>

@@ -19,7 +19,7 @@ function stateClass(e) {
         return 'bg-danger';
 }
 
-export default inject('store')(observer(({store: {journal}}) =>
+export default inject('journal')(observer(({journal}) =>
     <div className="panel panel-default">
         <table className="table table-condensed table-hover journal-table">
             <thead>

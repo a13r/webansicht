@@ -5,7 +5,7 @@ import {TextInput} from "../components/formControls";
 import {Button, Checkbox, Col, FormGroup, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import "../styles/admin.css";
 
-export default restrictToRoles(['dispo'])(inject('store')(observer(({store: {resourceAdmin}}) =>
+export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({resourceAdmin}) =>
     <Row>
         <Col md={9}>
             <FormGroup>

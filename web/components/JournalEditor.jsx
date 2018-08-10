@@ -12,7 +12,7 @@ const SelectWithOptions = ({field, options}) =>
         {options.map(v => <option key={v}>{v}</option>)}
     </Select>;
 
-const AuditList = restrictToRoles(['admin'])(inject('store')(observer(({store: {journal}}) =>
+const AuditList = restrictToRoles(['admin'])(inject('journal', 'journalForm')(observer(({journal, journalForm: form}) =>
     journal.selectedEntry && journal.selectedEntry.auditLog && journal.selectedEntry.auditLog.length &&
     <table className="table table-condensed table-bordered">
         <thead>
@@ -28,7 +28,7 @@ const AuditList = restrictToRoles(['admin'])(inject('store')(observer(({store: {
         {journal.selectedEntry.auditLog.map(log =>
             <tr key={log.changedAt}>
                 <td>{moment(log.changedAt).format('L LT')}</td>
-                <td>{journal.form.$(log.field).label}</td>
+                <td>{form.$(log.field).label}</td>
                 <td>{log.field === 'createdAt' ? moment(log.before).format('L LT') : log.before}</td>
                 <td>{log.field === 'createdAt' ? moment(log.after).format('L LT') : log.after}</td>
                 <td>{log.initials}</td>
@@ -36,25 +36,25 @@ const AuditList = restrictToRoles(['admin'])(inject('store')(observer(({store: {
         </tbody>
     </table> || null)));
 
-export default authenticate(inject('store')(observer(({store: {journal}}) =>
+export default authenticate(inject('journal', 'journalForm')(observer(({journal, journalForm: form}) =>
     <Modal show={journal.editorVisible} onHide={journal.closeEditor}>
-        <form onSubmit={journal.form.onSubmit}>
+        <form onSubmit={form.onSubmit}>
             <Modal.Header closeButton>
                 <Modal.Title>ETB-Eintrag {journal.selectedEntryId ? 'bearbeiten' : 'erstellen'}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <TextInput field={journal.form.$('createdAt')}/>
-                <TextInput field={journal.form.$('text')}/>
-                <TextInput field={journal.form.$('reporter')}/>
-                <SelectWithOptions field={journal.form.$('reportedVia')}
+                <TextInput field={form.$('createdAt')}/>
+                <TextInput field={form.$('text')}/>
+                <TextInput field={form.$('reporter')}/>
+                <SelectWithOptions field={form.$('reportedVia')}
                                    options={selectOptions.reportedVia}/>
-                <SelectWithOptions field={journal.form.$('direction')}
+                <SelectWithOptions field={form.$('direction')}
                                    options={selectOptions.direction}/>
-                <SelectWithOptions field={journal.form.$('priority')}
+                <SelectWithOptions field={form.$('priority')}
                                    options={selectOptions.priority}/>
-                <SelectWithOptions field={journal.form.$('state')}
+                <SelectWithOptions field={form.$('state')}
                                    options={selectOptions.state}/>
-                <TextInput field={journal.form.$('comment')}/>
+                <TextInput field={form.$('comment')}/>
             </Modal.Body>
             <AuditList/>
             <Modal.Footer>

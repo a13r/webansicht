@@ -3,7 +3,7 @@ import {inject, observer} from 'mobx-react';
 import {Button, FormGroup} from 'react-bootstrap';
 import {TextInput} from './formControls';
 
-export default inject('store')(observer(({store: {auth: {changePasswordForm: form}}}) =>
+export default inject('changePasswordForm')(observer(({changePasswordForm: form}) =>
     <div className="panel panel-default">
         <div className="panel-heading">
             <h2 className="panel-title">Passwort ändern</h2>

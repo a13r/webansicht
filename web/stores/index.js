@@ -31,25 +31,15 @@ const stores = {
 };
 export default stores;
 
-const forms = {
-    resourceEditor: stores.resources.form,
-    resourceAdmin: stores.resourceAdmin.form,
-    logFilter: stores.log.form,
-    loginForm: stores.auth.loginForm,
-    changePasswordForm: stores.auth.changePasswordForm,
-    manageUserForm: stores.manageUser.form,
-    journalForm: stores.journal.form
-};
-
-MobxReactFormDevTools.register(forms);
-
-loginReaction(() => {
-    bind('f1', '/');
-    bind('f2', '/journal');
-    bind('f3', '/log');
-    bind('ctrl+e', stores.journal.createEntry);
-    bind('f4', '/resources');
-    bind('f5', '/stations');
+loginReaction(({user}) => {
+    if (user.roles.includes('dispo')) {
+        bind('f1', '/');
+        bind('f2', '/journal');
+        bind('f3', '/log');
+        bind('ctrl+e', stores.journal.createEntry);
+        bind('f4', '/resources');
+        bind('f5', '/stations');
+    }
 }, () => Mousetrap.reset());
 
 function bind(key, pathOrAction) {
@@ -65,14 +55,10 @@ function bind(key, pathOrAction) {
     });
 }
 
-export function clearForms() {
-    _.values(forms).forEach(form => form.clear());
-}
-
 export function loginReaction(onLogin, onLogout) {
     reaction(() => auth.loggedIn, loggedIn => {
         if (loggedIn) {
-            _.isFunction(onLogin) && onLogin();
+            _.isFunction(onLogin) && onLogin({user: auth.user, auth});
         } else {
             _.isFunction(onLogout) && onLogout();
         }

@@ -4,7 +4,7 @@ import moment from "moment";
 import states from "../shared/states";
 import "../styles/resourceList.css";
 
-export default inject('store')(observer(({store: {auth, resources}}) =>
+export default inject('auth', 'resources')(observer(({auth, resources}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>

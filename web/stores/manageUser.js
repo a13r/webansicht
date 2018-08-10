@@ -1,6 +1,5 @@
 import {action, observable, reaction} from "mobx";
 import {loginReaction} from "~/stores";
-import {auth} from "~/stores";
 import {users} from "~/app";
 import _ from "lodash";
 import {ManageUserForm} from "~/forms/manageUserForm";
@@ -12,7 +11,7 @@ export default class ManageUserStore {
 
     constructor() {
         this.form = new ManageUserForm();
-        loginReaction(() => {
+        loginReaction(({auth}) => {
             if (auth.isAdmin) {
                 users.find().then(action(users => this.userList = users));
                 users.on('created', this.addUser);

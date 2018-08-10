@@ -2,7 +2,7 @@ import React from "react";
 import {inject, observer} from "mobx-react";
 import {Button, FormGroup} from 'react-bootstrap';
 
-export default inject('store')(observer(({store: {auth}}) =>
+export default inject('auth')(observer(({auth}) =>
     <div className="print-hidden">
         <form action="/export.xlsx" method="post">
             <input type="hidden" name="accessToken" value={auth.token}/>
