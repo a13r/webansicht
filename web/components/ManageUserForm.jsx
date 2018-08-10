@@ -8,7 +8,7 @@ export default restrictToRoles(['admin'])(inject('auth', 'stations')(observer(({
     <Panel header={<span>Benutzer verwalten</span>}>
         <form onSubmit={auth.manageUserForm.onSubmit}>
             <Select field={auth.manageUserForm.$('_id')}>
-                <option>(neuer Benutzer)</option>
+                <option value=''>(neuer Benutzer)</option>
                 {auth.userList.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
             </Select>
             <TextInput field={auth.manageUserForm.$('username')}/>
