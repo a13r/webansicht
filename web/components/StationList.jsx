@@ -9,6 +9,7 @@ const Station = inject('auth', 'stations')(observer(({auth, stations: store, sta
             <ProgressBar now={station.loadPercentage}
                          label={`${station.currentPatients.value}/${station.maxPatients.value}`}/>
             <form onSubmit={e => store.submitNew(station, e)}>
+                <fieldset disabled={!station.canWrite}>
                 <Row>
                     <Col lg={6}>
                         <TextInput field={station.currentPatients} min={0}/>
@@ -28,6 +29,7 @@ const Station = inject('auth', 'stations')(observer(({auth, stations: store, sta
                     {station.isNew &&
                         <Button onClick={() => store.removeNew(station)} className="pull-right">Abbrechen</Button>}
                 </div>
+                </fieldset>
             </form>
         </Panel>
     </Col>));

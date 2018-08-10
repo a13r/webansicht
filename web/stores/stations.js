@@ -1,5 +1,6 @@
 import {observable, action, computed, reaction} from "mobx";
 import {stations} from "~/app";
+import {auth} from "~/stores";
 import _ from "lodash";
 import {loginReaction} from "~/stores/index";
 import validatorjs from "validatorjs";
@@ -147,6 +148,10 @@ export class Station {
     @computed
     get loadLabel() {
         return this.currentPatients.value + '/' + this.maxPatients.value;
+    }
+
+    get canWrite() {
+        return auth.isAdmin || auth.isDispo || auth.user.stationId === this._id;
     }
 }
 
