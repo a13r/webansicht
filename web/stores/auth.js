@@ -134,13 +134,16 @@ export default class AuthStore {
 
     onSubmitManageUser = {
         onSuccess: form => {
-            const {_id, admin, dispo, station, username, name, initials, password} = form.values();
+            const {_id, admin, dispo, station, username, name, initials, password, stationId} = form.values();
             const roles = [];
             if (admin) roles.push('admin');
             if (dispo) roles.push('dispo');
             if (station) roles.push('station');
 
-            const data = {roles, username, name, initials};
+            const data = {roles, username, name, initials, stationId};
+            if (!stationId) {
+                data.stationId = null;
+            }
             if (password.length) {
                 data.password = password;
             }
@@ -245,6 +248,9 @@ const manageUserFields = {
         label: 'Kürzel',
         validators: [requiredIf('dispo')]
     },
+    stationId: {
+        label: 'Eigene SanHiSt'
+    },
     password: {
         label: 'Neues Passwort',
         type: 'password',
@@ -254,7 +260,7 @@ const manageUserFields = {
     passwordRepeat: {
         label: 'Neues Passwort (wdh.)',
         type: 'password',
-        valudators: [passwordEqualTo('password')]
+        validators: [passwordEqualTo('password')]
     }
 };
 

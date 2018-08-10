@@ -11,6 +11,7 @@ module.exports = function (app) {
         name: {type: String},
         initials: {type: String, unique: true},
         roles: [String],
+        stationId: {type: mongooseClient.Schema.Types.ObjectId},
 
         createdAt: {type: Date, default: Date.now},
         updatedAt: {type: Date, default: Date.now},
