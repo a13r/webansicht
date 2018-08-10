@@ -13,7 +13,7 @@ export default authenticate(inject('store', 'stations')(observer(({store: {auth}
         <Col md={3}>
             {auth.isDispo && <ResourceEditor/>}
             {stations.list.map(s =>
-                <Panel key={s._id} header={s.nameValue}>
+                <Panel key={s._id} header={s.name}>
                     <ProgressBar now={s.loadPercentage} label={s.loadLabel} style={{marginBottom: 0}}/>
                 </Panel>)}
         </Col>

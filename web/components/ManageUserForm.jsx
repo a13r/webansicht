@@ -23,7 +23,7 @@ export default restrictToRoles(['admin'])(inject('auth', 'stations')(observer(({
             {auth.manageUserForm.$('station').value &&
             <Select field={auth.manageUserForm.$('stationId')}>
                 <option value="">(keine)</option>
-                {stations.list.map(s => <option key={s._id} value={s._id}>{s.nameValue}</option>)}
+                {stations.list.map(s => <option key={s._id} value={s._id}>{s.name}</option>)}
             </Select>}
             <div className="btn-toolbar">
                 <Button type="submit" bsStyle="primary">speichern</Button>

@@ -2,9 +2,10 @@ import {observable, action, computed, reaction} from "mobx";
 import {stations} from "~/app";
 import {auth} from "~/stores";
 import _ from "lodash";
-import {loginReaction} from "~/stores/index";
-import validatorjs from "validatorjs";
+import {loginReaction, notification} from "~/stores/index";
+import validator from "validator";
 import {Form} from "mobx-react-form";
+import {required} from "~/shared/validators";
 
 export default class StationStore {
     @observable
@@ -30,20 +31,20 @@ export default class StationStore {
 
     @action
     onCreated = entry => {
-        this.list = _.orderBy(this.list.concat(new Station(entry)), ['orderingValue', 'nameValue']);
+        this.list = _.orderBy(this.list.concat(new Station(entry)), ['ordering', 'name']);
     };
 
     @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing) {
-            existing.form.update(entry);
             if (entry.deleted !== existing.deleted) {
                 if (entry.deleted && !this.showDeleted) {
                     _.remove(this.list, {_id: entry._id});
                 }
             }
-            this.list = _.orderBy(this.list, ['orderingValue', 'nameValue']);
+            existing.update(entry);
+            this.list = _.orderBy(this.list, ['ordering', 'name']);
         } else {
             this.find();
         }
@@ -53,7 +54,7 @@ export default class StationStore {
     selectStation = station => this.selected = station;
 
     create = () => {
-        this.list.push(new Station({name: 'Unbenannt'}));
+        this.list.push(new Station({name: ''}));
     };
 
     @action
@@ -77,77 +78,43 @@ export default class StationStore {
 
 export class Station {
     form;
+    _id;
+    name;
+    contact;
+    currentPatients;
+    maxPatients;
+    ordering;
+    deleted;
 
     constructor(values) {
-        this.form = new Form({fields}, {onSubmit: this, plugins: {dvr: validatorjs}});
+        _.assign(this, values);
+        this.form = new StationForm(this);
         this.form.update(values);
     }
 
-    onSuccess = form => {
-        const values = _.merge({}, form.values());
-        if (!values._id) {
-            delete values._id;
-            return stations.create(values);
-        } else {
-            return stations.patch(values._id, values)
-                .then(entry => {
-                    form.reset();
-                    form.update(entry);
-                });
-        }
-    };
-
-    get _id() {
-        return this.form.$('_id').value;
+    update(values) {
+        _.assign(this, values);
+        this.form.reset();
+        this.form.update(values);
+        this.form.validate();
     }
 
-    get name() {
-        return this.form.$('name');
+    reset() {
+        this.form.reset();
+        this.form.update(_.omit(this, ['form', '_id']));
+        this.form.validate();
     }
 
-    @computed
-    get nameValue() {
-        return this.name.value;
-    }
-
-    get contact() {
-        return this.form.$('contact');
-    }
-
-    get currentPatients() {
-        return this.form.$('currentPatients');
-    }
-
-    get maxPatients() {
-        return this.form.$('maxPatients');
-    }
-
-    get ordering() {
-        return this.form.$('ordering');
-    }
-
-    @computed
-    get orderingValue() {
-        return this.ordering.value;
-    }
-
-    get deleted() {
-        return this.form.$('deleted');
-    }
-
-    @computed
     get isNew() {
-        return !this.form.$('_id').value;
+        return !this._id;
     }
 
-    @computed
     get loadPercentage() {
-        return this.currentPatients.value / this.maxPatients.value * 100;
+        return this.currentPatients / this.maxPatients * 100;
     }
 
-    @computed
     get loadLabel() {
-        return this.currentPatients.value + '/' + this.maxPatients.value;
+        return this.currentPatients + '/' + this.maxPatients;
     }
 
     get canWrite() {
@@ -155,13 +122,39 @@ export class Station {
     }
 }
 
+export class StationForm extends Form {
+    constructor(station) {
+        super({fields}, {
+            onSubmit: {
+                onSuccess: form => {
+                    if (!station._id) {
+                        return stations.create(form.values())
+                            .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
+                    } else {
+                        return stations.patch(station._id, form.values())
+                            .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
+                    }
+                }
+            },
+            plugins: {dvr: validator}
+        });
+    }
+
+    @computed
+    get loadPercentage() {
+        return this.$('currentPatients').value / this.$('maxPatients').value * 100;
+    }
+
+    @computed
+    get loadLabel() {
+        return this.$('currentPatients').value + '/' + this.$('maxPatients').value;
+    }
+}
+
 const fields = {
-    _id: {
-        label: 'ID'
-    },
     name: {
         label: 'Name',
-        rules: 'required'
+        validators: [required()]
     },
     contact: {
         label: 'Kontakt'
