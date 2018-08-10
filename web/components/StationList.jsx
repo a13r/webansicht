@@ -1,12 +1,13 @@
 import React from "react";
 import {inject, observer} from "mobx-react";
-import {Button, Checkbox, Col, Panel, ProgressBar, Row} from "react-bootstrap";
+import {Button, Checkbox, Col, Panel, Row} from "react-bootstrap";
 import {TextInput} from "~/components/formControls";
+import StationLoad from "~/components/StationLoad";
 
 const Station = inject('auth', 'stations')(observer(({auth, stations: store, station}) =>
     <Col lg={2} md={4}>
         <Panel header={station.name || 'Neue SanHiSt'} bsStyle={station.form.changed ? 'warning' : 'default'}>
-            <ProgressBar now={station.form.loadPercentage} label={station.form.loadLabel}/>
+            <StationLoad now={station.form.loadPercentage} label={station.form.loadLabel}/>
             <form onSubmit={e => store.submitNew(station, e)}>
                 <fieldset disabled={!station.canWrite}>
                 <Row>
