@@ -11,10 +11,12 @@ import _ from 'lodash';
 import Mousetrap from 'mousetrap';
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
 import StationStore from "~/stores/stations";
+import ManageUserStore from "~/stores/manageUser";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
 export const notification = new NotificationStore();
+export const manageUser = new ManageUserStore();
 
 const stores = {
     auth,
@@ -24,7 +26,8 @@ const stores = {
     resources: new ResourceListStore(),
     resourceAdmin: new ResourceAdminStore(),
     journal: new JournalStore(),
-    stations: new StationStore()
+    stations: new StationStore(),
+    manageUser
 };
 export default stores;
 
@@ -34,7 +37,7 @@ const forms = {
     logFilter: stores.log.form,
     loginForm: stores.auth.loginForm,
     changePasswordForm: stores.auth.changePasswordForm,
-    manageUserForm: stores.auth.manageUserForm,
+    manageUserForm: stores.manageUser.form,
     journalForm: stores.journal.form
 };
 
