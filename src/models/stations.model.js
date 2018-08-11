@@ -1,5 +1,5 @@
 // stations-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 module.exports = function (app) {
@@ -11,7 +11,12 @@ module.exports = function (app) {
         currentPatients: {type: Number},
         maxPatients: {type: Number},
         ordering: {type: Number},
-        deleted: {type: Boolean, default: false}
+        deleted: {type: Boolean, default: false},
+        history: [{
+            timestamp: {type: Date},
+            currentPatients: {type: Number},
+            maxPatients: {type: Number}
+        }]
     }, {
         timestamps: true
     });

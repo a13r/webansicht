@@ -1,13 +1,14 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const createStationHistory = require('../../hooks/create-station-history');
 
 module.exports = {
   before: {
     all: [ authenticate('jwt') ],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
+    create: [createStationHistory()],
+    update: [createStationHistory()],
+    patch: [createStationHistory()],
     remove: []
   },
 
