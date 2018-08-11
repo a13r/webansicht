@@ -9,9 +9,13 @@ module.exports = function () { // eslint-disable-line no-unused-vars
 
         let history = [];
         if (context.id) {
-            const existing = await context.service.get(context.id);
-            if (existing) {
-                history = existing.history || [];
+            try {
+                const existing = await context.service.get(context.id);
+                if (existing) {
+                    history = existing.history || [];
+                }
+            } catch (error) {
+                console.error('could not get existing station object', error);
             }
         }
         history.push(entry);
