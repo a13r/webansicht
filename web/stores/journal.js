@@ -170,6 +170,10 @@ const fields = {
         value: selectOptions.state[0],
         //default: selectOptions.state[0]
     },
+    transport: {
+        label: 'Abtransport',
+        type: 'checkbox'
+    },
     comment: {
         label: 'Erledigungsvermerk'
     }

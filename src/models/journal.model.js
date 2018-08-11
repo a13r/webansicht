@@ -15,6 +15,7 @@ module.exports = function (app) {
         priority: {type: String},
         state: {type: String},
         comment: {type: String},
+        transport: {type: Boolean},
         user: {
             username: String,
             name: String,

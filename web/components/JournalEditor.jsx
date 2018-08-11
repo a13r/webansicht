@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Modal} from "react-bootstrap";
+import {Button, Checkbox, Modal} from "react-bootstrap";
 import {Select, TextInput} from "./formControls";
 import {inject, observer} from "mobx-react";
 import {selectOptions} from "../stores/journal";
@@ -54,6 +54,7 @@ export default authenticate(inject('journal', 'journalForm')(observer(({journal,
                                    options={selectOptions.priority}/>
                 <SelectWithOptions field={form.$('state')}
                                    options={selectOptions.state}/>
+                <Checkbox {...form.$('transport').bind()}>{form.$('transport').label}</Checkbox>
                 <TextInput field={form.$('comment')}/>
             </Modal.Body>
             <AuditList/>

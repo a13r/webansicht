@@ -32,6 +32,7 @@ export default inject('journal')(observer(({journal}) =>
                 <th style={{width: '5em'}}>Priorität</th>
                 <th style={{width: '5em'}}>Status</th>
                 <th style={{width: '15%'}}>Vermerk</th>
+                <th style={{width: '5em'}}>Trsp.</th>
                 <th style={{width: '5em'}}>Kürzel</th>
             </tr>
             </thead>
@@ -47,6 +48,7 @@ export default inject('journal')(observer(({journal}) =>
                     <td className={priorityClass(e)}>{e.priority}</td>
                     <td className={stateClass(e)}>{e.state}</td>
                     <td>{e.comment}</td>
+                    <td>{e.transport && <i className="fa fa-ambulance"/>}</td>
                     <td>{e.user.initials}</td>
                 </tr>)}
             </tbody>
