@@ -10,8 +10,8 @@ export default inject('auth', 'resources')(observer(({auth, resources}) =>
             <thead>
             <tr>
                 <th>TETRA</th>
-                <th>Kennung</th>
                 <th>Typ</th>
+                <th>Kennung</th>
                 <th>Status</th>
                 <th>seit</th>
                 <th>Letzter Standort</th>
@@ -25,8 +25,8 @@ export default inject('auth', 'resources')(observer(({auth, resources}) =>
                 <tr style={states.get(r.state).rowStyle} className={auth.isDispo ? 'resourceRow' : ''}
                     key={r._id} onClick={auth.isDispo ? () => resources.selectResource(r._id) : null}>
                     <td>{r.tetra}</td>
-                    <td>{r.callSign}</td>
                     <td>{r.type}</td>
+                    <td>{r.callSign}</td>
                     <td>{states.get(r.state).name}</td>
                     <td>{r.since && moment(r.since).format('LT')}</td>
                     <td>{r.lastPosition}</td>

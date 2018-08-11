@@ -23,8 +23,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                     <thead>
                     <tr>
                         <th>TETRA</th>
-                        <th>Kennung</th>
                         <th>Typ</th>
+                        <th>Kennung</th>
                         <th>Kdt./Fahrer</th>
                         <th>Reihung</th>
                         <th>Heimatstandort</th>
@@ -36,8 +36,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                         <tr onClick={() => resourceAdmin.selectResource(r._id)} key={r._id}
                             className={'resourceRow' + (resourceAdmin.selectedResourceId === r._id ? ' active' : '')}>
                             <td>{r.tetra}</td>
-                            <td>{r.callSign}</td>
                             <td>{r.type}</td>
+                            <td>{r.callSign}</td>
                             <td>{r.contact}</td>
                             <td>{r.ordering}</td>
                             <td>{r.home}</td>

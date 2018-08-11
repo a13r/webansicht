@@ -11,8 +11,8 @@ export default inject('log')(observer(({log}) =>
             <tr>
                 <th>Zeitpunkt <SortToggle store={log}/></th>
                 <th>TETRA</th>
-                <th>Kennung</th>
                 <th>Typ</th>
+                <th>Kennung</th>
                 <th>Status</th>
                 <th>Letzter Standort</th>
                 <th>Zielort</th>
@@ -27,8 +27,8 @@ export default inject('log')(observer(({log}) =>
                 <tr style={states.get(r.state).rowStyle} key={r._id}>
                     <td>{r.since && moment(r.since).format('L LT')}</td>
                     <td>{r.tetra}</td>
-                    <td>{r.callSign}</td>
                     <td>{r.type}</td>
+                    <td>{r.callSign}</td>
                     <td>{states.get(r.state).name}</td>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
