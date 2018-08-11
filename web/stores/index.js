@@ -12,6 +12,7 @@ import Mousetrap from 'mousetrap';
 import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
 import StationStore from "~/stores/stations";
 import ManageUserStore from "~/stores/manageUser";
+import {TransportStore} from "~/stores/transports";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -28,6 +29,7 @@ const stores = {
     resourceAdmin,
     journal: new JournalStore(),
     stations: new StationStore(),
+    transports: new TransportStore(),
     manageUser
 };
 export default stores;

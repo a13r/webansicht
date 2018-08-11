@@ -12,6 +12,7 @@ import Log from "./containers/log";
 import UserSettings from "./containers/userSettings";
 import Journal from "./containers/journal";
 import Stations from "./containers/stations";
+import Transports from "./containers/transports";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import stores from "./stores";
 import forms from "./forms";
@@ -22,12 +23,13 @@ import NotificationSystem from "react-notification-system";
 import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
 import DeleteResourceModal from "~/components/DeleteResourceModal";
+import restrictToRoles from "~/components/restrictToRoles";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, router);
 
-const K = ({children}) => <kbd className="hidden-xs hidden-sm hidden-md">{children}</kbd>;
+const K = restrictToRoles(['dispo'])(({children}) => <kbd className="hidden-xs hidden-sm hidden-md">{children}</kbd>);
 
 @observer
 export default class Container extends React.Component {
@@ -42,11 +44,13 @@ export default class Container extends React.Component {
                         </Navbar.Header>
                         {auth.loggedIn &&
                         <Navbar.Collapse>
-                            {auth.isDispo &&
                             <Nav>
                                 <IndexLinkContainer to="/">
                                     <NavItem><i className="fa fa-home"/> Übersicht <K>F1</K></NavItem>
                                 </IndexLinkContainer>
+                            </Nav>
+                            {auth.isDispo &&
+                            <Nav>
                                 <LinkContainer to="/journal">
                                     <NavItem><i className="fa fa-list"/> Einsatztagebuch <K>F2</K></NavItem>
                                 </LinkContainer>
@@ -72,6 +76,11 @@ export default class Container extends React.Component {
                                     <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
                                 </LinkContainer>
                             </Nav>}
+                            <Nav>
+                                <LinkContainer to="/transports">
+                                    <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
+                                </LinkContainer>
+                            </Nav>
                             <Nav pullRight>
                                 {auth.user ?
                                     <NavDropdown id="user"
@@ -93,6 +102,7 @@ export default class Container extends React.Component {
                     <Route path="/userSettings" component={UserSettings}/>
                     <Route path="/journal" component={Journal}/>
                     <Route path="/stations" component={Stations}/>
+                    <Route path="/transports" component={Transports}/>
                     {auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">
