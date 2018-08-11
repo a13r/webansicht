@@ -5,7 +5,7 @@ import {TextInput} from "~/components/formControls";
 import StationLoad from "~/components/StationLoad";
 
 const Station = inject('auth', 'stations')(observer(({auth, stations: store, station}) =>
-    <Col lg={2} md={4}>
+    <Col lg={3} md={4}>
         <Panel header={station.name || 'Neue SanHiSt'} bsStyle={station.form.changed ? 'warning' : 'default'}>
             <StationLoad now={station.form.loadPercentage} label={station.form.loadLabel}/>
             <form onSubmit={e => store.submitNew(station, e)}>
