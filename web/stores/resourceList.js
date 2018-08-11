@@ -30,6 +30,12 @@ export default class ResourceListStore extends ResourceStore {
     setHome = field => {
         this.form.$(field).set(this.form.$('home').value);
     };
+
+    swapPositions = () => {
+        const tmp = this.form.$('lastPosition').value;
+        this.form.$('lastPosition').set(this.form.$('destination').value);
+        this.form.$('destination').set(tmp);
+    };
 }
 
 const fields = {

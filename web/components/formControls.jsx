@@ -15,13 +15,14 @@ export const TextInput = observer(({field, ...props}) =>
         {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 
-export const HomeTextInput = observer(({field, onClick}) =>
+export const PositionTextInput = observer(({field, onClickHome, onClickSwap}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
         <InputGroup>
             <FormControl {...field.bind()} inputRef={i => field.input = i}/>
             <InputGroup.Button>
-                <Button onClick={onClick}><i className="glyphicon glyphicon-home"/></Button>
+                <Button onClick={onClickSwap}><i className="fa fa-retweet"/></Button>
+                <Button onClick={onClickHome}><i className="glyphicon glyphicon-home"/></Button>
             </InputGroup.Button>
         </InputGroup>
         {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}

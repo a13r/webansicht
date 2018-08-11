@@ -4,7 +4,7 @@ import {Select, TextInput} from "./formControls";
 import states from "../shared/states";
 import {inject, observer} from "mobx-react";
 import _ from "lodash";
-import {HomeTextInput} from "~/components/formControls";
+import {PositionTextInput} from "~/components/formControls";
 
 export default inject('resources')(observer(({resources}) =>
     <div className="panel panel-default">
@@ -19,10 +19,12 @@ export default inject('resources')(observer(({resources}) =>
                 <Select field={resources.form.$('state')}>
                     {_.keys(states).map(key => <option key={key} value={key}>{key} – {states[key].name}</option>)}
                 </Select>
-                <HomeTextInput field={resources.form.$('lastPosition')}
-                               onClick={() => resources.setHome('lastPosition')}/>
-                <HomeTextInput field={resources.form.$('destination')}
-                               onClick={() => resources.setHome('destination')}/>
+                <PositionTextInput field={resources.form.$('lastPosition')}
+                                   onClickHome={() => resources.setHome('lastPosition')}
+                                   onClickSwap={resources.swapPositions}/>
+                <PositionTextInput field={resources.form.$('destination')}
+                                   onClickHome={() => resources.setHome('destination')}
+                                   onClickSwap={resources.swapPositions}/>
                 <TextInput field={resources.form.$('info')}/>
                 <Button type="submit">Speichern</Button>
             </form>
