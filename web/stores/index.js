@@ -4,7 +4,6 @@ import LogStore from './log';
 import NotificationStore from './notification';
 import ResourceListStore from './resourceList';
 import ResourceAdminStore from './resourceAdmin';
-import MobxReactFormDevTools from 'mobx-react-form-devtools';
 import {RouterStore} from 'mobx-react-router';
 import {reaction} from 'mobx';
 import _ from 'lodash';
@@ -13,6 +12,7 @@ import 'mousetrap/plugins/global-bind/mousetrap-global-bind';
 import StationStore from "~/stores/stations";
 import ManageUserStore from "~/stores/manageUser";
 import {TransportStore} from "~/stores/transports";
+import ImportExportStore from "~/stores/importExport";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -30,7 +30,8 @@ const stores = {
     journal: new JournalStore(),
     stations: new StationStore(),
     transports: new TransportStore(),
-    manageUser
+    manageUser,
+    importExport: new ImportExportStore()
 };
 export default stores;
 

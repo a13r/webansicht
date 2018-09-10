@@ -10,6 +10,12 @@ export const client = feathers()
 
 const authManagement = new AuthManagement(client);
 
+service('notifications').on('created', n => {
+    if (n.type === 'reloadClient') {
+        window.location.reload();
+    }
+});
+
 export function login({username, password}) {
     return client.authenticate({
         strategy: 'local',

@@ -1,25 +1,72 @@
 const auth = require('@feathersjs/authentication');
 const X = require('xlsx');
 const moment = require('moment-timezone');
+const backup = require('mongodb-backup');
+const restore = require('mongodb-restore');
+const fs = require('fs');
+const uploadDir = './uploads';
+const upload = require('multer')({ dest: uploadDir });
 
 module.exports = function() {
     const app = this;
     // needs Authorization header or accessToken in body
-    app.post('/export.xlsx', auth.express.authenticate('jwt'), (req, res) => {
+    app.post('/export.xlsx', auth.express.authenticate('jwt'), sendExcel);
+    app.post('/export.tar', auth.express.authenticate('jwt'), sendBackup);
+    app.post('/import.tar', auth.express.authenticate('jwt'), upload.single('import'), restoreDatabase);
+
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
+    }
+
+    function sendExcel(req, res) {
         return app.service('journal').find()
             .then(entries => {
                 const wb = X.utils.book_new();
                 X.utils.book_append_sheet(wb, X.utils.json_to_sheet(journalEntriesToRows(entries)));
                 const wbbuf = X.write(wb, {type: 'base64'});
-                const now = moment().format('YYYY-MM-DD_HH-mm-ss');
                 res.writeHead(200, [
                     ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-                    ['Content-Disposition', `attachment; filename=Protokoll_${now}.xlsx`]
+                    ['Content-Disposition', `attachment; filename=Protokoll_${dateTime()}.xlsx`]
                 ]);
                 res.end(new Buffer(wbbuf, 'base64'));
             });
-    });
+    }
+
+    function sendBackup(req, res) {
+        console.log(this);
+        res.writeHead(200, {
+            'Content-Type': 'application/x-tar',
+            'Content-Disposition': `attachment; filename=webansicht_${dateTime()}.tar`
+        });
+
+        backup({
+            uri: app.get('mongodb'),
+            stream: res
+        });
+    }
+
+    function restoreDatabase(req, res) {
+        restore({
+            uri: app.get('mongodb'),
+            root: req.file.destination,
+            tar: req.file.filename,
+            drop: true,
+            callback(error) {
+                fs.unlink(req.file.path, e => { if (e) console.error(e); });
+                if (error) {
+                    res.status(500).send(error);
+                } else {
+                    res.status(200).end();
+                    app.service('notifications').create({type: 'reloadClient'});
+                }
+            }
+        });
+    }
 };
+
+function dateTime() {
+    return moment().format('YYYY-MM-DD_HH-mm-ss');
+}
 
 function journalEntriesToRows(entries) {
     return entries.map((entry, index) => {
