@@ -17,6 +17,7 @@ export default class LogStore {
 
     constructor() {
         log.on('created', this.onCreated);
+        log.on('removed', this.onRemoved);
         this.form = new Form({fields});
         reaction(() => this.form.$('resource_id').value, id => this.find(id ? {resource_id: id} : {}));
         loginReaction(() => this.find());
@@ -29,6 +30,11 @@ export default class LogStore {
         } else {
             this.list.unshift(item);
         }
+    };
+
+    @action
+    onRemoved = ({_id}) => {
+        _.remove(this.list, {_id});
     };
 
     find(query = {}) {

@@ -18,6 +18,7 @@ export default class StationStore {
         stations.on('created', this.onCreated);
         stations.on('updated', this.onUpdated);
         stations.on('patched', this.onUpdated);
+        stations.on('removed', this.onRemoved);
         loginReaction(() => this.find());
         reaction(() => this.showDeleted, () => this.find());
     }
@@ -48,6 +49,9 @@ export default class StationStore {
             this.find();
         }
     };
+
+    @action
+    onRemoved = ({_id}) => _.remove(this.list, {_id});
 
     @action
     selectStation = station => this.selected = station;

@@ -12,6 +12,12 @@ export function minLengthIfNew(length) {
     }
 }
 
+export function equalsConst(constValue) {
+    return ({field, form}) => {
+        return [field.value === constValue, `Wert ist nicht "${constValue}"`]
+    }
+}
+
 export function isEqualTo(target) {
     return ({field, form}) => {
         const equal = (form.$(target).value === field.value);

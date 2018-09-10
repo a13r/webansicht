@@ -1,6 +1,7 @@
 import stores from "~/stores";
 import MobxReactFormDevTools from "mobx-react-form-devtools";
 import _ from "lodash";
+import {DeleteDataForm} from "~/forms/deleteData";
 
 const forms = {
     resourceEditorForm: stores.resources.form,
@@ -10,7 +11,8 @@ const forms = {
     changePasswordForm: stores.auth.changePasswordForm,
     manageUserForm: stores.manageUser.form,
     journalForm: stores.journal.form,
-    deleteResourceForm: stores.resourceAdmin.deleteResourceForm
+    deleteResourceForm: stores.resourceAdmin.deleteResourceForm,
+    deleteDataForm: new DeleteDataForm()
 };
 export default forms;
 

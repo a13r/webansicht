@@ -12,6 +12,7 @@ export class TransportStore {
         journal.on('created', this.onCreated);
         journal.on('updated', this.onUpdated);
         journal.on('patched', this.onUpdated);
+        journal.on('removed', this.onRemoved);
     }
 
     find() {
@@ -41,4 +42,7 @@ export class TransportStore {
         _.assign(existing, entry);
         this.list = _.orderBy(this.list, ['createdAt']);
     };
+
+    @action
+    onRemoved = ({_id}) => _.remove(this.list, {_id});
 }

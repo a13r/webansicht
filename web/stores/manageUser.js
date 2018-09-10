@@ -17,11 +17,13 @@ export default class ManageUserStore {
                 users.on('created', this.addUser);
                 users.on('patched', this.updateUser);
                 users.on('updated', this.updateUser);
+                users.on('removed', this.removeUser);
             } else {
                 this.userList = [];
                 users.off('created', this.addUser);
                 users.off('patched', this.updateUser);
                 users.off('updated', this.updateUser);
+                users.off('removed', this.removeUser);
             }
         });
         reaction(() => this.form.$('_id').value, id => {
@@ -42,6 +44,14 @@ export default class ManageUserStore {
             }
         } else {
             this.userList.push(user);
+        }
+    };
+
+    @action
+    removeUser = ({_id}) => {
+        _.remove(this.userList, {_id});
+        if (this.form.$('_id').value === _id) {
+            this.form.clear();
         }
     };
 

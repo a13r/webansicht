@@ -27,9 +27,10 @@ export default class JournalStore {
 
     constructor() {
         this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}});
-        journal.on('created', action(this.onCreated));
-        journal.on('updated', action(this.onUpdated));
-        journal.on('patched', action(this.onUpdated));
+        journal.on('created', this.onCreated);
+        journal.on('updated', this.onUpdated);
+        journal.on('patched', this.onUpdated);
+        journal.on('removed', this.onRemoved);
         loginReaction(() => {
             this.find();
         });
@@ -40,6 +41,7 @@ export default class JournalStore {
             .then(action(list => this.list = list));
     }
 
+    @action
     onCreated = entry => {
         if (this.sortOrder === 1) {
             this.list.push(entry);
@@ -49,6 +51,7 @@ export default class JournalStore {
         this.list = _.orderBy(this.list, ['createdAt'], [this.sortOrder === 1 ? 'asc' : 'desc']);
     };
 
+    @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing && existing.createdAt === entry.createdAt) {
@@ -60,6 +63,9 @@ export default class JournalStore {
             this.find();
         }
     };
+
+    @action
+    onRemoved = ({_id}) => _.remove(this.list, {_id});
 
     @computed
     get sortOrder() {

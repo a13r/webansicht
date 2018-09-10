@@ -5,7 +5,7 @@ import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
 import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 import {Router} from "react-router-dom";
-import {Redirect, Route} from "react-router";
+import {Route} from "react-router";
 import Overview from "./containers/overview";
 import ResourceAdmin from "./containers/resourceAdmin";
 import Log from "./containers/log";
