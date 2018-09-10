@@ -1,12 +1,13 @@
 import React from 'react';
 import restrictToRoles from "~/components/restrictToRoles";
 import {inject, observer} from 'mobx-react';
-import {Alert, Button, Checkbox, ControlLabel, FormControl, FormGroup, Modal, Panel} from "react-bootstrap";
+import {Button, Checkbox, Modal} from "react-bootstrap";
 import {TextInput} from "~/components/formControls";
+import {Panel} from "~/components/Panel";
 
 export default restrictToRoles(['admin'])(inject('deleteDataForm')(observer(({deleteDataForm: form}) =>
     <div>
-        <Panel header={<span>Daten löschen</span>}>
+        <Panel title="Daten löschen">
             Zu löschende Daten:
             <Checkbox {...form.$('resources').bind()}>Ressourcen</Checkbox>
             <Checkbox {...form.$('journal').bind()}>Einsatztagebuch</Checkbox>

@@ -69,9 +69,6 @@ export default class Container extends React.Component {
                             </Nav>}
                             {auth.isStation &&
                             <Nav>
-                                <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
-                                </IndexLinkContainer>
                                 <LinkContainer to="/stations">
                                     <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
                                 </LinkContainer>
@@ -110,7 +107,6 @@ export default class Container extends React.Component {
                         </div>
                     </div>}
                     {auth.isDispo && <JournalEditor/>}
-                    <DeleteResourceModal/>
                     <NotificationSystem ref={ns => notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>

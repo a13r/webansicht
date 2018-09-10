@@ -61,12 +61,12 @@ export default class StationStore {
     };
 
     @action
-    removeNew = station => {
+    removeNew = station => () => {
         _.remove(this.list, s => s === station);
     };
 
     @action
-    submitNew = (station, e) => {
+    submitNew = station => e => {
         e.preventDefault();
         station.form.submit().then(() => {
             if (station.isNew) {
@@ -102,11 +102,11 @@ export class Station {
         this.form.validate();
     }
 
-    reset() {
+    reset = () => {
         this.form.reset();
         this.form.update(_.omit(this, ['form', '_id']));
         this.form.validate();
-    }
+    };
 
     get isNew() {
         return !this._id;

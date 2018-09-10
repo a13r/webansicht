@@ -4,6 +4,8 @@ import {inject, observer} from "mobx-react";
 import {TextInput} from "../components/formControls";
 import {Button, Checkbox, Col, FormGroup, Row} from "react-bootstrap";
 import "../styles/admin.css";
+import DeleteResourceModal from "~/components/DeleteResourceModal";
+import {Panel} from "~/components/Panel";
 
 const DeleteButton = restrictToRoles(['admin'])(inject('resourceAdmin')(({resourceAdmin}) =>
     <Button bsStyle="danger" onClick={resourceAdmin.showDeleteModal}>
@@ -49,32 +51,24 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
         </Col>
         {resourceAdmin.editorVisible &&
         <Col md={3}>
-            <div className="panel panel-default">
-                <div className="panel-heading">
-                    <h2 className="panel-title">
-                        {resourceAdmin.selectedResourceId ? 'Ressource bearbeiten' : 'Neue Ressource'}
-                    </h2>
-                </div>
-                <div className="panel-body">
-                    <form onSubmit={resourceAdmin.form.onSubmit}>
-                        <TextInput field={resourceAdmin.form.$('callSign')}/>
-                        <TextInput field={resourceAdmin.form.$('type')}/>
-                        <TextInput field={resourceAdmin.form.$('tetra')}/>
-                        <TextInput field={resourceAdmin.form.$('contact')}/>
-                        <TextInput field={resourceAdmin.form.$('ordering')}/>
-                        <TextInput field={resourceAdmin.form.$('home')}/>
-                        <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
-                        <FormGroup>
-                            <div className="btn-toolbar">
-                                <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
-                                    <i className="fa fa-save"/> Speichern
-                                </Button>
-                                <DeleteButton/>
-                                <Button onClick={() => resourceAdmin.showEditor(false)}> Abbrechen</Button>
-                            </div>
-                        </FormGroup>
-                    </form>
-                </div>
-            </div>
+            <Panel title={resourceAdmin.selectedResourceId ? 'Ressource bearbeiten' : 'Neue Ressource'}>
+                <form onSubmit={resourceAdmin.form.onSubmit}>
+                    <TextInput field={resourceAdmin.form.$('callSign')}/>
+                    <TextInput field={resourceAdmin.form.$('type')}/>
+                    <TextInput field={resourceAdmin.form.$('tetra')}/>
+                    <TextInput field={resourceAdmin.form.$('contact')}/>
+                    <TextInput field={resourceAdmin.form.$('ordering')}/>
+                    <TextInput field={resourceAdmin.form.$('home')}/>
+                    <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
+                    <div className="btn-toolbar">
+                        <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
+                            <i className="fa fa-save"/> Speichern
+                        </Button>
+                        {resourceAdmin.selectedResourceId && <DeleteButton/>}
+                        <Button onClick={() => resourceAdmin.showEditor(false)}> Abbrechen</Button>
+                    </div>
+                </form>
+            </Panel>
         </Col>}
+        <DeleteResourceModal/>
     </Row>)));

@@ -1,11 +1,12 @@
 import React from 'react';
 import restrictToRoles from "~/components/restrictToRoles";
 import {inject, observer} from 'mobx-react';
-import {Alert, Button, Checkbox, ControlLabel, FormControl, FormGroup, Panel} from "react-bootstrap";
+import {Alert, Button, ControlLabel, FormControl, FormGroup} from "react-bootstrap";
+import {Panel} from "~/components/Panel";
 
 export default restrictToRoles(['admin'])(inject('auth', 'importExport')(observer(({auth, importExport: store}) =>
     <div>
-        <Panel header={<span>Export</span>}>
+        <Panel title="Export">
             <div className="btn-toolbar">
                 <form action="/export.tar" method="post">
                     <input type="hidden" name="accessToken" value={auth.token}/>
@@ -13,7 +14,7 @@ export default restrictToRoles(['admin'])(inject('auth', 'importExport')(observe
                 </form>
             </div>
         </Panel>
-        <Panel header={<span>Import</span>}>
+        <Panel title="Import">
             <FormGroup>
                 <ControlLabel>Datei (tar)</ControlLabel>
                 <FormControl type="file" onChange={store.setImportFile}/>

@@ -1,11 +1,12 @@
 import React from "react";
 import {inject, observer} from "mobx-react";
 import restrictToRoles from "~/components/restrictToRoles";
-import {Button, Checkbox, Panel} from "react-bootstrap";
+import {Button, Checkbox} from "react-bootstrap";
 import {Select, TextInput} from "~/components/formControls";
+import {Panel} from "~/components/Panel";
 
 export default restrictToRoles(['admin'])(inject('manageUser', 'stations')(observer(({manageUser, stations}) =>
-    <Panel header={<span>Benutzer verwalten</span>}>
+    <Panel title="Benutzer verwalten">
         <form onSubmit={manageUser.form.onSubmit}>
             <Select field={manageUser.form.$('_id')}>
                 <option value=''>(neuer Benutzer)</option>

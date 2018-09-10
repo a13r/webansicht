@@ -41,7 +41,7 @@ loginReaction(({user}) => {
         bind('f2', '/journal');
         bind('f3', '/log');
         bind('ctrl+e', stores.journal.createEntry);
-        bind('f4', '/resources');
+        bind('f4', '/resourceAdmin');
         bind('f5', '/stations');
     }
 }, () => Mousetrap.reset());

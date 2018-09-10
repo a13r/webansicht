@@ -2,24 +2,17 @@ import React from 'react';
 import {inject, observer} from 'mobx-react';
 import {Button, FormGroup} from 'react-bootstrap';
 import {TextInput} from './formControls';
+import {Panel} from "~/components/Panel";
 
 export default inject('changePasswordForm')(observer(({changePasswordForm: form}) =>
-    <div className="panel panel-default">
-        <div className="panel-heading">
-            <h2 className="panel-title">Passwort ändern</h2>
-        </div>
-        <div className="panel-body">
-            <form onSubmit={form.onSubmit}>
-                <TextInput field={form.$('oldPassword')}/>
-                <TextInput field={form.$('password')}/>
-                <TextInput field={form.$('passwordRepeat')}/>
-                <FormGroup>
-                    <div className="btn-toolbar">
-                        <Button type="submit" bsStyle="primary" disabled={!form.isValid}>speichern</Button>
-                        <Button onClick={() => form.clear()}>abbrechen</Button>
-                    </div>
-                </FormGroup>
-                {form.error && <div className="alert alert-danger">{form.error}</div>}
-            </form>
-        </div>
-    </div>));
+    <Panel title="Passwort ändern">
+        <form onSubmit={form.onSubmit}>
+            <TextInput field={form.$('oldPassword')}/>
+            <TextInput field={form.$('password')}/>
+            <TextInput field={form.$('passwordRepeat')}/>
+            <div className="btn-toolbar">
+                <Button type="submit" bsStyle="primary" disabled={!form.isValid}>speichern</Button>
+                <Button onClick={() => form.clear()}>abbrechen</Button>
+            </div>
+        </form>
+    </Panel>));
