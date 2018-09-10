@@ -7,9 +7,9 @@ import {IndexLinkContainer, LinkContainer} from "react-router-bootstrap";
 import {Router} from "react-router-dom";
 import {Redirect, Route} from "react-router";
 import Overview from "./containers/overview";
-import Admin from "./containers/admin";
+import ResourceAdmin from "./containers/resourceAdmin";
 import Log from "./containers/log";
-import UserSettings from "./containers/userSettings";
+import Settings from "./containers/settings";
 import Journal from "./containers/journal";
 import Stations from "./containers/stations";
 import Transports from "./containers/transports";
@@ -57,7 +57,7 @@ export default class Container extends React.Component {
                                 <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf <K>F3</K></NavItem>
                                 </LinkContainer>
-                                <LinkContainer to="/resources">
+                                <LinkContainer to="/resourceAdmin">
                                     <NavItem><i className="fa fa-ambulance"/> Ressourcen <K>F4</K></NavItem>
                                 </LinkContainer>
                                 <LinkContainer to="/stations">
@@ -87,7 +87,7 @@ export default class Container extends React.Component {
                                                  title={<span><i
                                                      className="fa fa-user-circle"/> {auth.user.name}</span>}>
                                         {auth.isDispo &&
-                                        <LinkContainer to="/userSettings">
+                                        <LinkContainer to="/settings">
                                             <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
                                         </LinkContainer>}
                                         <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
@@ -97,9 +97,9 @@ export default class Container extends React.Component {
                         </Navbar.Collapse>}
                     </Navbar>
                     <Route path="/" exact component={Overview}/>
-                    <Route path="/resources" component={Admin}/>
+                    <Route path="/resourceAdmin" component={ResourceAdmin}/>
                     <Route path="/log" component={Log}/>
-                    <Route path="/userSettings" component={UserSettings}/>
+                    <Route path="/settings" component={Settings}/>
                     <Route path="/journal" component={Journal}/>
                     <Route path="/stations" component={Stations}/>
                     <Route path="/transports" component={Transports}/>
