@@ -7,7 +7,11 @@ import _ from "lodash";
 export default class ResourceListStore extends ResourceStore {
     constructor() {
         super(fields);
-        loginReaction(() => this.find({hidden: false}).then(() => this.selectResource(this.list[0]._id)));
+        loginReaction(() => this.find({hidden: false}).then(() => {
+            if (this.list.length > 0) {
+                this.selectResource(this.list[0]._id);
+            }
+        }));
         reaction(() => this.form.$('_id').value, _id => {
             const resource = _.find(this.list, {_id});
             if (resource) {
