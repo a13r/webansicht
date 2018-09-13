@@ -8,8 +8,9 @@ import {priorities, states, types} from "~/shared/strings";
 const stateClass = {
     0: 'bg-danger',
     1: 'bg-warning',
-    2: 'bg-success',
-    3: 'bg-success'
+    2: 'bg-warning',
+    3: 'bg-success',
+    4: 'bg-success'
 };
 const priorityClass = {
     1: 'bg-warning',
