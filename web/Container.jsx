@@ -24,6 +24,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
 import DeleteResourceModal from "~/components/DeleteResourceModal";
 import restrictToRoles from "~/components/restrictToRoles";
+import {TransportForm} from "~/components/TransportForm";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -107,6 +108,7 @@ export default class Container extends React.Component {
                         </div>
                     </div>}
                     {auth.isDispo && <JournalEditor/>}
+                    <TransportForm/>
                     <NotificationSystem ref={ns => notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>

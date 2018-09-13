@@ -62,4 +62,6 @@ export class TransportStore {
     };
 
     editAllowed = transport => auth.isDispo || transport.userId === auth.user._id;
+
+    openTransports = resource => this.list.filter(t => t.resourceId === resource._id && t.state < 2);
 }
