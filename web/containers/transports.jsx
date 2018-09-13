@@ -17,7 +17,7 @@ const priorityClass = {
 };
 
 function priorityBgClass(transport) {
-    if (transport.state < 2) {
+    if (transport.state < 3) {
         // nicht abgeschlossen
         return priorityClass[transport.priority];
     }

@@ -24,6 +24,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
+import {NewTransportWarning} from "~/components/NewTransportWarning";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -75,6 +76,9 @@ export default class Container extends React.Component {
                                 </NavItem>}
                             </Nav>
                             <Nav pullRight>
+                                {auth.isDispo && stores.transports.existNewTransports && <LinkContainer to="/transports">
+                                    <NavItem><NewTransportWarning/></NavItem>
+                                </LinkContainer>}
                                 {auth.user ?
                                     <NavDropdown id="user"
                                                  title={<span><i

@@ -1,4 +1,4 @@
-import {action, observable} from "mobx";
+import {action, computed, observable} from "mobx";
 import {auth, loginReaction, notification} from "~/stores";
 import {transports} from "~/app";
 import _ from "lodash";
@@ -92,5 +92,10 @@ export class TransportStore {
 
     editAllowed = transport => auth.isDispo || transport.userId === auth.user._id;
 
-    openTransports = resource => this.list.filter(t => t.resourceId === resource._id && t.state < 2);
+    openTransports = resource => this.list.filter(t => t.resourceId === resource._id && t.state < 3);
+
+    @computed
+    get existNewTransports() {
+        return this.list.some(t => t.state === 0);
+    }
 }
