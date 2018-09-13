@@ -44,7 +44,9 @@ export class TransportStore {
     createNew = () => {
         this.form.clear();
         this.form.set({
-            requester: auth.user.name
+            requester: auth.user.name,
+            priority: -1,
+            type: -1
         });
         this.form.show();
     };

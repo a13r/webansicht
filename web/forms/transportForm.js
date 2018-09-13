@@ -2,7 +2,7 @@ import {BaseForm} from "~/forms/baseForm";
 import {action, observable} from "mobx";
 import {transports} from "~/app";
 import {notification} from "~/stores";
-import moment from "moment";
+import {requiredSelect} from "~/forms/validators";
 
 export class TransportForm extends BaseForm {
     @observable
@@ -24,11 +24,15 @@ export class TransportForm extends BaseForm {
                 },
                 priority: {
                     label: 'Dringlichkeit',
-                    type: 'number'
+                    type: 'number',
+                    default: -1,
+                    validators: [requiredSelect()]
                 },
                 type: {
                     label: 'Transportart',
-                    type: 'number'
+                    type: 'number',
+                    default: -1,
+                    validators: [requiredSelect()]
                 },
                 hasCompany: {
                     label: 'Begleitperson',

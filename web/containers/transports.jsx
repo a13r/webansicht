@@ -31,11 +31,11 @@ const TransportForm = inject('auth', 'transportForm', 'resources')(observer(({au
                     </Select>,
                     <TextInput field={form.$('requester')} key={2}/>]}
                 <Select field={form.$('priority')}>
-                    <option>(bitte wählen)</option>
+                    <option value={-1}>(bitte wählen)</option>
                     {prioritiesLong.map((p, i) => <option value={i} key={i}>{p}</option>)}
                 </Select>
                 <Select field={form.$('type')}>
-                    <option>(bitte wählen)</option>
+                    <option value={-1}>(bitte wählen)</option>
                     {types.map((t, i) => <option value={i} key={i}>{t}</option>)}
                 </Select>
                 <Checkbox {...form.$('hasCompany').bind()}>+ Begleitperson</Checkbox>

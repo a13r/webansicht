@@ -32,6 +32,12 @@ export function passwordEqualTo(target) {
     };
 }
 
+export function requiredSelect() {
+    return ({field}) => {
+        return [Number(field.value) >= 0, `${field.label} muss gewählt werden`];
+    }
+}
+
 export function required() {
     return ({field}) => {
         return [field.value.toString().length, `${field.label} ist erforderlich`];
