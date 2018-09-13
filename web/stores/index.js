@@ -43,6 +43,8 @@ loginReaction(({user}) => {
         bind('ctrl+e', stores.journal.createEntry);
         bind('f4', '/resourceAdmin');
         bind('f5', '/stations');
+        bind('f6', '/transports');
+        bind('ctrl-f6', stores.transports.createNew);
     }
 }, () => Mousetrap.reset());
 

@@ -9,6 +9,7 @@ export default function restrictToRoles(roles) {
             if (auth.user && _.intersection(roles, auth.user.roles).length > 0) {
                 return <Component {...this.props}/>;
             }
+            console.log(auth.user, 'is not', roles);
             return false;
         }
     }));

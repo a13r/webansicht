@@ -24,6 +24,7 @@ import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
 import DeleteResourceModal from "~/components/DeleteResourceModal";
 import restrictToRoles from "~/components/restrictToRoles";
+import {TransportForm} from "~/components/TransportForm";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -48,35 +49,24 @@ export default class Container extends React.Component {
                                 <IndexLinkContainer to="/">
                                     <NavItem><i className="fa fa-home"/> Übersicht <K>F1</K></NavItem>
                                 </IndexLinkContainer>
-                            </Nav>
-                            {auth.isDispo &&
-                            <Nav>
-                                <LinkContainer to="/journal">
+                                {auth.isDispo && <LinkContainer to="/journal">
                                     <NavItem><i className="fa fa-list"/> Einsatztagebuch <K>F2</K></NavItem>
-                                </LinkContainer>
-                                <LinkContainer to="/log">
+                                </LinkContainer>}
+                                {auth.isDispo && <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf <K>F3</K></NavItem>
-                                </LinkContainer>
-                                <LinkContainer to="/resourceAdmin">
+                                </LinkContainer>}
+                                {auth.isDispo && <LinkContainer to="/resourceAdmin">
                                     <NavItem><i className="fa fa-ambulance"/> Ressourcen <K>F4</K></NavItem>
-                                </LinkContainer>
-                                <LinkContainer to="/stations">
+                                </LinkContainer>}
+                                {(auth.isDispo || auth.isStation) &&<LinkContainer to="/stations">
                                     <NavItem><i className="fa fa-hospital-o"/> SanHiSts <K>F5</K></NavItem>
-                                </LinkContainer>
-                                <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
-                                </NavItem>
-                            </Nav>}
-                            {auth.isStation &&
-                            <Nav>
-                                <LinkContainer to="/stations">
-                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
-                                </LinkContainer>
-                            </Nav>}
-                            <Nav>
+                                </LinkContainer>}
                                 <LinkContainer to="/transports">
-                                    <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Transporte <K>F6</K></NavItem>
                                 </LinkContainer>
+                                {auth.isDispo && <NavItem onClick={() => stores.journal.createEntry()}>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
+                                </NavItem>}
                             </Nav>
                             <Nav pullRight>
                                 {auth.user ?
@@ -107,6 +97,7 @@ export default class Container extends React.Component {
                         </div>
                     </div>}
                     {auth.isDispo && <JournalEditor/>}
+                    <TransportForm/>
                     <NotificationSystem ref={ns => notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
