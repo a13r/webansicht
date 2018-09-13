@@ -7,9 +7,21 @@ export default class NotificationStore {
         });
     }
 
+    warning(message, title) {
+        this.system.addNotification({
+            message, title, level: 'warning'
+        })
+    }
+
     success(message, title) {
         this.system.addNotification({
             message, title, level: 'success'
         });
+    }
+
+    info(message, title) {
+        this.system.addNotification({
+            message, title, level: 'info'
+        })
     }
 }

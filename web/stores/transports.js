@@ -3,6 +3,7 @@ import {auth, loginReaction, notification} from "~/stores";
 import {transports} from "~/app";
 import _ from "lodash";
 import {TransportForm} from "~/forms/transportForm";
+import {priorities} from "~/shared/strings";
 
 export class TransportStore {
     @observable
@@ -10,7 +11,14 @@ export class TransportStore {
     form = new TransportForm();
 
     constructor() {
-        loginReaction(() => this.find());
+        loginReaction(({auth}) => {
+            this.find();
+            if (auth.isDispo) {
+                transports.on('created', this.showNotification);
+            } else {
+                transports.off('created', this.showNotification);
+            }
+        });
         transports.on('created', this.onCreated);
         transports.on('updated', this.onUpdated);
         transports.on('patched', this.onUpdated);
@@ -40,6 +48,27 @@ export class TransportStore {
 
     @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
+
+    showNotification = entry => {
+        const title = 'Neue Transportanforderung';
+        let body = `Dringlichkeit: ${priorities[entry.priority]}`;
+        if (entry.diagnose) {
+            body += `, Verdachtsdiagnose: ${entry.diagnose}`;
+        }
+        if (entry.priority === 2) {
+            notification.error(body, title);
+        } else if (entry.priority === 1) {
+            notification.warning(body, title);
+        } else {
+            notification.info(body, title);
+        }
+        if (Notification.permission === 'granted') {
+            const n = new Notification(title, {body});
+            n.onclick = function () {
+                window.focus();
+            };
+        }
+    };
 
     createNew = () => {
         this.form.clear();

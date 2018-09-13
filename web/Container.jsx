@@ -22,7 +22,6 @@ import JournalEditor from "./components/JournalEditor";
 import NotificationSystem from "react-notification-system";
 import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
-import DeleteResourceModal from "~/components/DeleteResourceModal";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 
@@ -31,6 +30,13 @@ const browserHistory = createBrowserHistory();
 const history = syncHistoryWithStore(browserHistory, router);
 
 const K = restrictToRoles(['dispo'])(({children}) => <kbd className="hidden-xs hidden-sm hidden-md">{children}</kbd>);
+
+Notification.requestPermission().then(value => {
+    if (value !== 'granted') {
+        notification.warning('Systemweite Benachrichtigungen werden nicht angezeigt!', 'Achtung');
+        stores.transports.showWebsiteNotification = true;
+    }
+});
 
 @observer
 export default class Container extends React.Component {
