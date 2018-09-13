@@ -12,7 +12,8 @@ const forms = {
     manageUserForm: stores.manageUser.form,
     journalForm: stores.journal.form,
     deleteResourceForm: stores.resourceAdmin.deleteResourceForm,
-    deleteDataForm: new DeleteDataForm()
+    deleteDataForm: new DeleteDataForm(),
+    transportForm: stores.transports.form
 };
 export default forms;
 

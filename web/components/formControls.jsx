@@ -6,6 +6,7 @@ export const Select = observer(({field, children}) =>
     <FormGroup>
         <ControlLabel>{field.label}</ControlLabel>
         <FormControl componentClass="select" {...field.bind()} inputRef={i => field.input = i}>{children}</FormControl>
+        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
     </FormGroup>);
 
 export const TextInput = observer(({field, ...props}) =>
