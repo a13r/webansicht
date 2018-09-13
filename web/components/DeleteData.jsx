@@ -14,6 +14,7 @@ export default restrictToRoles(['admin'])(inject('deleteDataForm')(observer(({de
             <Checkbox {...form.$('log').bind()}>Statusverlauf</Checkbox>
             <Checkbox {...form.$('stations').bind()}>SanHiSts</Checkbox>
             <Checkbox {...form.$('users').bind()}>Benutzer (ausgen. Admins und Dispos)</Checkbox>
+            <Checkbox {...form.$('transports').bind()}>Transporte</Checkbox>
             <Button onClick={form.show} disabled={form.selectedItems.length === 0}>Löschen</Button>
         </Panel>
         <Modal show={form.modalVisible} onHide={form.hide}>
