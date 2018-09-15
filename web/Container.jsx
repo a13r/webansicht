@@ -25,6 +25,8 @@ import {syncHistoryWithStore} from "mobx-react-router";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 import {NewTransportWarning} from "~/components/NewTransportWarning";
+import {TodoForm} from "~/components/TodoForm";
+import moment from "moment";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -65,7 +67,7 @@ export default class Container extends React.Component {
                                 {auth.isDispo && <LinkContainer to="/resourceAdmin">
                                     <NavItem><i className="fa fa-ambulance"/> Ressourcen <K>F4</K></NavItem>
                                 </LinkContainer>}
-                                {(auth.isDispo || auth.isStation) &&<LinkContainer to="/stations">
+                                {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
                                     <NavItem><i className="fa fa-hospital-o"/> SanHiSts <K>F5</K></NavItem>
                                 </LinkContainer>}
                                 <LinkContainer to="/transports">
@@ -76,9 +78,19 @@ export default class Container extends React.Component {
                                 </NavItem>}
                             </Nav>
                             <Nav pullRight>
-                                {auth.isDispo && stores.transports.existNewTransports && <LinkContainer to="/transports">
+                                {auth.isDispo && stores.transports.existNewTransports &&
+                                <LinkContainer to="/transports">
                                     <NavItem><NewTransportWarning/></NavItem>
                                 </LinkContainer>}
+                                {auth.isDispo &&
+                                <NavDropdown id="todos" title={<span><i className="fa fa-list"/> Todos</span>}>
+                                    {stores.todos.list.map(todo =>
+                                        <MenuItem onClick={stores.todos.edit(todo)}>
+                                            {todo.description} {todo.dueDate && <small>(fällig {moment(todo.dueDate).format('HH:mm')})</small>}
+                                        </MenuItem>)}
+                                    {stores.todos.list.length > 0 && <MenuItem divider/>}
+                                    <MenuItem onClick={stores.todos.create}><i className="fa fa-plus"/> neu</MenuItem>
+                                </NavDropdown>}
                                 {auth.user ?
                                     <NavDropdown id="user"
                                                  title={<span><i
@@ -108,6 +120,7 @@ export default class Container extends React.Component {
                     </div>}
                     {auth.isDispo && <JournalEditor/>}
                     <TransportForm/>
+                    <TodoForm/>
                     <NotificationSystem ref={ns => notification.system = ns}/>
                     {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>

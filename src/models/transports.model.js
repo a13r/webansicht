@@ -1,7 +1,7 @@
 module.exports = function (app) {
     const mongooseClient = app.get('mongooseClient');
     const {Schema} = mongooseClient;
-    const journal = new Schema({
+    const schema = new Schema({
         requester: {type: String},
         priority: {type: Number, default: 0}, // 0 normal, 1 dringend, 2 sofort
         type: {type: Number, default: 0}, // 0 liegend, 1 sitzend, 2 gehfaehig
@@ -23,5 +23,5 @@ module.exports = function (app) {
         updatedAt: {type: Date, default: Date.now}
     });
 
-    return mongooseClient.model('transports', journal);
+    return mongooseClient.model('transports', schema);
 };

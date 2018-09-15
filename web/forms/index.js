@@ -13,7 +13,8 @@ const forms = {
     journalForm: stores.journal.form,
     deleteResourceForm: stores.resourceAdmin.deleteResourceForm,
     deleteDataForm: new DeleteDataForm(),
-    transportForm: stores.transports.form
+    transportForm: stores.transports.form,
+    todoForm: stores.todos.form
 };
 export default forms;
 

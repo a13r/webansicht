@@ -13,6 +13,7 @@ import StationStore from "~/stores/stations";
 import ManageUserStore from "~/stores/manageUser";
 import {TransportStore} from "~/stores/transports";
 import ImportExportStore from "~/stores/importExport";
+import {TodoStore} from "~/stores/todos";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -31,7 +32,8 @@ const stores = {
     stations: new StationStore(),
     transports: new TransportStore(),
     manageUser,
-    importExport: new ImportExportStore()
+    importExport: new ImportExportStore(),
+    todos: new TodoStore()
 };
 export default stores;
 

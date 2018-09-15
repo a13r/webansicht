@@ -42,3 +42,4 @@ export const users = service('users');
 export const journal = service('journal');
 export const stations = service('stations');
 export const transports = service('transports');
+export const todos = service('todos');
