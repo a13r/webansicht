@@ -21,3 +21,7 @@ body {
 .mb-16 {
     margin-bottom: 16px;
 }
+
+.progress-bar {
+    color: #000;
+}
