@@ -60,8 +60,7 @@ export class TodoStore {
     edit = entry => () => {
         this.form.clear();
         this.form.set(entry);
-        let {dueDate} = entry.dueDate;
-        dueDate = moment(dueDate).format('L HH:mm');
+        let dueDate = moment(entry.dueDate).format('L HH:mm');
         this.form.set({dueDate});
         this.form.show();
     };
