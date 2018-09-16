@@ -22,7 +22,7 @@ const TransportSummary = ({diagnose, requester, priority, type, destination}) =>
         </dl>
     </div>;
 
-export default inject('auth', 'resources', 'transports')(observer(({auth, resources, transports}) =>
+export default inject('auth', 'resources', 'transports', 'calls')(observer(({auth, resources, transports, calls}) =>
     <div className="panel panel-default">
         <table className="table table-condensed">
             <thead>
@@ -56,6 +56,8 @@ export default inject('auth', 'resources', 'transports')(observer(({auth, resour
                                             overlay={<Popover title={`Transport ${transports.list.indexOf(t)+1}`}><TransportSummary {...t}/></Popover>}>
                                 <span><i className="fa fa-lg fa-fw fa-ambulance" key={i} onClick={transports.edit(t)}/></span>
                             </OverlayTrigger>)}
+                        {calls.lastIncoming && calls.lastIncoming.resourceId === r._id &&
+                        <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>}
                         {resources.selectedResourceId === r._id && <i className="fa fa-lg fa-fw fa-pencil"/>}
                     </td>}
                 </tr>)}

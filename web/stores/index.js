@@ -14,6 +14,7 @@ import ManageUserStore from "~/stores/manageUser";
 import {TransportStore} from "~/stores/transports";
 import ImportExportStore from "~/stores/importExport";
 import {TodoStore} from "~/stores/todos";
+import {CallStore} from "~/stores/calls";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -33,7 +34,8 @@ const stores = {
     transports: new TransportStore(),
     manageUser,
     importExport: new ImportExportStore(),
-    todos: new TodoStore()
+    todos: new TodoStore(),
+    calls: new CallStore()
 };
 export default stores;
 

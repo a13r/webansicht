@@ -113,6 +113,11 @@ export default class Container extends React.Component {
                             </Nav>
                         </Navbar.Collapse>}
                     </Navbar>
+                    {auth.isDispo && stores.calls.lastIncoming && <Navbar fixedBottom fluid inverse>
+                        <Navbar.Header>
+                            <Navbar.Brand>{stores.calls.lastIncomingText}</Navbar.Brand>
+                        </Navbar.Header>
+                    </Navbar>}
                     <Route path="/" exact component={Overview}/>
                     <Route path="/resourceAdmin" component={ResourceAdmin}/>
                     <Route path="/log" component={Log}/>
