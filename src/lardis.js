@@ -8,13 +8,24 @@ module.exports = function () {
     app.get('lardis').radios.forEach(setupRadio);
 
     function setupRadio(radio) {
+        if (connections[radio.name]) {
+            console.warn(`already connecting or connected to ${radio.name}`);
+            return;
+        }
         console.log(`connecting to ${radio.name}`);
         const connection = net.createConnection({host: radio.boxIP, port: radio.boxPort});
         connection.on('connect', () => console.log(`connected to ${radio.name}`));
         connection.on('data', buffer => {
             buffer.toString().split('\n').forEach(line => dataReceived(radio, line));
         });
-        connection.on('close', () => console.log(`connection to ${radio.name} closed`));
+        connection.on('error', error => {
+            console.error(`error during connection to ${radio.name}`, error.code);
+        });
+        connection.on('close', () => {
+            delete connections[radio.name];
+            console.log(`connection to ${radio.name} closed, will try to reconnect in 30s`);
+            setTimeout(() => setupRadio(radio), 30000);
+        });
         connections[radio.name] = connection;
     }
 
