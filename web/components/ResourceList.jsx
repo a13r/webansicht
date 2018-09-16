@@ -56,7 +56,7 @@ export default inject('auth', 'resources', 'transports', 'calls')(observer(({aut
                                             overlay={<Popover title={`Transport ${transports.list.indexOf(t)+1}`}><TransportSummary {...t}/></Popover>}>
                                 <span><i className="fa fa-lg fa-fw fa-ambulance" key={i} onClick={transports.edit(t)}/></span>
                             </OverlayTrigger>)}
-                        {calls.lastIncoming && calls.lastIncoming.resourceId === r._id &&
+                        {calls.lastIncomings.some(c => String(c.issi) === r.tetra) &&
                         <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>}
                         {resources.selectedResourceId === r._id && <i className="fa fa-lg fa-fw fa-pencil"/>}
                     </td>}
