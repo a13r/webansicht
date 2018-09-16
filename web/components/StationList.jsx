@@ -37,7 +37,7 @@ const Station = inject('auth', 'stations')(observer(({auth, stations: store, sta
         </Panel>
     </Col>));
 
-export default observer(['stations'], ({stations}) =>
+export default inject('stations')(observer(({stations}) =>
     <Row>
         {stations.list.map(s => <Station key={s._id || Math.random()} station={s}/>)}
-    </Row>);
+    </Row>));

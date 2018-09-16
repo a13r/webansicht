@@ -6,13 +6,14 @@ import {Button, Checkbox, Col, FormGroup, Row} from "react-bootstrap";
 import "../styles/admin.css";
 import DeleteResourceModal from "~/components/DeleteResourceModal";
 import {Panel} from "~/components/Panel";
+import {Select} from "~/components/formControls";
 
 const DeleteButton = restrictToRoles(['admin'])(inject('resourceAdmin')(({resourceAdmin}) =>
     <Button bsStyle="danger" onClick={resourceAdmin.showDeleteModal}>
         <i className="fa fa-trash"/> Löschen
     </Button>));
 
-export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({resourceAdmin}) =>
+export default restrictToRoles(['dispo'])(inject('resourceAdmin', 'talkGroups')(observer(({resourceAdmin, talkGroups}) =>
     <Row>
         <Col md={9}>
             <FormGroup>
@@ -25,6 +26,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                     <thead>
                     <tr>
                         <th>TETRA</th>
+                        <th>GSSI</th>
+                        <th>Fahrzeug</th>
                         <th>Typ</th>
                         <th>Kennung</th>
                         <th>Kdt./Fahrer</th>
@@ -38,6 +41,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                         <tr onClick={() => resourceAdmin.selectResource(r._id)} key={r._id}
                             className={'resourceRow' + (resourceAdmin.selectedResourceId === r._id ? ' active' : '')}>
                             <td>{r.tetra}</td>
+                            <td>{r.gssi}</td>
+                            <td>{r.vehicle}</td>
                             <td>{r.type}</td>
                             <td>{r.callSign}</td>
                             <td>{r.contact}</td>
@@ -56,6 +61,11 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin')(observer(({res
                     <TextInput field={resourceAdmin.form.$('callSign')}/>
                     <TextInput field={resourceAdmin.form.$('type')}/>
                     <TextInput field={resourceAdmin.form.$('tetra')}/>
+                    <Select field={resourceAdmin.form.$('gssi')}>
+                        <option value="">(wählen)</option>
+                        {talkGroups.list.map(g => <option key={g.gssi} value={g.gssi}>{g.name}</option>)}
+                    </Select>
+                    <TextInput field={resourceAdmin.form.$('vehicle')}/>
                     <TextInput field={resourceAdmin.form.$('contact')}/>
                     <TextInput field={resourceAdmin.form.$('ordering')}/>
                     <TextInput field={resourceAdmin.form.$('home')}/>

@@ -44,3 +44,4 @@ export const stations = service('stations');
 export const transports = service('transports');
 export const todos = service('todos');
 export const calls = service('calls');
+export const talkGroups = service('talkGroups');

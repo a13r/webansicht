@@ -13,7 +13,6 @@ import Settings from "./containers/settings";
 import Journal from "./containers/journal";
 import Stations from "./containers/stations";
 import Transports from "./containers/transports";
-import MobxReactFormDevTools from "mobx-react-form-devtools";
 import stores from "./stores";
 import forms from "./forms";
 import "./styles/global.css";
@@ -28,6 +27,7 @@ import {NewTransportWarning} from "~/components/NewTransportWarning";
 import {TodoForm} from "~/components/TodoForm";
 import moment from "moment";
 import {service} from "~/app";
+import {BottomNav} from "~/components/BottomNav";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -82,7 +82,7 @@ export default class Container extends React.Component {
                                     <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
                                 </LinkContainer>
                                 {auth.isDispo && <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
+                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag
                                 </NavItem>}
                             </Nav>
                             <Nav pullRight>
@@ -113,11 +113,7 @@ export default class Container extends React.Component {
                             </Nav>
                         </Navbar.Collapse>}
                     </Navbar>
-                    {auth.isDispo && stores.calls.lastIncoming && <Navbar fixedBottom fluid inverse>
-                        <Navbar.Header>
-                            <Navbar.Brand>{stores.calls.lastIncomingText}</Navbar.Brand>
-                        </Navbar.Header>
-                    </Navbar>}
+                    <BottomNav/>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/resourceAdmin" component={ResourceAdmin}/>
                     <Route path="/log" component={Log}/>
@@ -135,7 +131,6 @@ export default class Container extends React.Component {
                     <TransportForm/>
                     <TodoForm/>
                     <NotificationSystem ref={ns => notification.system = ns}/>
-                    {process.env.NODE_ENV === 'development' && <MobxReactFormDevTools.UI/>}
                 </div>
             </Router>
         </Provider>;

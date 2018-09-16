@@ -4,6 +4,8 @@ const schema = new mongoose.Schema({
     callSign: String,
     type: String,
     tetra: String,
+    gssi: Number,
+    vehicle: String,
     state: Number,
     since: {type: Date, default: Date.now},
     lastPosition: String,

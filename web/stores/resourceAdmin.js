@@ -94,6 +94,13 @@ const fields = {
     tetra: {
         label: 'Tetra'
     },
+    gssi: {
+        label: 'Sprechgruppe',
+        type: 'number'
+    },
+    vehicle: {
+        label: 'Fahrzeug'
+    },
     contact: {
         label: 'Kommandant / Fahrer'
     },

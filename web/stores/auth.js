@@ -28,7 +28,7 @@ export default class AuthStore {
                 this.loginForm.clear();
                 this.loginForm.$('username').focus();
             }
-        }, true);
+        }, {fireImmediately: true});
     }
 
     @computed

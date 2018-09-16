@@ -1,4 +1,5 @@
 import {calls} from '~/app';
+import {talkGroups} from '~/stores';
 import {loginReaction} from "~/stores/index";
 import {action, computed, observable} from "mobx";
 import _ from "lodash";
@@ -22,12 +23,21 @@ export class CallStore {
     }
 
     find() {
-        calls.find({query: {$sort: {timestamp: -1}}}).then(action(t => this.list = t));
+        calls.find({
+            query: {
+                direction: 'incoming',
+                $sort: {timestamp: -1},
+                $limit: 10
+            }
+        }).then(action(t => this.list = t));
     }
 
     @action
     onCreated = entry => {
-        this.list.unshift(entry);
+        if (entry.direction === 'incoming') {
+            _.remove(this.list, {gssi: entry.gssi});
+            this.list.unshift(entry);
+        }
     };
 
     @action
@@ -35,11 +45,18 @@ export class CallStore {
 
     @computed
     get lastIncoming() {
-        const incoming = this.list.filter(e => e.direction === 'incoming');
-        if (incoming.length > 0) {
-            return incoming[0];
+        if (this.list.length > 0) {
+            return this.list[0];
         }
     };
+
+    @computed
+    get lastIncomings() {
+        return talkGroups.list.map(tg => {
+            const incomings = this.list.filter(e => e.gssi === tg.gssi);
+            return incomings.length > 0 ? _.assign({}, incomings[0], {talkGroup: tg}) : null;
+        }).filter(e => e !== null);
+    }
 
     @computed
     get lastIncomingText() {
@@ -53,5 +70,19 @@ export class CallStore {
             }
             return caller;
         }
+    }
+
+    @computed
+    get lastIncomingTexts() {
+        return this.lastIncomings.map(last => {
+            let timestamp = moment(last.timestamp).format('HH:mm:ss');
+            let caller;
+            if (last.resource) {
+                caller = last.resource.type + ' ' + last.resource.callSign;
+            } else {
+                caller = last.issi;
+            }
+            return {talkGroup: last.talkGroup.name, caller, timestamp};
+        });
     }
 }

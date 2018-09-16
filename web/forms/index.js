@@ -1,5 +1,4 @@
 import stores from "~/stores";
-import MobxReactFormDevTools from "mobx-react-form-devtools";
 import _ from "lodash";
 import {DeleteDataForm} from "~/forms/deleteData";
 
@@ -20,8 +19,4 @@ export default forms;
 
 export function clearForms() {
     _.values(forms).forEach(form => form.clear());
-}
-
-if (process.env.NODE_ENV === 'development') {
-    MobxReactFormDevTools.register(forms);
 }

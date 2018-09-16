@@ -15,12 +15,14 @@ import {TransportStore} from "~/stores/transports";
 import ImportExportStore from "~/stores/importExport";
 import {TodoStore} from "~/stores/todos";
 import {CallStore} from "~/stores/calls";
+import {TalkGroupStore} from "~/stores/talkGroups";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
 export const notification = new NotificationStore();
 export const manageUser = new ManageUserStore();
 export const resourceAdmin = new ResourceAdminStore();
+export const talkGroups = new TalkGroupStore();
 
 const stores = {
     auth,
@@ -35,6 +37,7 @@ const stores = {
     manageUser,
     importExport: new ImportExportStore(),
     todos: new TodoStore(),
+    talkGroups,
     calls: new CallStore()
 };
 export default stores;
@@ -66,5 +69,5 @@ export function loginReaction(onLogin, onLogout) {
         } else {
             _.isFunction(onLogout) && onLogout();
         }
-    }, true);
+    }, {fireImmediately: true});
 }
