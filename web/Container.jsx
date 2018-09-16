@@ -57,29 +57,29 @@ export default class Container extends React.Component {
                 <div className="container-fluid">
                     <Navbar fluid collapseOnSelect>
                         <Navbar.Header>
-                            <Navbar.Brand>µ-webansicht</Navbar.Brand>
+                            <Navbar.Brand>webansicht</Navbar.Brand>
                             <Navbar.Toggle/>
                         </Navbar.Header>
                         {auth.loggedIn &&
                         <Navbar.Collapse>
                             <Nav>
                                 <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-home"/> Übersicht <K>F1</K></NavItem>
+                                    <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
                                 </IndexLinkContainer>
                                 {auth.isDispo && <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch <K>F2</K></NavItem>
+                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/log">
-                                    <NavItem><i className="fa fa-history"/> Statusverlauf <K>F3</K></NavItem>
+                                    <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/resourceAdmin">
-                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen <K>F4</K></NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen</NavItem>
                                 </LinkContainer>}
                                 {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
-                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts <K>F5</K></NavItem>
+                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
                                 </LinkContainer>}
                                 <LinkContainer to="/transports">
-                                    <NavItem><i className="fa fa-ambulance"/> Transporte <K>F6</K></NavItem>
+                                    <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
                                 </LinkContainer>
                                 {auth.isDispo && <NavItem onClick={() => stores.journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag <K>CTRL+E</K>
