@@ -28,5 +28,14 @@
             "identifyUserProps": ["\\username"]
         }
     },
-    "mongodb": "mongodb://localhost:27017/webansicht"
+    "mongodb": "mongodb://localhost:27017/webansicht",
+    "lardis": {
+        "radios": [
+            {
+                "name": "MRT2",
+                "boxIP": "10.63.255.60",
+                "boxPort": 2002
+            }
+        ]
+    }
 }

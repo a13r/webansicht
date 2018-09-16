@@ -23,6 +23,7 @@ const channels = require('./channels');
 
 const mongoose = require('./mongoose');
 const exporter = require('./exporter');
+const lardis = require('./lardis');
 
 const app = express(feathers());
 
@@ -50,6 +51,7 @@ app.configure(authentication);
 app.configure(services);
 app.configure(channels);
 app.configure(exporter);
+app.configure(lardis);
 
 // Configure a middleware for 404s and the error handler
 app.use(notFound());
