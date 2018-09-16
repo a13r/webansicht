@@ -58,17 +58,11 @@ export class CallStore {
     }
 
     @computed
-    get lastIncomingText() {
-        const last = this.lastIncoming;
-        if (last) {
-            let caller = `[${moment(last.timestamp).format('HH:mm:ss')}] `;
-            if (last.resource) {
-                caller += last.resource.type + ' ' + last.resource.callSign;
-            } else {
-                caller += last.issi;
-            }
-            return caller;
-        }
+    get lastIncomingsByCaller() {
+        return this.lastIncomings.reduce((map, current) => {
+            map[current.issi] = current;
+            return map;
+        }, {});
     }
 
     @computed

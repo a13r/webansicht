@@ -3,7 +3,7 @@ import {inject, observer} from "mobx-react";
 import moment from "moment";
 import states from "../shared/states";
 import "../styles/resourceList.css";
-import {OverlayTrigger, Popover} from "react-bootstrap";
+import {OverlayTrigger, Popover, Tooltip} from "react-bootstrap";
 import {priorities, types} from "~/shared/strings";
 
 const TransportSummary = ({diagnose, requester, priority, type, destination}) =>
@@ -56,8 +56,16 @@ export default inject('auth', 'resources', 'transports', 'calls')(observer(({aut
                                             overlay={<Popover title={`Transport ${transports.list.indexOf(t)+1}`}><TransportSummary {...t}/></Popover>}>
                                 <span><i className="fa fa-lg fa-fw fa-ambulance" key={i} onClick={transports.edit(t)}/></span>
                             </OverlayTrigger>)}
-                        {calls.lastIncomings.some(c => String(c.issi) === r.tetra) &&
-                        <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>}
+                        {calls.lastIncomingsByCaller[r.tetra] &&
+                        <OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={
+                            <Tooltip id="active-talkgroup">
+                                {moment(calls.lastIncomingsByCaller[r.tetra].timestamp).format('HH:mm:ss')}
+                                —
+                                {calls.lastIncomingsByCaller[r.tetra].talkGroup.name}
+                            </Tooltip>
+                        }>
+                            <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>
+                        </OverlayTrigger>}
                         {resources.selectedResourceId === r._id && <i className="fa fa-lg fa-fw fa-pencil"/>}
                     </td>}
                 </tr>)}
