@@ -1,6 +1,7 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const {when, isProvider, populate, setNow} = require('feathers-hooks-common');
 const {associateCurrentUser} = require('feathers-authentication-hooks');
+const todoNotifier = require('../../hooks/todo-notifier');
 
 const loadResource = {
     include: [{
@@ -26,10 +27,10 @@ module.exports = {
     all: [populate({schema: loadResource})],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
-    remove: []
+      create: [todoNotifier.schedule],
+      update: [todoNotifier.schedule],
+      patch: [todoNotifier.schedule],
+      remove: [todoNotifier.unschedule]
   },
 
   error: {

@@ -27,6 +27,7 @@ import {TransportForm} from "~/components/TransportForm";
 import {NewTransportWarning} from "~/components/NewTransportWarning";
 import {TodoForm} from "~/components/TodoForm";
 import moment from "moment";
+import {service} from "~/app";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -39,6 +40,13 @@ Notification.requestPermission().then(value => {
         notification.warning('Systemweite Benachrichtigungen werden nicht angezeigt!', 'Achtung');
         stores.transports.showWebsiteNotification = true;
     }
+});
+
+service('notifications').on('created', n => {
+    if (n.type !== 'showNotification') return;
+    console.log(n.data);
+    notification.success(n.data.body, n.data.title);
+    new Notification(n.data.title, {body: n.data.body});
 });
 
 @observer
@@ -85,7 +93,7 @@ export default class Container extends React.Component {
                                 {auth.isDispo &&
                                 <NavDropdown id="todos" title={<span><i className="fa fa-list"/> Todos</span>}>
                                     {stores.todos.list.map(todo =>
-                                        <MenuItem onClick={stores.todos.edit(todo)}>
+                                        <MenuItem onClick={stores.todos.edit(todo)} key={todo._id}>
                                             {todo.description} {todo.dueDate && <small>(fällig {moment(todo.dueDate).format('HH:mm')})</small>}
                                         </MenuItem>)}
                                     {stores.todos.list.length > 0 && <MenuItem divider/>}

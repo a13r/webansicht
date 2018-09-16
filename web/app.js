@@ -32,7 +32,7 @@ export function registerAuthErrorHandler(handler) {
     client.on('reauthentication-error', handler);
 }
 
-function service(name) {
+export function service(name) {
     return client.service(name);
 }
 
