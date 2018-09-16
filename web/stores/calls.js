@@ -35,7 +35,6 @@ export class CallStore {
     @action
     onCreated = entry => {
         if (entry.direction === 'incoming') {
-            _.remove(this.list, {gssi: entry.gssi});
             this.list.unshift(entry);
         }
     };
