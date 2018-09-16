@@ -1,6 +1,6 @@
 import {action, computed, observable} from "mobx";
 import {BaseForm} from "~/forms/baseForm";
-import {log, resources, users, journal, stations, transports} from "~/app";
+import {log, resources, users, journal, stations, transports, calls, todos} from "~/app";
 import {notification} from "~/stores";
 import {equalsConst} from "~/forms/validators";
 
@@ -17,6 +17,8 @@ export class DeleteDataForm extends BaseForm {
                 stations: { type: 'checkbox' },
                 users: { type: 'checkbox' },
                 transports: { type: 'checkbox' },
+                todos: {type: 'checkbox'},
+                calls: {type: 'checkbox'},
                 confirm: {
                     label: 'Bitte "ja, wirklich" eingeben:',
                     validators: [equalsConst('ja, wirklich')]
@@ -46,6 +48,12 @@ export class DeleteDataForm extends BaseForm {
                 }
                 if (form.values().transports) {
                     removeAll(transports, 'Transporte gelöscht');
+                }
+                if (form.values().todos) {
+                    removeAll(todos, 'Todos gelöscht');
+                }
+                if (form.values().calls) {
+                    removeAll(calls, 'Funksprüche gelöscht');
                 }
                 form.hide();
             }
