@@ -1,5 +1,5 @@
 import {calls} from '~/app';
-import {talkGroups} from '~/stores';
+import {talkGroups, resourceAdmin} from '~/stores';
 import {loginReaction} from "~/stores/index";
 import {action, computed, observable} from "mobx";
 import _ from "lodash";
@@ -51,7 +51,7 @@ export class CallStore {
 
     @computed
     get lastIncomings() {
-        return talkGroups.list.map(tg => {
+        return talkGroups.list.filter(tg => resourceAdmin.list.some(r => r.gssi === tg.gssi)).map(tg => {
             const incomings = this.list.filter(e => e.gssi === tg.gssi);
             return incomings.length > 0 ? _.assign({}, incomings[0], {talkGroup: tg}) : null;
         }).filter(e => e !== null);
