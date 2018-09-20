@@ -6,7 +6,7 @@ import {inject, observer} from "mobx-react";
 import _ from "lodash";
 import {PositionTextInput} from "~/components/formControls";
 
-export default inject('resources')(observer(({resources}) =>
+export default inject('resources', 'log')(observer(({resources, log}) =>
     <div className="panel panel-default">
         <div className="panel-heading">
             <h2 className="panel-title">Status ändern</h2>
@@ -26,7 +26,12 @@ export default inject('resources')(observer(({resources}) =>
                                    onClickHome={() => resources.setHome('destination')}
                                    onClickSwap={resources.swapPositions}/>
                 <TextInput field={resources.form.$('info')}/>
-                <Button type="submit">Speichern</Button>
+                <div className="btn-toolbar">
+                    <Button type="submit" bsStyle="primary">Speichern</Button>
+                    <Button onClick={log.goToResourceId(resources.form.$('_id').value)}>
+                        <i className="fa fa-fw fa-history"/>
+                    </Button>
+                </div>
             </form>
         </div>
     </div>));

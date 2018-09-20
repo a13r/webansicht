@@ -2,7 +2,7 @@ import {action, computed, observable, reaction} from "mobx";
 import {log} from "../app";
 import _ from "lodash";
 import {Form} from "mobx-react-form";
-import {auth, loginReaction} from '../stores';
+import {loginReaction, router} from '../stores';
 
 export default class LogStore {
     @observable
@@ -56,6 +56,12 @@ export default class LogStore {
         this.query.$sort.since = this.query.$sort.since === 1 ? -1 : 1;
         this.find();
     }
+
+    @action
+    goToResourceId = (resourceId) => () => {
+        this.form.$('resource_id').set(resourceId);
+        router.push('/log');
+    };
 }
 
 const fields = {
