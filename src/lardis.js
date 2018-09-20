@@ -33,7 +33,10 @@ module.exports = function () {
         const [action, data] = line.split(':');
         if (action === 'Call') {
             const split = data.split(',');
-            const [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
+            let [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
+            const prefix = /^232010000/;
+            issi = issi.replace(prefix, '');
+            gssi = gssi.replace(prefix, '');
             if (Number(incomingActive) === 1) {
                 console.log(`[${radio.name}] incoming call from ${issi} on group ${gssi}`);
                 calls.create({
