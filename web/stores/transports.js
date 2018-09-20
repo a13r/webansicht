@@ -1,5 +1,5 @@
 import {action, computed, observable} from "mobx";
-import {auth, loginReaction, notification} from "~/stores";
+import {auth, loginReaction, notification, router} from "~/stores";
 import {transports} from "~/app";
 import _ from "lodash";
 import {TransportForm} from "~/forms/transportForm";
@@ -88,6 +88,12 @@ export class TransportStore {
         } else {
             notification.error('Dieser Transport kann nicht bearbeitet werden', 'Fremder Transport');
         }
+    };
+
+    accept = transport => () => {
+        transports.patch(transport._id, {state: 1})
+            .then(this.edit(transport))
+            .catch(e => notification.error(e.message));
     };
 
     editAllowed = transport => auth.isDispo || transport.userId === auth.user._id;

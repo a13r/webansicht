@@ -24,10 +24,12 @@ import {syncHistoryWithStore} from "mobx-react-router";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 import {NewTransportWarning} from "~/components/NewTransportWarning";
+import {TodoDropdown} from "~/components/TodoDropdown";
 import {TodoForm} from "~/components/TodoForm";
 import moment from "moment";
 import {service} from "~/app";
 import {BottomNav} from "~/components/BottomNav";
+import {TransportDropdown} from "~/components/TransportDropdown";
 
 const {auth, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -86,19 +88,8 @@ export default class Container extends React.Component {
                                 </NavItem>}
                             </Nav>
                             <Nav pullRight>
-                                {auth.isDispo && stores.transports.existNewTransports &&
-                                <LinkContainer to="/transports">
-                                    <NavItem><NewTransportWarning/></NavItem>
-                                </LinkContainer>}
-                                {auth.isDispo &&
-                                <NavDropdown id="todos" title={<span><i className="fa fa-list"/> Todos</span>}>
-                                    {stores.todos.list.map(todo =>
-                                        <MenuItem onClick={stores.todos.edit(todo)} key={todo._id}>
-                                            {todo.description} {todo.dueDate && <small>(fällig {moment(todo.dueDate).format('HH:mm')})</small>}
-                                        </MenuItem>)}
-                                    {stores.todos.list.length > 0 && <MenuItem divider/>}
-                                    <MenuItem onClick={stores.todos.create}><i className="fa fa-plus"/> neu</MenuItem>
-                                </NavDropdown>}
+                                <TransportDropdown/>
+                                <TodoDropdown/>
                                 {auth.user ?
                                     <NavDropdown id="user"
                                                  title={<span><i
