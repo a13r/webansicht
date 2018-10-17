@@ -1,3 +1,5 @@
+config/mls-dev.json
+
 # Logs
 logs
 *.log
