@@ -13,6 +13,7 @@ import Settings from "./containers/settings";
 import Journal from "./containers/journal";
 import Stations from "./containers/stations";
 import Transports from "./containers/transports";
+import Map from "~/containers/map";
 import stores from "./stores";
 import forms from "./forms";
 import "./styles/global.css";
@@ -23,7 +24,6 @@ import createBrowserHistory from "history/createBrowserHistory";
 import {syncHistoryWithStore} from "mobx-react-router";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
-import {NewTransportWarning} from "~/components/NewTransportWarning";
 import {TodoDropdown} from "~/components/TodoDropdown";
 import {TodoForm} from "~/components/TodoForm";
 import moment from "moment";
@@ -57,7 +57,7 @@ export default class Container extends React.Component {
         return <Provider {...stores} {...forms}>
             <Router history={history}>
                 <div className="container-fluid">
-                    <Navbar fluid collapseOnSelect>
+                    <Navbar fixedTop fluid collapseOnSelect>
                         <Navbar.Header>
                             <Navbar.Brand>webansicht</Navbar.Brand>
                             <Navbar.Toggle/>
@@ -82,6 +82,9 @@ export default class Container extends React.Component {
                                 </LinkContainer>}
                                 <LinkContainer to="/transports">
                                     <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
+                                </LinkContainer>
+                                <LinkContainer to="/map">
+                                    <NavItem><i className="fa fa-map"/> Karte</NavItem>
                                 </LinkContainer>
                                 {auth.isDispo && <NavItem onClick={() => stores.journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag
@@ -112,6 +115,7 @@ export default class Container extends React.Component {
                     <Route path="/journal" component={Journal}/>
                     <Route path="/stations" component={Stations}/>
                     <Route path="/transports" component={Transports}/>
+                    <Route path="/map" component={Map}/>
                     {auth.loggedIn === false &&
                     <div className="row">
                         <div className="col-md-2 col-md-offset-5">

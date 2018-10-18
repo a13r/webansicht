@@ -16,6 +16,7 @@ import ImportExportStore from "~/stores/importExport";
 import {TodoStore} from "~/stores/todos";
 import {CallStore} from "~/stores/calls";
 import {TalkGroupStore} from "~/stores/talkGroups";
+import {MapStore} from "~/stores/map";
 
 export const router = new RouterStore();
 export const auth = new AuthStore();
@@ -38,7 +39,8 @@ const stores = {
     importExport: new ImportExportStore(),
     todos: new TodoStore(),
     talkGroups,
-    calls: new CallStore()
+    calls: new CallStore(),
+    map: new MapStore()
 };
 export default stores;
 
