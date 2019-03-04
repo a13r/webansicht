@@ -4,7 +4,7 @@ module.exports = function () {
     const app = this;
     const config = app.get('gpsd');
     const positions = app.service('positions');
-    const myPositionId = positions.find({name: 'MLS'})
+    const myPositionId = positions.find({query: {name: 'MLS'}})
         .then(result => {
             if (result.length > 0) {
                 return result[0];
