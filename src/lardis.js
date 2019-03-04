@@ -5,6 +5,7 @@ const connections = {};
 module.exports = function () {
     const app = this;
     const calls = app.service('calls');
+    const resources = app.service('resources');
     app.get('lardis').radios.forEach(setupRadio);
 
     function setupRadio(radio) {
@@ -52,6 +53,13 @@ module.exports = function () {
                     lardisUserName: lardisUserName.substring(1, lardisUserName.length - 1),
                     gssi: Number(gssi)
                 });
+            }
+        } else if (action === 'Mail') {
+            let [id, issi, time, message] = line.split(',');
+            message = message.substring(1, message.length - 1);
+            console.log(`[${radio.name}] incoming message from ${issi}: ${message}`);
+            if (/^\*\d$/.test(message)) {
+                resources.patch(null, {state: parseInt(message.substring(1))}, {query: {tetra: issi}});
             }
         }
     }

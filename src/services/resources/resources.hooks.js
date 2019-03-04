@@ -1,5 +1,5 @@
 const {authenticate} = require('@feathersjs/authentication').hooks;
-const {setNow} = require('feathers-hooks-common');
+const {isProvider, setNow, when} = require('feathers-hooks-common');
 const createLogEntry = require('../../hooks/create-log-entry')();
 const dedup = require('../../hooks/dedup')();
 
@@ -7,7 +7,7 @@ const updateSince = setNow('since');
 
 module.exports = {
   before: {
-    all: [authenticate('jwt')],
+    all: [when(isProvider('external'), authenticate('jwt'))],
     find: [],
     get: [],
     create: [],
