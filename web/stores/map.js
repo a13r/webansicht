@@ -3,6 +3,7 @@ import {loginReaction} from "~/stores/index";
 import {action, computed, observable} from "mobx";
 import _ from "lodash";
 import * as ol from 'openlayers';
+import States from '../shared/states';
 
 // import VectorSource from 'ol/source/vector';
 // import Feature from 'ol/feature';
@@ -53,7 +54,8 @@ export class MapStore {
     get positionFeatures() {
         return this.positions.map(pos => new ol.Feature({
             geometry: new ol.geom.Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
-            name: pos.name
+            name: pos.resource ? pos.resource.callSign : pos.name,
+            color: pos.resource ? States[pos.resource.state].rowStyle.backgroundColor : 'red'
         }));
     }
 

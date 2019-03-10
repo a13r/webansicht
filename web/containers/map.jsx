@@ -15,13 +15,15 @@ const pointStyle = feature => {
     return new ol.style.Style({
         image: new ol.style.Circle({
             radius: 7,
-            fill: new ol.style.Fill({color: 'red'}),
-            // stroke: new ol.style.Stroke({color: 'black', width: 2})
+            fill: new ol.style.Fill({color: feature.get('color')}),
+            stroke: new ol.style.Stroke({color: 'black', width: 2})
         }),
         text: new ol.style.Text({
             text: feature.get('name'),
-            offsetX: 22,
-            font: '12px sans-serif',
+            offsetX: 13,
+            offsetY: 1,
+            font: '14px sans-serif',
+            textAlign: 'left',
             fill: new ol.style.Fill({color: 'black'}),
             stroke: new ol.style.Stroke({color: 'white', width: 4})
         })
