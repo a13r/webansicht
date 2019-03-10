@@ -1,4 +1,5 @@
 const gpsd = require('node-gpsd');
+const _ = require('lodash');
 
 module.exports = function () {
     const app = this;
@@ -14,15 +15,22 @@ module.exports = function () {
         })
         .then(position => position._id);
 
+    function updatePosition({lat, lon, time}) {
+        myPositionId.then(id => positions.patch(id, {lat, lon, time}));
+    }
+
     if (!config || !config.hostname) {
         console.warn('Invalid GPSd config, GPSd client disabled');
         return;
     }
 
     const listener = new gpsd.Listener(config);
-    listener.on('error', e => console.error(e.message));
-    listener.on('TPV', ({lat, lon, time}) => {
-        myPositionId.then(id => positions.patch(id, {lat, lon, time}));
+    listener.on('error', e => {
+        // to print errors, use
+        // console.error(e.message);
+    });
+    listener.on('TPV', data => {
+        _.throttle(() => updatePosition(data), 60000);
     });
     listener.connect(() => {
         console.log('Connected to GPSd');

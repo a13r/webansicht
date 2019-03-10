@@ -5,8 +5,8 @@ const resourceSchema = {
     include: {
         service: 'resources',
         nameAs: 'resource',
-        parentField: 'resourceId',
-        childField: '_id'
+        parentField: 'issi',
+        childField: 'tetra'
     }
 };
 

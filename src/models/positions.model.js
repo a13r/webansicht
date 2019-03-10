@@ -7,10 +7,11 @@ module.exports = function (app) {
     const {Schema} = mongooseClient;
     const positions = new Schema({
         name: {type: String},
-        resourceId: {type: mongooseClient.Schema.Types.ObjectId},
+        issi: {type: String},
         lat: {type: Number},
         lon: {type: Number},
-        time: {type: Date}
+        time: {type: Date},
+        accuracy: {type: Number}
     }, {
         timestamps: true
     });
