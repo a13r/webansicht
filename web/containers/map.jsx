@@ -1,31 +1,41 @@
 import React from 'react';
 import authenticate from '~/components/authenticate';
-import {inject, observer} from 'mobx-react';
-// import {Layers, Map, layer} from "react-openlayers";
-// import Style from 'ol/style/style';
-// import Fill from 'ol/style/fill';
-// import Circle from 'ol/style/circle';
-// import Stroke from 'ol/style/stroke';
-import * as ol from 'openlayers';
-import 'openlayers/css/ol.css';
-import '~/styles/map.css';
+import {inject} from 'mobx-react';
 import {reaction, when} from "mobx";
+import Style from 'ol/style/Style';
+import Fill from 'ol/style/Fill';
+import Circle from 'ol/style/Circle';
+import Stroke from 'ol/style/Stroke';
+import Text from 'ol/style/Text';
+import Map from 'ol/Map';
+import WMTS, {optionsFromCapabilities} from "ol/source/WMTS";
+import Tile from 'ol/layer/Tile';
+import View from 'ol/View';
+import Point from 'ol/geom/Point';
+import WMTSCapabilities from 'ol/format/WMTSCapabilities';
+import Vector from 'ol/layer/Vector';
+import Select from 'ol/interaction/Select';
+import 'ol/ol.css';
+import '~/styles/map.css';
+import VectorSource from "ol/source/Vector";
+import GeomCircle from 'ol/geom/Circle';
+import Feature from "ol/Feature";
 
-const pointStyle = feature => {
-    return new ol.style.Style({
-        image: new ol.style.Circle({
+const pointStyle = selected => feature => {
+    return new Style({
+        image: new Circle({
             radius: 7,
-            fill: new ol.style.Fill({color: feature.get('color')}),
-            stroke: new ol.style.Stroke({color: 'black', width: 2})
+            fill: new Fill({color: feature.get('color')}),
+            stroke: new Stroke({color: 'black', width: selected ? 2 : 1})
         }),
-        text: new ol.style.Text({
+        text: new Text({
             text: feature.get('name'),
             offsetX: 13,
             offsetY: 1,
-            font: '14px sans-serif',
+            font: (selected ? 'bold ' : '') + '14px sans-serif',
             textAlign: 'left',
-            fill: new ol.style.Fill({color: 'black'}),
-            stroke: new ol.style.Stroke({color: 'white', width: 4})
+            fill: new Fill({color: 'black'}),
+            stroke: new Stroke({color: 'white', width: 4})
         })
     });
 };
@@ -35,29 +45,51 @@ const pointStyle = feature => {
 class MapComponent extends React.Component {
 
     componentDidMount() {
-        this.map = new ol.Map({target: this.div});
+        this.map = new Map({target: this.div});
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
             .then(text => {
-                const capabilities = new ol.format.WMTSCapabilities().read(text);
-                const options = ol.source.WMTS.optionsFromCapabilities(capabilities, {
+                const capabilities = new WMTSCapabilities().read(text);
+                const options = optionsFromCapabilities(capabilities, {
                     layer: 'bmapgrau',
                     matrixSet: capabilities.Contents.TileMatrixSet[0].Identifier
                 });
-                this.map.addLayer(new ol.layer.Tile({
-                    source: new ol.source.WMTS(options),
+                this.map.addLayer(new Tile({
+                    source: new WMTS(options),
                     zIndex: -1
                 }));
             });
         when(() => this.props.map.mls, () => {
             const {mls} = this.props.map;
-            this.map.setView(new ol.View({
-                center: new ol.geom.Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
+            this.map.setView(new View({
+                center: new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
                 zoom: 15
             }))
         });
-        const vectorLayer = new ol.layer.Vector({style: pointStyle});
+        const vectorLayer = new Vector({style: pointStyle(false), zIndex: 0});
+        const accuracyLayer = new Vector({
+            source: new VectorSource(),
+            zIndex: 1
+        });
         this.map.addLayer(vectorLayer);
+        this.map.addLayer(accuracyLayer);
+        const select = new Select({
+            style: pointStyle(true),
+            layers: [vectorLayer]
+        });
+        select.on('select', e => {
+            if (e.selected.length > 0) {
+                const accuracy = e.selected[0].get('accuracy');
+                if (!accuracy) {
+                    return;
+                }
+                const center = e.selected[0].getGeometry().getCoordinates();
+                accuracyLayer.getSource().addFeature(new Feature(new GeomCircle(center, accuracy)));
+            } else {
+                accuracyLayer.getSource().clear();
+            }
+        });
+        this.map.addInteraction(select);
         reaction(() => this.props.map.vectorSource, vectorSource => {
             if (vectorSource) {
                 vectorLayer.setSource(vectorSource);

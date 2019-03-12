@@ -2,12 +2,10 @@ import {positions} from '~/app';
 import {loginReaction} from "~/stores/index";
 import {action, computed, observable} from "mobx";
 import _ from "lodash";
-import * as ol from 'openlayers';
 import States from '../shared/states';
-
-// import VectorSource from 'ol/source/vector';
-// import Feature from 'ol/feature';
-// import Point from 'ol/geom/point';
+import Feature from 'ol/Feature';
+import Point from 'ol/geom/Point';
+import VectorSource from "ol/source/Vector";
 
 export class MapStore {
     @observable
@@ -47,15 +45,16 @@ export class MapStore {
 
     @computed
     get vectorSource() {
-        return new ol.source.Vector({features: [...this.positionFeatures]});
+        return new VectorSource({features: [...this.positionFeatures]});
     }
 
     @computed
     get positionFeatures() {
-        return this.positions.map(pos => new ol.Feature({
-            geometry: new ol.geom.Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
+        return this.positions.map(pos => new Feature({
+            geometry: new Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
             name: pos.resource ? pos.resource.callSign : pos.name,
-            color: pos.resource ? States[pos.resource.state].rowStyle.backgroundColor : 'red'
+            color: pos.resource && pos.resource.state ? States[pos.resource.state].rowStyle.backgroundColor : 'red',
+            accuracy: pos.accuracy
         }));
     }
 
