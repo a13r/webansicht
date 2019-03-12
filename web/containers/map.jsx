@@ -25,9 +25,8 @@ import Overlay from "ol/Overlay";
 import {fromExtent} from "ol/geom/Polygon";
 import _ from "lodash";
 import states from "~/shared/states";
-import {TextInput, Select as SelectControl} from "~/components/formControls";
+import {Select as SelectControl} from "~/components/formControls";
 import {Button} from "react-bootstrap";
-import ResourceEditor from "~/components/ResourceEditor";
 
 const pointStyle = selected => feature => {
     return new Style({
@@ -53,9 +52,10 @@ const rectangleStyle = selected => feature => new Style({
         width: 1
     }),
     text: new Text({
-        text: selected ? feature.get('name') : '',
+        text: feature.get('name'),
         font: '20px sans-serif',
-        textAlign: 'center'
+        textAlign: 'center',
+        fill: new Fill({color: selected ? '#333' : '#AAA'})
     }),
     fill: new Fill({
         color: selected ? '#CCCCCC33' : '#FFFFFF00'
