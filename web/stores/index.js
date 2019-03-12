@@ -23,6 +23,7 @@ export const auth = new AuthStore();
 export const notification = new NotificationStore();
 export const manageUser = new ManageUserStore();
 export const resourceAdmin = new ResourceAdminStore();
+export const resources = new ResourceListStore();
 export const talkGroups = new TalkGroupStore();
 
 const stores = {
@@ -30,7 +31,7 @@ const stores = {
     notification,
     router,
     log: new LogStore(),
-    resources: new ResourceListStore(),
+    resources,
     resourceAdmin,
     journal: new JournalStore(),
     stations: new StationStore(),
