@@ -5,6 +5,7 @@ import states from "../shared/states";
 import {inject, observer} from "mobx-react";
 import _ from "lodash";
 import {PositionTextInput} from "~/components/formControls";
+import {SendMessageForm} from "~/components/SendMessageForm";
 
 export default inject('resources', 'log')(observer(({resources, log}) =>
     <div className="panel panel-default">
@@ -26,12 +27,13 @@ export default inject('resources', 'log')(observer(({resources, log}) =>
                                    onClickHome={() => resources.setHome('destination')}
                                    onClickSwap={resources.swapPositions}/>
                 <TextInput field={resources.form.$('info')}/>
-                <div className="btn-toolbar">
+                <div className="btn-toolbar form-group">
                     <Button type="submit" bsStyle="primary">Speichern</Button>
                     <Button onClick={log.goToResourceId(resources.form.$('_id').value)}>
                         <i className="fa fa-fw fa-history"/>
                     </Button>
                 </div>
             </form>
+            {resources.sendMessageVisible && <SendMessageForm form={resources.sendMessageForm}/>}
         </div>
     </div>));

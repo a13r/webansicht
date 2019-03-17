@@ -46,3 +46,4 @@ export const todos = service('todos');
 export const calls = service('calls');
 export const talkGroups = service('talkGroups');
 export const positions = service('positions');
+export const messages = service('messages');

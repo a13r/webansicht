@@ -1,10 +1,15 @@
-import {action, reaction} from "mobx";
+import {action, observable, reaction} from "mobx";
 import {resources} from "../app";
 import ResourceStore from "./resources";
 import {loginReaction} from "./index";
 import _ from "lodash";
+import {SendMessageForm} from "~/forms/sendMessageForm";
 
 export default class ResourceListStore extends ResourceStore {
+    sendMessageForm = new SendMessageForm();
+    @observable
+    sendMessageVisible = false;
+
     constructor() {
         super(fields);
         loginReaction(() => this.find({hidden: false}).then(() => {
@@ -19,6 +24,12 @@ export default class ResourceListStore extends ResourceStore {
                 this.form.update(resource);
                 if (this.form.$('state').input) {
                     this.form.$('state').input.focus();
+                }
+                if (resource.tetra) {
+                    this.sendMessageForm.$('destination').set(resource.tetra);
+                    this.sendMessageVisible = true;
+                } else {
+                    this.sendMessageVisible = false;
                 }
             }
         });

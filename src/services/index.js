@@ -9,6 +9,7 @@ const todos = require('./todos/todos.service.js');
 const calls = require('./calls/calls.service.js');
 const talkGroups = require('./talkGroups/talkGroups.service.js');
 const positions = require('./positions/positions.service.js');
+const messages = require('./messages/messages.service.js');
 module.exports = function () {
   const app = this; // eslint-disable-line no-unused-vars
   app.configure(resources);
@@ -19,7 +20,8 @@ module.exports = function () {
   app.configure(notifications);
   app.configure(transports);
   app.configure(todos);
-    app.configure(calls);
-    app.configure(talkGroups);
-    app.configure(positions);
+  app.configure(calls);
+  app.configure(talkGroups);
+  app.configure(positions);
+  app.configure(messages);
 };

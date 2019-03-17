@@ -1,6 +1,7 @@
 import stores from "~/stores";
 import _ from "lodash";
 import {DeleteDataForm} from "~/forms/deleteData";
+import {SendMessageForm} from "~/forms/sendMessageForm";
 
 const forms = {
     resourceEditorForm: stores.resources.form,
@@ -13,7 +14,8 @@ const forms = {
     deleteResourceForm: stores.resourceAdmin.deleteResourceForm,
     deleteDataForm: new DeleteDataForm(),
     transportForm: stores.transports.form,
-    todoForm: stores.todos.form
+    todoForm: stores.todos.form,
+    sendMessageForm: new SendMessageForm()
 };
 export default forms;
 

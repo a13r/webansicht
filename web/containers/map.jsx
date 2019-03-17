@@ -25,8 +25,9 @@ import Overlay from "ol/Overlay";
 import {fromExtent} from "ol/geom/Polygon";
 import _ from "lodash";
 import states from "~/shared/states";
-import {Select as SelectControl} from "~/components/formControls";
+import {Select as SelectControl, TextInput} from "~/components/formControls";
 import {Button} from "react-bootstrap";
+import {SendMessageForm} from "~/components/SendMessageForm";
 
 const pointStyle = selected => feature => {
     return new Style({
@@ -62,20 +63,22 @@ const rectangleStyle = selected => feature => new Style({
     })
 });
 
-const ResourceOverlay = inject('resources', 'map')(observer(({resources, map: mapStore, id, onClose}) =>
+const ResourceOverlay = inject('resources', 'map')(observer(({resources, map, id, onClose}) =>
     <div className="panel panel-default" id={id}>
         <div className="panel-heading">
-            <h2 className="panel-title">{mapStore.selectedResource.callSign}</h2>
+            <h2 className="panel-title">{map.selectedResource.callSign}</h2>
         </div>
         <div className="panel-body">
+
             <form onSubmit={e => { onClose(); return resources.form.onSubmit(e); }}>
                 <SelectControl field={resources.form.$('state')}>
                     {_.keys(states).map(key => <option key={key} value={key}>{key} – {states[key].name}</option>)}
                 </SelectControl>
-                <div className="btn-toolbar">
+                <div className="btn-toolbar form-group">
                     <Button type="submit" bsStyle="primary">Speichern</Button>
                 </div>
             </form>
+            <SendMessageForm form={map.sendMessageForm}/>
         </div>
     </div>));
 
@@ -194,7 +197,7 @@ class MapComponent extends React.Component {
     render() {
         return <div>
             <div className="openlayers-map" ref={el => this.div = el}/>
-            <ResourceOverlay id="popover" onClose={this.hideOverlay} resources={this.props.resources}/>
+            <ResourceOverlay id="popover" onClose={this.hideOverlay}/>
         </div>;
     }
 }

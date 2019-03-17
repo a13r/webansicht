@@ -1,5 +1,5 @@
 import React from "react";
-import {observer, Provider} from "mobx-react";
+import {inject, observer, Provider} from "mobx-react";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
@@ -26,7 +26,6 @@ import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 import {TodoDropdown} from "~/components/TodoDropdown";
 import {TodoForm} from "~/components/TodoForm";
-import moment from "moment";
 import {service} from "~/app";
 import {BottomNav} from "~/components/BottomNav";
 import {TransportDropdown} from "~/components/TransportDropdown";
@@ -51,62 +50,65 @@ service('notifications').on('created', n => {
     new Notification(n.data.title, {body: n.data.body});
 });
 
+const Navigation = inject('auth')(observer(({auth, journal}) =>
+    <Navbar fixedTop fluid collapseOnSelect>
+        <Navbar.Header>
+            <Navbar.Brand>webansicht</Navbar.Brand>
+            <Navbar.Toggle/>
+        </Navbar.Header>
+        {auth.loggedIn &&
+        <Navbar.Collapse>
+            <Nav>
+                <IndexLinkContainer to="/">
+                    <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
+                </IndexLinkContainer>
+                {auth.isDispo && <LinkContainer to="/journal">
+                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
+                </LinkContainer>}
+                {auth.isDispo && <LinkContainer to="/log">
+                    <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
+                </LinkContainer>}
+                {auth.isDispo && <LinkContainer to="/resourceAdmin">
+                    <NavItem><i className="fa fa-ambulance"/> Ressourcen</NavItem>
+                </LinkContainer>}
+                {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
+                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
+                </LinkContainer>}
+                <LinkContainer to="/transports">
+                    <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
+                </LinkContainer>
+                <LinkContainer to="/map">
+                    <NavItem><i className="fa fa-map"/> Karte</NavItem>
+                </LinkContainer>
+                {auth.isDispo && <NavItem onClick={() => journal.createEntry()}>
+                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag
+                </NavItem>}
+            </Nav>
+            <Nav pullRight>
+                <TransportDropdown/>
+                <TodoDropdown/>
+                {auth.user ?
+                    <NavDropdown id="user"
+                                 title={<span><i
+                                     className="fa fa-user-circle"/> {auth.user.name}</span>}>
+                        {auth.isDispo &&
+                        <LinkContainer to="/settings">
+                            <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
+                        </LinkContainer>}
+                        <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
+                    </NavDropdown> :
+                    <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
+            </Nav>
+        </Navbar.Collapse>}
+    </Navbar>));
+
 @observer
 export default class Container extends React.Component {
     render() {
         return <Provider {...stores} {...forms}>
             <Router history={history}>
                 <div className="container-fluid">
-                    <Navbar fixedTop fluid collapseOnSelect>
-                        <Navbar.Header>
-                            <Navbar.Brand>webansicht</Navbar.Brand>
-                            <Navbar.Toggle/>
-                        </Navbar.Header>
-                        {auth.loggedIn &&
-                        <Navbar.Collapse>
-                            <Nav>
-                                <IndexLinkContainer to="/">
-                                    <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
-                                </IndexLinkContainer>
-                                {auth.isDispo && <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
-                                </LinkContainer>}
-                                {auth.isDispo && <LinkContainer to="/log">
-                                    <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
-                                </LinkContainer>}
-                                {auth.isDispo && <LinkContainer to="/resourceAdmin">
-                                    <NavItem><i className="fa fa-ambulance"/> Ressourcen</NavItem>
-                                </LinkContainer>}
-                                {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
-                                    <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
-                                </LinkContainer>}
-                                <LinkContainer to="/transports">
-                                    <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
-                                </LinkContainer>
-                                <LinkContainer to="/map">
-                                    <NavItem><i className="fa fa-map"/> Karte</NavItem>
-                                </LinkContainer>
-                                {auth.isDispo && <NavItem onClick={() => stores.journal.createEntry()}>
-                                    <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag
-                                </NavItem>}
-                            </Nav>
-                            <Nav pullRight>
-                                <TransportDropdown/>
-                                <TodoDropdown/>
-                                {auth.user ?
-                                    <NavDropdown id="user"
-                                                 title={<span><i
-                                                     className="fa fa-user-circle"/> {auth.user.name}</span>}>
-                                        {auth.isDispo &&
-                                        <LinkContainer to="/settings">
-                                            <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
-                                        </LinkContainer>}
-                                        <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
-                                    </NavDropdown> :
-                                    <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
-                            </Nav>
-                        </Navbar.Collapse>}
-                    </Navbar>
+                    <Navigation/>
                     <BottomNav/>
                     <Route path="/" exact component={Overview}/>
                     <Route path="/resourceAdmin" component={ResourceAdmin}/>

@@ -30,7 +30,16 @@
     },
     "mongodb": "mongodb://localhost:27017/webansicht",
     "lardis": {
-        "radios": []
+        "radios": [{
+            "name": "MRT3",
+            "boxIP": "10.63.255.61",
+            "boxPort": 2001,
+            "sendMessages": true
+        }, {
+            "name": "MRT4",
+            "boxIP": "10.63.255.61",
+            "boxPort": 2002
+        }]
     },
     "gpsd": {
         "hostname": null

@@ -1,16 +1,23 @@
 const net = require('net');
+const _ = require('lodash');
 
-const connections = {};
+const connectedRadios = {};
+let nextId = 0;
+
+function generateId() {
+    nextId = (nextId + 1) % 100;
+}
 
 module.exports = function () {
     const app = this;
     const calls = app.service('calls');
     const resources = app.service('resources');
     const positions = app.service('positions');
+    const messages = app.service('messages');
     app.get('lardis').radios.forEach(setupRadio);
 
     function setupRadio(radio) {
-        if (connections[radio.name]) {
+        if (connectedRadios[radio.name]) {
             console.warn(`already connecting or connected to ${radio.name}`);
             return;
         }
@@ -24,12 +31,31 @@ module.exports = function () {
             console.error(`error during connection to ${radio.name}`, error.code);
         });
         connection.on('close', () => {
-            delete connections[radio.name];
+            delete connectedRadios[radio.name];
             console.log(`connection to ${radio.name} closed, will try to reconnect in 30s`);
             setTimeout(() => setupRadio(radio), 30000);
         });
-        connections[radio.name] = connection;
+        const {sendMessages} = radio;
+        connectedRadios[radio.name] = {connection, sendMessages};
     }
+
+    messages.on('created', m => {
+        const radio = _.values(connectedRadios).find(r => r.sendMessages);
+        if (!radio) {
+            messages.patch(m._id, {state: 'error', errorType: 'no_radio'});
+            return;
+        }
+        let destination = m.destination;
+        if (!destination.startsWith('63')) {
+            destination = '63' + destination;
+        }
+        const command = `SendMail=${m._id},${destination},0,"${m.message}"\r`;
+        console.log(`Sending command ${command}`);
+        radio.connection.write(command, 'utf8', () => {
+            messages.patch(m._id, {state: 'pending'});
+            console.log('Message sent');
+        });
+    });
 
     function dataReceived(radio, line) {
         const [action, data] = line.split(':');
@@ -63,8 +89,22 @@ module.exports = function () {
                 resources.patch(null, {state: parseInt(message.substring(1))}, {query: {tetra: issi}});
             }
         } else if (action === 'LIP') {
-            let [issi, hex] = data.split(',')
+            let [issi, hex] = data.split(',');
             processLIP(issi, hex);
+        } else if (action === 'MailState') {
+            const [id, state] = data.split(',');
+            switch (state) {
+                case '1':
+                    messages.patch(id, {state: 'sent'});
+                    return;
+                case '2':
+                    messages.patch(id, {state: 'delivered'});
+                    return;
+                default:
+                    messages.patch(id, {state: 'error', errorType: 'tetra'});
+            }
+        } else {
+            console.log(line);
         }
     }
 

@@ -7,12 +7,14 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from "ol/source/Vector";
 import {resources as resourceListStore} from "~/stores";
+import {SendMessageForm} from "~/forms/sendMessageForm";
 
 export class MapStore {
     @observable
     positions = [];
     @observable
     selectedResource = {};
+    sendMessageForm = new SendMessageForm();
 
     constructor() {
         loginReaction(() => {
@@ -60,6 +62,7 @@ export class MapStore {
     selectResource = resource => {
         resourceListStore.selectResource(resource._id);
         this.selectedResource = resource;
+        this.sendMessageForm.$('destination').set(resource.tetra);
     };
 
     @computed
