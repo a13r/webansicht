@@ -50,10 +50,8 @@ module.exports = function () {
             destination = '63' + destination;
         }
         const command = `SendMail=${m._id},${destination},0,"${m.message}"\r`;
-        console.log(`Sending command ${command}`);
         radio.connection.write(command, 'utf8', () => {
             messages.patch(m._id, {state: 'pending'});
-            console.log('Message sent');
         });
     });
 
@@ -103,8 +101,6 @@ module.exports = function () {
                 default:
                     messages.patch(id, {state: 'error', errorType: 'tetra'});
             }
-        } else {
-            console.log(line);
         }
     }
 

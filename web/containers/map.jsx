@@ -88,7 +88,7 @@ class MapComponent extends React.Component {
 
     componentDidMount() {
         this.map = new Map({target: this.div});
-        const {map: mapStore, resources: resourceStore} = this.props;
+        const {map: mapStore} = this.props;
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
             .then(text => {
