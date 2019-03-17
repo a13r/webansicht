@@ -2,11 +2,6 @@ const net = require('net');
 const _ = require('lodash');
 
 const connectedRadios = {};
-let nextId = 0;
-
-function generateId() {
-    nextId = (nextId + 1) % 100;
-}
 
 module.exports = function () {
     const app = this;
