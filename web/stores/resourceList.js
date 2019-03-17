@@ -17,6 +17,7 @@ export default class ResourceListStore extends ResourceStore {
                 this.selectResource(this.list[0]._id);
             }
         }));
+        this.sendMessageForm.reset();
         reaction(() => this.form.$('_id').value, _id => {
             const resource = _.find(this.list, {_id});
             if (resource) {

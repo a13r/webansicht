@@ -30,24 +30,38 @@ module.exports = function () {
             console.log(`connection to ${radio.name} closed, will try to reconnect in 30s`);
             setTimeout(() => setupRadio(radio), 30000);
         });
-        const {sendMessages} = radio;
-        connectedRadios[radio.name] = {connection, sendMessages};
+        const {sendMessages, sendCallouts} = radio;
+        connectedRadios[radio.name] = {connection, sendMessages, sendCallouts};
     }
 
     messages.on('created', m => {
-        const radio = _.values(connectedRadios).find(r => r.sendMessages);
-        if (!radio) {
-            messages.patch(m._id, {state: 'error', errorType: 'no_radio'});
-            return;
-        }
         let destination = m.destination;
         if (!destination.startsWith('63')) {
             destination = '63' + destination;
         }
-        const command = `SendMail=${m._id},${destination},0,"${m.message}"\r`;
-        radio.connection.write(command, 'utf8', () => {
-            messages.patch(m._id, {state: 'pending'});
-        });
+        if (m.callout) {
+            const radio = _.values(connectedRadios).find(r => r.sendCallouts);
+            if (!radio) {
+                console.error('No radio available for callouts');
+                messages.patch(m._id, {state: 'error', errorType: 'no_radio'});
+                return;
+            }
+            const command = `Callout=${m._id},${destination},1,,${m.callout.severity},1,"${m.message}"`;
+            radio.connection.write(command, 'utf8', () => {
+                messages.patch(m._id, {state: 'pending'});
+            });
+        } else {
+            const radio = _.values(connectedRadios).find(r => r.sendMessages);
+            if (!radio) {
+                console.error('No radio available for messages');
+                messages.patch(m._id, {state: 'error', errorType: 'no_radio'});
+                return;
+            }
+            const command = `SendMail=${m._id},${destination},0,"${m.message}"\r`;
+            radio.connection.write(command, 'utf8', () => {
+                messages.patch(m._id, {state: 'pending'});
+            });
+        }
     });
 
     function dataReceived(radio, line) {

@@ -10,7 +10,7 @@ module.exports = function (app) {
         destination: {type: String, required: true},
         state: {type: String, enum: ['pending', 'sent', 'delivered', 'error'], required: true, default: 'pending'},
         errorType: {type: String, enum: ['no_radio', 'tetra']},
-        callOut: {
+        callout: {
             severity: Number
         }
     }, {

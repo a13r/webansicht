@@ -26,6 +26,7 @@ export class MapStore {
             resources.on('updated', this.onResourceUpdated);
             resources.on('patched', this.onResourceUpdated);
         });
+        this.sendMessageForm.reset();
     }
 
     find() {

@@ -1,6 +1,7 @@
 import {BaseForm} from "~/forms/baseForm";
 import {messages} from "~/app";
 import {notification} from "~/stores";
+import {required} from "~/forms/validators";
 
 export class SendMessageForm extends BaseForm {
 
@@ -12,7 +13,11 @@ export class SendMessageForm extends BaseForm {
                     type: 'hidden'
                 },
                 message: {
-                    label: 'Nachricht'
+                    validators: [required()]
+                },
+                callout: {
+                    type: 'radio',
+                    default: false
                 }
             }
         };
@@ -21,8 +26,15 @@ export class SendMessageForm extends BaseForm {
     hooks() {
         return {
             onSuccess(form) {
-                const {destination, message} = form.values();
-                messages.create({destination, message})
+                const {destination, message, callout} = form.values();
+                const data = {
+                    destination, message
+                };
+                if (callout) {
+                    data.callout = {severity: 7}
+                }
+                console.log(data);
+                messages.create(data)
                     .then(() => form.$('message').clear())
                     .catch(e => notification.error(e.message, 'Fehler beim Senden der Nachricht'));
             }
