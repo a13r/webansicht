@@ -33,7 +33,6 @@ export class SendMessageForm extends BaseForm {
                 if (callout) {
                     data.callout = {severity: 7}
                 }
-                console.log(data);
                 messages.create(data)
                     .then(() => form.$('message').clear())
                     .catch(e => notification.error(e.message, 'Fehler beim Senden der Nachricht'));

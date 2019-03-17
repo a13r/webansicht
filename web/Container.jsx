@@ -124,7 +124,7 @@ export default class Container extends React.Component {
                     {auth.isDispo && <JournalEditor/>}
                     <TransportForm/>
                     <TodoForm/>
-                    <NotificationSystem ref={ns => notification.system = ns}/>
+                    <NotificationSystem ref={ns => notification.init(ns)}/>
                 </div>
             </Router>
         </Provider>;

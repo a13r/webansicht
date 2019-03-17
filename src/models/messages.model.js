@@ -12,7 +12,8 @@ module.exports = function (app) {
         errorType: {type: String, enum: ['no_radio', 'tetra']},
         callout: {
             severity: Number
-        }
+        },
+        userId: String
     }, {
         timestamps: true
     });
