@@ -5,22 +5,26 @@
             {
                 "name": "MRT1",
                 "boxIP": "10.63.255.60",
-                "boxPort": 2001
+                "boxPort": 2001,
+                "sendMessages": true
             },
             {
                 "name": "MRT2",
                 "boxIP": "10.63.255.60",
-                "boxPort": 2002
+                "boxPort": 2002,
+                "sendMessages": true
             },
             {
                 "name": "MRT3",
                 "boxIP": "10.63.255.61",
-                "boxPort": 2001
+                "boxPort": 2001,
+                "sendMessages": true
             },
             {
                 "name": "MRT4",
                 "boxIP": "10.63.255.61",
-                "boxPort": 2002
+                "boxPort": 2002,
+                "sendMessages": true
             }
         ]
     },
