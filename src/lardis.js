@@ -46,7 +46,7 @@ module.exports = function () {
                 messages.patch(m._id, {state: 'error', errorType: 'no_radio'});
                 return;
             }
-            const command = `Callout=${m._id},${destination},1,,${m.callout.severity},1,"${m.message}"`;
+            const command = `Callout=${m._id},${destination},1,,${m.callout.severity},1,"${m.message}"\r`;
             radio.connection.write(command, 'utf8', () => {
                 messages.patch(m._id, {state: 'pending'});
             });
