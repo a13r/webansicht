@@ -1,13 +1,14 @@
-import {messages} from "~/app";
+import {messages, notifications} from "~/app";
 import {auth} from ".";
 
-export default class NotificationStore {
+export class NotificationStore {
     system;
     notified = {};
 
     init(system) {
         this.system = system;
         messages.on('patched', this.messageUpdated);
+        notifications.on('created', this.onNotification);
     }
 
     messageUpdated = message => {
@@ -22,6 +23,13 @@ export default class NotificationStore {
             this.error(`Nachricht an ${message.destination} nicht erfolgreich: ${reason}.`, 'Zustellfehler');
         }
         setTimeout(() => delete this.notified[message._id], 1000);
+    };
+
+    onNotification = n => {
+        if (n.type !== 'showNotification') return;
+        console.log(n.data);
+        this.system.addNotification(n.data);
+        new Notification(n.data.title, {body: n.data.message});
     };
 
     error(message, title = 'Fehler') {

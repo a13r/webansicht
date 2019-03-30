@@ -1,5 +1,5 @@
 import React from "react";
-import {inject, observer, Provider} from "mobx-react";
+import {observer, Provider} from "mobx-react";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 import {MenuItem, Nav, Navbar, NavDropdown, NavItem} from "react-bootstrap";
@@ -26,7 +26,6 @@ import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 import {TodoDropdown} from "~/components/TodoDropdown";
 import {TodoForm} from "~/components/TodoForm";
-import {service} from "~/app";
 import {BottomNav} from "~/components/BottomNav";
 import {TransportDropdown} from "~/components/TransportDropdown";
 
@@ -41,13 +40,6 @@ Notification.requestPermission().then(value => {
         notification.warning('Systemweite Benachrichtigungen werden nicht angezeigt!', 'Achtung');
         stores.transports.showWebsiteNotification = true;
     }
-});
-
-service('notifications').on('created', n => {
-    if (n.type !== 'showNotification') return;
-    console.log(n.data);
-    notification.success(n.data.body, n.data.title);
-    new Notification(n.data.title, {body: n.data.body});
 });
 
 @observer

@@ -15,7 +15,8 @@ function schedule({data: todo, app}) {
             type: 'showNotification',
             data: {
                 title: 'Todo fällig',
-                body: todo.description
+                message: todo.description,
+                level: 'info'
             }
         });
         delete jobs[todo._id];
