@@ -41,7 +41,7 @@ export default inject('auth', 'resources', 'transports', 'calls')(observer(({aut
             <tbody>
             {resources.list.map(r =>
                 <tr style={states.get(r.state).rowStyle} className={auth.isDispo ? 'resourceRow' : ''}
-                    key={r._id} onClick={auth.isDispo ? () => resources.selectPosition(r._id) : null}>
+                    key={r._id} onClick={auth.isDispo ? () => resources.selectResource(r._id) : null}>
                     <td>{r.tetra}</td>
                     <td>{r.type}</td>
                     <td>{r.callSign}</td>
