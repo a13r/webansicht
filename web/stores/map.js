@@ -11,7 +11,7 @@ export class MapStore {
     @observable
     positions = [];
     @observable
-    selectedPosition;
+    selectedPosition = {};
 
     constructor() {
         loginReaction(() => {

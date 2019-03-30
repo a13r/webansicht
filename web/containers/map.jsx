@@ -61,13 +61,13 @@ const rectangleStyle = selected => feature => new Style({
 });
 
 const ResourceOverlay = inject('map')(observer(({map, id}) =>
-    map.selectedPosition.resource && <div className="panel panel-default" id={id}>
-        <div className="panel-heading">
+    <div className="panel panel-default" id={id}>
+        {map.selectedPosition.resource && <div className="panel-heading">
             <h2 className="panel-title">{map.selectedPosition.resource.callSign}</h2>
-        </div>
-        <div className="panel-body">
+        </div>}
+        {map.selectedPosition.updatedAt && <div className="panel-body">
             Letzter Standort: {moment(map.selectedPosition.updatedAt).format('L LT')}
-        </div>
+        </div>}
     </div>));
 
 @authenticate
@@ -92,12 +92,12 @@ class MapComponent extends React.Component {
             });
         when(() => mapStore.mls, () => {
             const {mls} = mapStore;
-            const [x,y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
+            const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
             this.map.setView(new View({
                 center: [x, y],
                 zoom: 13
             }));
-            this.createGrid([x-500, y+500], 10, 10, 100, -100);
+            this.createGrid([x - 500, y + 500], 10, 10, 100, -100);
         });
         const resourceLayer = new Vector({style: pointStyle(false), zIndex: 2});
         const accuracyLayer = new Vector({
@@ -128,10 +128,8 @@ class MapComponent extends React.Component {
                     accuracyLayer.getSource().addFeature(new Feature(new GeomCircle(center, accuracy)));
                 }
                 const position = e.selected[0].get('position');
-                if (position.resource) {
-                    mapStore.selectPosition(position);
-                    this.overlay.setPosition(e.selected[0].getGeometry().getCoordinates());
-                }
+                mapStore.selectPosition(position);
+                this.overlay.setPosition(e.selected[0].getGeometry().getCoordinates());
             } else {
                 accuracyLayer.getSource().clear();
                 this.overlay.setPosition(null);
@@ -171,7 +169,7 @@ class MapComponent extends React.Component {
             for (let y = startY, j = 0; j < rows; j++, y += ySize) {
                 source.addFeature(new Feature({
                     geometry: fromExtent([x, y, x + xSize, y + ySize]),
-                    name: String.fromCharCode('A'.charCodeAt(0) + i) + (j+1)
+                    name: String.fromCharCode('A'.charCodeAt(0) + i) + (j + 1)
                 }));
             }
         }
