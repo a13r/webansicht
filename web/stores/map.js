@@ -6,15 +6,12 @@ import States from '../shared/states';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from "ol/source/Vector";
-import {resources as resourceListStore} from "~/stores";
-import {SendMessageForm} from "~/forms/sendMessageForm";
 
 export class MapStore {
     @observable
     positions = [];
     @observable
-    selectedResource = {};
-    sendMessageForm = new SendMessageForm();
+    selectedPosition;
 
     constructor() {
         loginReaction(() => {
@@ -26,7 +23,6 @@ export class MapStore {
             resources.on('updated', this.onResourceUpdated);
             resources.on('patched', this.onResourceUpdated);
         });
-        this.sendMessageForm.reset();
     }
 
     find() {
@@ -60,10 +56,8 @@ export class MapStore {
     };
 
     @action
-    selectResource = resource => {
-        resourceListStore.selectResource(resource._id);
-        this.selectedResource = resource;
-        this.sendMessageForm.$('destination').set(resource.tetra);
+    selectPosition = position => {
+        this.selectedPosition = position;
     };
 
     @computed
@@ -77,6 +71,7 @@ export class MapStore {
             geometry: new Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
             name: pos.resource ? pos.resource.callSign : pos.name,
             color: pos.resource && pos.resource.state ? States[pos.resource.state].rowStyle.backgroundColor : 'red',
+            position: pos,
             accuracy: pos.accuracy,
             resource: pos.resource
         }));

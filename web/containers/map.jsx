@@ -23,11 +23,8 @@ import Feature from "ol/Feature";
 import {pointerMove} from "ol/events/condition";
 import Overlay from "ol/Overlay";
 import {fromExtent} from "ol/geom/Polygon";
-import _ from "lodash";
-import states from "~/shared/states";
-import {Select as SelectControl, TextInput} from "~/components/formControls";
-import {Button} from "react-bootstrap";
-import {SendMessageForm} from "~/components/SendMessageForm";
+import ResourceEditor from "~/components/ResourceEditor";
+import moment from "moment";
 
 const pointStyle = selected => feature => {
     return new Style({
@@ -63,22 +60,13 @@ const rectangleStyle = selected => feature => new Style({
     })
 });
 
-const ResourceOverlay = inject('resources', 'map')(observer(({resources, map, id, onClose}) =>
-    <div className="panel panel-default" id={id}>
+const ResourceOverlay = inject('map')(observer(({map, id}) =>
+    map.selectedPosition.resource && <div className="panel panel-default" id={id}>
         <div className="panel-heading">
-            <h2 className="panel-title">{map.selectedResource.callSign}</h2>
+            <h2 className="panel-title">{map.selectedPosition.resource.callSign}</h2>
         </div>
         <div className="panel-body">
-
-            <form onSubmit={e => { onClose(); return resources.form.onSubmit(e); }}>
-                <SelectControl field={resources.form.$('state')}>
-                    {_.keys(states).map(key => <option key={key} value={key}>{key} – {states[key].name}</option>)}
-                </SelectControl>
-                <div className="btn-toolbar form-group">
-                    <Button type="submit" bsStyle="primary">Speichern</Button>
-                </div>
-            </form>
-            <SendMessageForm form={map.sendMessageForm}/>
+            Letzter Standort: {moment(map.selectedPosition.updatedAt).format('L LT')}
         </div>
     </div>));
 
@@ -88,7 +76,7 @@ class MapComponent extends React.Component {
 
     componentDidMount() {
         this.map = new Map({target: this.div});
-        const {map: mapStore} = this.props;
+        const {map: mapStore, resources: resourceListStore} = this.props;
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
             .then(text => {
@@ -135,25 +123,28 @@ class MapComponent extends React.Component {
         hoverInteraction.on('select', e => {
             if (e.selected.length > 0) {
                 const accuracy = e.selected[0].get('accuracy');
-                if (!accuracy) {
-                    return;
+                if (accuracy) {
+                    const center = e.selected[0].getGeometry().getCoordinates();
+                    accuracyLayer.getSource().addFeature(new Feature(new GeomCircle(center, accuracy)));
                 }
-                const center = e.selected[0].getGeometry().getCoordinates();
-                accuracyLayer.getSource().addFeature(new Feature(new GeomCircle(center, accuracy)));
+                const position = e.selected[0].get('position');
+                if (position.resource) {
+                    mapStore.selectPosition(position);
+                    this.overlay.setPosition(e.selected[0].getGeometry().getCoordinates());
+                }
             } else {
                 accuracyLayer.getSource().clear();
+                this.overlay.setPosition(null);
             }
         });
         this.clickInteraction.on('select', e => {
             if (e.selected.length > 0) {
                 const resource = e.selected[0].get('resource');
                 if (resource) {
-                    mapStore.selectResource(resource);
-                    this.overlay.setPosition(e.selected[0].getGeometry().getCoordinates());
-                    return;
+                    resourceListStore.selectResource(resource._id);
                 }
+                this.clickInteraction.getFeatures().clear();
             }
-            this.overlay.setPosition(null);
         });
         this.map.addInteraction(hoverInteraction);
         this.map.addInteraction(this.clickInteraction);
@@ -167,7 +158,6 @@ class MapComponent extends React.Component {
 
     hideOverlay = () => {
         this.overlay.setPosition(null);
-        this.clickInteraction.getFeatures().clear();
     };
 
     createGrid([startX, startY], cols, rows, xSize, ySize) {
@@ -197,7 +187,12 @@ class MapComponent extends React.Component {
     render() {
         return <div>
             <div className="openlayers-map" ref={el => this.div = el}/>
-            <ResourceOverlay id="popover" onClose={this.hideOverlay}/>
+            <div className="row">
+                <div className="col-md-3 col-md-offset-9" style={{marginTop: '25px'}}>
+                    <ResourceEditor/>
+                </div>
+            </div>
+            <ResourceOverlay id="popover"/>
         </div>;
     }
 }
