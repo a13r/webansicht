@@ -31,7 +31,7 @@ export class SendMessageForm extends BaseForm {
                     destination, message
                 };
                 if (callout) {
-                    data.callout = {severity: 7}
+                    data.callout = {severity: 1}
                 }
                 messages.create(data)
                     .then(() => form.$('message').clear())

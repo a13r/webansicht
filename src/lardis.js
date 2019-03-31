@@ -9,6 +9,7 @@ module.exports = function () {
     const resources = app.service('resources');
     const positions = app.service('positions');
     const messages = app.service('messages');
+    const notifications = app.service('notifications');
     app.get('lardis').radios.forEach(setupRadio);
 
     function setupRadio(radio) {
@@ -100,16 +101,27 @@ module.exports = function () {
             processLIP(issi, hex);
         } else if (action === 'MailState') {
             const [id, state] = data.split(',');
+            console.log(line);
             switch (state) {
                 case '1':
                     messages.patch(id, {state: 'sent'});
-                    return;
+                    break;
                 case '2':
                     messages.patch(id, {state: 'delivered'});
-                    return;
+                    break;
                 default:
                     messages.patch(id, {state: 'error', errorType: 'tetra'});
+                    break;
             }
+        } else if (action === 'CalloutAck') {
+            const [issi, text] = data.split(',');
+            notifications.create({
+                type: 'showNotification',
+                data: {
+                    title: `Callout-Rückmeldung von ${issi}`,
+                    level: 'info'
+                }
+            });
         }
     }
 
@@ -168,12 +180,23 @@ module.exports = function () {
             const reasonForSending = extractInt(bin, 68, 76);
             console.log(`Reason for sending: ${reasonForSending}`);
             if (reasonForSending === 12) {
-                console.log(`${issi} has low battery`)
+                console.log(`${issi} has low battery`);
+                resources.find({query: {tetra: issi}}).catch(() => false)
+                    .then(resource => {
+                        const name = resource ? `${resource.callSign} (${issi})` : issi;
+                        notifications.create({
+                            type: 'showNotification',
+                            data: {
+                                title: `${name}: Akku fast leer`,
+                                level: 'warning'
+                            }
+                        });
+                    });
             }
         }
         positions.find({query: {issi}})
             .then(result => {
-                if(result.length > 0) {
+                if (result.length > 0) {
                     return result[0];
                 } else {
                     return positions.create({issi});

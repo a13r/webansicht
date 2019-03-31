@@ -3,33 +3,37 @@ import {auth} from ".";
 
 export class NotificationStore {
     system;
-    notified = {};
 
-    init(system) {
-        this.system = system;
+    constructor() {
         messages.on('patched', this.messageUpdated);
         notifications.on('created', this.onNotification);
     }
 
+    init(system) {
+        this.system = system;
+    }
+
     messageUpdated = message => {
-        if (!auth.loggedIn || auth.user._id !== message.userId || this.notified[message._id]) {
+        if (!auth.loggedIn || auth.user._id !== message.userId) {
+            console.log('not for this user');
             return;
         }
-        this.notified[message._id] = true;
         if (message.state === 'delivered') {
             this.success(`Zustellung an ${message.destination} erfolgreich`, 'Nachricht zugestellt');
         } else if (message.errorType) {
             const reason = message.errorType === 'no_radio' ? 'kein Funkgerät verfügbar' : 'TETRA-Fehler';
             this.error(`Nachricht an ${message.destination} nicht erfolgreich: ${reason}.`, 'Zustellfehler');
         }
-        setTimeout(() => delete this.notified[message._id], 1000);
     };
 
     onNotification = n => {
         if (n.type !== 'showNotification') return;
         console.log(n.data);
         this.system.addNotification(n.data);
-        new Notification(n.data.title, {body: n.data.message});
+        if (!window.document.hasFocus()) {
+            const notification = new Notification(n.data.title, {body: n.data.message});
+            notification.onclick = () => window.focus();
+        }
     };
 
     error(message, title = 'Fehler') {
