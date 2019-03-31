@@ -37,9 +37,6 @@ module.exports = function () {
 
     messages.on('created', m => {
         let destination = m.destination;
-        if (!destination.startsWith('63')) {
-            destination = '63' + destination;
-        }
         if (m.callout) {
             const radio = _.values(connectedRadios).find(r => r.sendCallouts);
             if (!radio) {
