@@ -96,7 +96,7 @@ const ResourceOverlay = inject('map')(observer(({map, id}) =>
     </div>));
 
 @authenticate
-@inject('map', 'resources')
+@inject('map', 'resources', 'auth')
 @observer
 class MapComponent extends React.Component {
     @observable
@@ -105,7 +105,7 @@ class MapComponent extends React.Component {
 
     componentDidMount() {
         this.map = new Map({target: this.div});
-        const {map: mapStore, resources: resourceListStore} = this.props;
+        const {map: mapStore, resources: resourceListStore, auth} = this.props;
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
             .then(text => {
@@ -200,8 +200,10 @@ class MapComponent extends React.Component {
             }
             this.showEditor = false;
         });
-        this.map.addInteraction(hoverInteraction);
-        this.map.addInteraction(clickInteraction);
+        if (auth.isDispo) {
+            this.map.addInteraction(hoverInteraction);
+            this.map.addInteraction(clickInteraction);
+        }
         reaction(() => this.showEditor, showEditor => {
             if (!showEditor) {
                 clickInteraction.getFeatures().clear();
