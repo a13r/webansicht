@@ -2,7 +2,7 @@ import {messages, notifications} from "~/app";
 import {auth} from ".";
 
 export class NotificationStore {
-    system;
+    static system;
 
     constructor() {
         messages.on('patched', this.messageUpdated);
@@ -10,7 +10,9 @@ export class NotificationStore {
     }
 
     init(system) {
-        this.system = system;
+        if (system) {
+            NotificationStore.system = system;
+        }
     }
 
     messageUpdated = message => {
@@ -29,7 +31,7 @@ export class NotificationStore {
     onNotification = n => {
         if (n.type !== 'showNotification') return;
         console.log(n.data);
-        this.system.addNotification(n.data);
+        NotificationStore.system.addNotification(n.data);
         if (!window.document.hasFocus()) {
             const notification = new Notification(n.data.title, {body: n.data.message});
             notification.onclick = () => window.focus();
@@ -37,25 +39,25 @@ export class NotificationStore {
     };
 
     error(message, title = 'Fehler') {
-        this.system.addNotification({
+        NotificationStore.system.addNotification({
             message, title, level: 'error'
         });
     }
 
     warning(message, title) {
-        this.system.addNotification({
+        NotificationStore.system.addNotification({
             message, title, level: 'warning'
         })
     }
 
     success(message, title) {
-        this.system.addNotification({
+        NotificationStore.system.addNotification({
             message, title, level: 'success'
         });
     }
 
     info(message, title) {
-        this.system.addNotification({
+        NotificationStore.system.addNotification({
             message, title, level: 'info'
         })
     }
