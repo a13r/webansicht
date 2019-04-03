@@ -98,17 +98,24 @@ class MapComponent extends React.Component {
         if (mapStore.view) {
             this.map.setView(mapStore.view);
         } else {
-            when(() => mapStore.mls, () => {
-                const {mls} = mapStore;
-                const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
-                this.map.setView(new View({
-                    center: [x, y],
-                    zoom: 13
-                }));
-            });
+            // set position for VCM
+            this.map.setView(new View({
+                center: [1821166.415347291, 6141958.138939653],
+                zoom: 17,
+                rotation: 1.375
+            }));
+            // when(() => mapStore.mls, () => {
+            //     const {mls} = mapStore;
+            //     const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
+            //     this.map.setView(new View({
+            //         center: [x, y],
+            //         zoom: 13
+            //     }));
+            // });
         }
         this.map.on('moveend', e => {
             mapStore.view = e.map.getView();
+            console.log(mapStore.view);
         });
         const resourceLayer = new Vector({style: pointStyle(false), zIndex: 2});
         const accuracyLayer = new Vector({
