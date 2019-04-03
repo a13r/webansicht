@@ -14,7 +14,9 @@ const schema = new mongoose.Schema({
     info: String,
     hidden: Boolean,
     ordering: Number,
-    home: String
+    home: String,
+    hasCallout: Boolean,
+    showOnMap: Boolean
 });
 
 module.exports = function (app) {

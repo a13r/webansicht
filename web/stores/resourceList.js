@@ -29,6 +29,8 @@ export default class ResourceListStore extends ResourceStore {
                 if (resource.tetra) {
                     this.sendMessageForm.$('destination').set(resource.tetra);
                     this.sendMessageVisible = true;
+                    this.sendMessageForm.hasCallout = !!resource.hasCallout;
+                    this.sendMessageForm.$('callout').set(!!resource.hasCallout);
                 } else {
                     this.sendMessageVisible = false;
                 }

@@ -113,6 +113,12 @@ const fields = {
     hidden: {
         type: 'checkbox'
     },
+    hasCallout: {
+        type: 'checkbox'
+    },
+    showOnMap: {
+        type: 'checkbox'
+    },
     home: {
         label: 'Heimatstandort'
     }

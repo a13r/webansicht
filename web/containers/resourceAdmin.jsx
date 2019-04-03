@@ -34,6 +34,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin', 'talkGroups')(
                         <th>Reihung</th>
                         <th>Heimatstandort</th>
                         <th>ausgeblendet</th>
+                        <th>Callout</th>
+                        <th>auf Karte</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -49,6 +51,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin', 'talkGroups')(
                             <td>{r.ordering}</td>
                             <td>{r.home}</td>
                             <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
+                            <td>{r.hasCallout && <i className="fa fa-bullhorn"/>}</td>
+                            <td>{r.showOnMap && <i className="fa fa-map"/>}</td>
                         </tr>)}
                     </tbody>
                 </table>
@@ -70,6 +74,8 @@ export default restrictToRoles(['dispo'])(inject('resourceAdmin', 'talkGroups')(
                     <TextInput field={resourceAdmin.form.$('ordering')}/>
                     <TextInput field={resourceAdmin.form.$('home')}/>
                     <Checkbox {...resourceAdmin.form.$('hidden').bind()}>ausblenden</Checkbox>
+                    <Checkbox {...resourceAdmin.form.$('hasCallout').bind()}>hat Callout</Checkbox>
+                    <Checkbox {...resourceAdmin.form.$('showOnMap').bind()}>auf Karte zeigen</Checkbox>
                     <div className="btn-toolbar">
                         <Button bsStyle="primary" type="submit" disabled={!resourceAdmin.form.isValid}>
                             <i className="fa fa-save"/> Speichern

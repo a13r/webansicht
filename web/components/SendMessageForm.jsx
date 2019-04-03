@@ -10,9 +10,9 @@ export const SendMessageForm = observer(({form}) => <form onSubmit={form.onSubmi
     </FormGroup>
     <div className="btn-toolbar">
         <Button type="submit" bsStyle="primary">Senden</Button>
-        <ToggleButtonGroup defaultValue={false} {...form.$('callout').bind()}>
+        {form.hasCallout && <ToggleButtonGroup defaultValue={false} {...form.$('callout').bind()}>
             <ToggleButton value={false}>Nachricht</ToggleButton>
             <ToggleButton value={true}>Callout</ToggleButton>
-        </ToggleButtonGroup>
+        </ToggleButtonGroup>}
     </div>
 </form>);
