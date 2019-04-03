@@ -1,7 +1,7 @@
 import React from 'react';
 import authenticate from '~/components/authenticate';
 import {inject, observer} from 'mobx-react';
-import {reaction, when} from "mobx";
+import {observable, reaction, when} from "mobx";
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
@@ -72,7 +72,11 @@ const ResourceOverlay = inject('map')(observer(({map, id}) =>
 
 @authenticate
 @inject('map', 'resources')
+@observer
 class MapComponent extends React.Component {
+    @observable
+    showEditor = false;
+    map;
 
     componentDidMount() {
         this.map = new Map({target: this.div});
@@ -90,14 +94,21 @@ class MapComponent extends React.Component {
                     zIndex: -1
                 }));
             });
-        when(() => mapStore.mls, () => {
-            const {mls} = mapStore;
-            const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
-            this.map.setView(new View({
-                center: [x, y],
-                zoom: 13
-            }));
-            this.createGrid([x - 500, y + 500], 10, 10, 100, -100);
+        // set map position
+        if (mapStore.view) {
+            this.map.setView(mapStore.view);
+        } else {
+            when(() => mapStore.mls, () => {
+                const {mls} = mapStore;
+                const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
+                this.map.setView(new View({
+                    center: [x, y],
+                    zoom: 13
+                }));
+            });
+        }
+        this.map.on('moveend', e => {
+            mapStore.view = e.map.getView();
         });
         const resourceLayer = new Vector({style: pointStyle(false), zIndex: 2});
         const accuracyLayer = new Vector({
@@ -111,7 +122,7 @@ class MapComponent extends React.Component {
             layers: [resourceLayer],
             condition: pointerMove
         });
-        this.clickInteraction = new Select({
+        const clickInteraction = new Select({
             layers: [resourceLayer],
             style: pointStyle(true)
         });
@@ -135,29 +146,45 @@ class MapComponent extends React.Component {
                 this.overlay.setPosition(null);
             }
         });
-        this.clickInteraction.on('select', e => {
+        clickInteraction.on('select', e => {
+            console.log('select', e.selected);
             if (e.selected.length > 0) {
                 const resource = e.selected[0].get('resource');
                 if (resource) {
+                    this.showEditor = true;
                     resourceListStore.selectResource(resource._id);
+                    return;
                 }
-                this.clickInteraction.getFeatures().clear();
             }
+            this.showEditor = false;
         });
         this.map.addInteraction(hoverInteraction);
-        this.map.addInteraction(this.clickInteraction);
+        this.map.addInteraction(clickInteraction);
+        reaction(() => this.showEditor, showEditor => {
+            if (!showEditor) {
+                clickInteraction.getFeatures().clear();
+            }
+        });
         reaction(() => mapStore.vectorSource, vectorSource => {
             if (vectorSource) {
                 accuracyLayer.getSource().clear();
+                clickInteraction.getFeatures().clear();
                 resourceLayer.setSource(vectorSource);
             }
         }, true);
     }
 
-    hideOverlay = () => {
-        this.overlay.setPosition(null);
-    };
-
+    /**
+     * Shows rectangular grid on the map.
+     * Example on how to create a grid: this.createGrid([x - 500, y + 500], 10, 10, 100, -100)
+     *
+     * @param startX the corner of the grid with the smallest latitude and longitude
+     * @param startY
+     * @param cols number of columns
+     * @param rows number of rows
+     * @param xSize cell size in x direction
+     * @param ySize cell size in y direction
+     */
     createGrid([startX, startY], cols, rows, xSize, ySize) {
         const source = new VectorSource();
         const gridLayer = new Vector({
@@ -185,11 +212,11 @@ class MapComponent extends React.Component {
     render() {
         return <div>
             <div className="openlayers-map" ref={el => this.div = el}/>
-            <div className="row">
+            {this.showEditor && <div className="row">
                 <div className="col-md-3 col-md-offset-9" style={{marginTop: '25px'}}>
-                    <ResourceEditor/>
+                    <ResourceEditor onClose={() => this.showEditor = false}/>
                 </div>
-            </div>
+            </div>}
             <ResourceOverlay id="popover"/>
         </div>;
     }

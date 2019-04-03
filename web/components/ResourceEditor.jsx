@@ -7,10 +7,16 @@ import _ from "lodash";
 import {PositionTextInput} from "~/components/formControls";
 import {SendMessageForm} from "~/components/SendMessageForm";
 
-export default inject('resources', 'log')(observer(({resources, log}) =>
+export default inject('resources', 'log')(observer(({resources, log, onClose}) =>
     <div className="panel panel-default">
         <div className="panel-heading">
-            <h2 className="panel-title">Status ändern</h2>
+            <h2 className="panel-title">
+                Status ändern
+                {onClose && <Button bsSize="xs" className="close" onClick={onClose}>
+                    <i className="fa fa-times"></i>
+                </Button>}
+            </h2>
+
         </div>
         <div className="panel-body">
             <form onSubmit={resources.form.onSubmit}>
