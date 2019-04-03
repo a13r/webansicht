@@ -6,6 +6,7 @@ import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
 import Stroke from 'ol/style/Stroke';
+import RegularShape from 'ol/style/RegularShape';
 import Text from 'ol/style/Text';
 import Map from 'ol/Map';
 import WMTS, {optionsFromCapabilities} from "ol/source/WMTS";
@@ -25,6 +26,7 @@ import Overlay from "ol/Overlay";
 import {fromExtent} from "ol/geom/Polygon";
 import ResourceEditor from "~/components/ResourceEditor";
 import moment from "moment";
+import umfeld from "~/pois/umfeld.json";
 
 const pointStyle = selected => feature => {
     return new Style({
@@ -59,6 +61,29 @@ const rectangleStyle = selected => feature => new Style({
         color: selected ? '#CCCCCC33' : '#FFFFFF00'
     })
 });
+const vcmPoiStyle = feature => {
+    let color = '#3333FF';
+    const text = feature.get('text');
+    if (text.startsWith('Ü')) {
+        color = '#339933';
+    } else if (text.startsWith('S')) {
+        color = '#ccba00';
+    }
+    return new Style({
+        image: new RegularShape({
+            radius: 15,
+            points: 3,
+            fill: new Fill({color})
+        }),
+        text: new Text({
+            text,
+            font: 'bold 12px sans-serif',
+            textAlign: 'center',
+            fill: new Fill({color}),
+            stroke: new Stroke({color: 'white', width: 4})
+        })
+    });
+};
 
 const ResourceOverlay = inject('map')(observer(({map, id}) =>
     <div className="panel panel-default" id={id}>
@@ -115,13 +140,23 @@ class MapComponent extends React.Component {
         }
         this.map.on('moveend', e => {
             mapStore.view = e.map.getView();
-            console.log(mapStore.view);
         });
-        const resourceLayer = new Vector({style: pointStyle(false), zIndex: 2});
+        const resourceLayer = new Vector({style: pointStyle(false), zIndex: 10});
         const accuracyLayer = new Vector({
             source: new VectorSource(),
-            zIndex: 1
+            zIndex: 8
         });
+        const vcmPoiLayer = new Vector({
+            style: vcmPoiStyle,
+            source: new VectorSource({
+                features: umfeld.map(p => new Feature({
+                    geometry: new Point([p.coordinates.lng, p.coordinates.lat]).transform('EPSG:4326', 'EPSG:3857'),
+                    text: p.text.split('\n')[0]
+                }))
+            }),
+            zIndex: 5
+        });
+        this.map.addLayer(vcmPoiLayer);
         this.map.addLayer(resourceLayer);
         this.map.addLayer(accuracyLayer);
         const hoverInteraction = new Select({

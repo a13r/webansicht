@@ -1,0 +1,345 @@
+[
+    {
+        "coordinates": {
+            "lat": 48.208787,
+            "lng": 16.360018
+        },
+        "text": "ÜP1"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209701,
+            "lng": 16.360248
+        },
+        "text": "ÜP2"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210404,
+            "lng": 16.360414
+        },
+        "text": "ÜP3"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212974,
+            "lng": 16.361072
+        },
+        "text": "SP1\nUniversität Haupteingang"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212767,
+            "lng": 16.358947
+        },
+        "text": "SP2\nReichsratsstraße hinter Universität"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209216,
+            "lng": 16.357728
+        },
+        "text": "SP3\nRathausplatz # Stadiongasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209456,
+            "lng": 16.355013
+        },
+        "text": "OP0\nLandesgerichtsstraße # Stadiongasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210341,
+            "lng": 16.355113
+        },
+        "text": "OP1\nLandesgerichtsstraße/Friedrich-Schmidt-Platz # Lichtenfelsgasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.211873,
+            "lng": 16.355499
+        },
+        "text": "OP2\nLandesgerichtsstraße/Friedrich-Schmidt-Platz # Felderstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212815,
+            "lng": 16.355784
+        },
+        "text": "OP3\nLandesgerichtsstraße # Grillparzerstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213681,
+            "lng": 16.355969
+        },
+        "text": "OP4\nLandesgerichtsstraße # Liebiggasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.214481,
+            "lng": 16.35614
+        },
+        "text": "OP5\nLandesgerichtsstraße # Universitätsstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209284,
+            "lng": 16.355779
+        },
+        "text": "OP10\nRathausstraße # Stadiongasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210155,
+            "lng": 16.355971
+        },
+        "text": "OP11\nRathausstraße/Friedrich-Schmidt-Platz # Lichtenfelsgasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.211611,
+            "lng": 16.356442
+        },
+        "text": "OP12\nRathausstraße/Friedrich-Schmidt-Platz # Felderstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212711,
+            "lng": 16.356805
+        },
+        "text": "OP13\nRathausstraße # Grillparzerstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213546,
+            "lng": 16.357041
+        },
+        "text": "OP14\nRathausstraße # Liebiggasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.214274,
+            "lng": 16.357276
+        },
+        "text": "OP15\nRathausstraße # Universitätsstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209198,
+            "lng": 16.356772
+        },
+        "text": "OP20\nBartensteingasse # Stadiongasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210069,
+            "lng": 16.357007
+        },
+        "text": "OP21\nBartensteingasse # Lichtenfelsgasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.211718,
+            "lng": 16.357521
+        },
+        "text": "OP22\nEbendorferstraße # Felderstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212603,
+            "lng": 16.357788
+        },
+        "text": "OP23\nEbendorferstraße # Grillparzerstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213381,
+            "lng": 16.357991
+        },
+        "text": "OP24\nEbendorferstraße # Liebiggasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.214145,
+            "lng": 16.358237
+        },
+        "text": "OP25\nEbendorferstraße # Universitätsstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209055,
+            "lng": 16.357683
+        },
+        "text": "OP30\nRathausplatz # Stadiongasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209933,
+            "lng": 16.35794
+        },
+        "text": "OP31\nRathausplatz # Lichtenfelsgasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.21154,
+            "lng": 16.358421
+        },
+        "text": "OP32\nRathausplatz # Felderstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212446,
+            "lng": 16.358689
+        },
+        "text": "OP33\nReichsratsstraße # Grillparzerstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213274,
+            "lng": 16.358913
+        },
+        "text": "OP34\nReichsratsstraße # Liebiggasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213988,
+            "lng": 16.359138
+        },
+        "text": "OP35\nReichsratsstraße # Universitätsstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209801,
+            "lng": 16.358679
+        },
+        "text": "OP40\nRathauspark links"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210006,
+            "lng": 16.359562
+        },
+        "text": "OP41\nRathauspark links"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210605,
+            "lng": 16.359117
+        },
+        "text": "OP42\nRathauspark Mitte"
+    },
+    {
+        "coordinates": {
+            "lat": 48.21101,
+            "lng": 16.359907
+        },
+        "text": "OP43\nRathauspark rechts"
+    },
+    {
+        "coordinates": {
+            "lat": 48.21169,
+            "lng": 16.359438
+        },
+        "text": "OP44\nRathauspark rechts"
+    },
+    {
+        "coordinates": {
+            "lat": 48.208587,
+            "lng": 16.359984
+        },
+        "text": "OP50\nDr.-Karl-Renner-Ring # Rathausplatz"
+    },
+    {
+        "coordinates": {
+            "lat": 48.209639,
+            "lng": 16.360088
+        },
+        "text": "OP51\nUniversitätsring # Rathauspark links"
+    },
+    {
+        "coordinates": {
+            "lat": 48.211262,
+            "lng": 16.360655
+        },
+        "text": "OP52\nUniversitätsring # Rathauspark rechts"
+    },
+    {
+        "coordinates": {
+            "lat": 48.212268,
+            "lng": 16.360677
+        },
+        "text": "OP53\nUniversitätsring # Rathausplatz"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213684,
+            "lng": 16.361375
+        },
+        "text": "OP54\nUniversitätsring # Universitätsstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.207479,
+            "lng": 16.36023
+        },
+        "text": "OP60\nDr.-Karl-Renner-Ring # Volksgarten"
+    },
+    {
+        "coordinates": {
+            "lat": 48.208694,
+            "lng": 16.360333
+        },
+        "text": "OP61\nUniversitätsring # Volksgarten"
+    },
+    {
+        "coordinates": {
+            "lat": 48.20938,
+            "lng": 16.360818
+        },
+        "text": "OP62\nUniversitätsring # Josef-Meinrad-Platz"
+    },
+    {
+        "coordinates": {
+            "lat": 48.211388,
+            "lng": 16.361356
+        },
+        "text": "OP63\nUniversitätsring # Löwelstraße"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213348,
+            "lng": 16.361877
+        },
+        "text": "OP64\nUniversitätsring ggü. Haupteingang Universität"
+    },
+    {
+        "coordinates": {
+            "lat": 48.213886,
+            "lng": 16.362394
+        },
+        "text": "OP65\nUniversitätsring # Schottengasse"
+    },
+    {
+        "coordinates": {
+            "lat": 48.207797,
+            "lng": 16.362337
+        },
+        "text": "OP70\nVolksgarten Nähe Heldenplatz"
+    },
+    {
+        "coordinates": {
+            "lat": 48.208597,
+            "lng": 16.361451
+        },
+        "text": "OP71\nVolksgarten Nähe Theseustempel"
+    },
+    {
+        "coordinates": {
+            "lat": 48.210275,
+            "lng": 16.362086
+        },
+        "text": "OP72\nLöwelstraße hinter Burgtheater"
+    }
+]
