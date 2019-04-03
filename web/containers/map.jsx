@@ -2,6 +2,7 @@ import React from 'react';
 import authenticate from '~/components/authenticate';
 import {inject, observer} from 'mobx-react';
 import {observable, reaction, when} from "mobx";
+import {defaults as defaultControls, Control} from "ol/control"
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
@@ -85,6 +86,42 @@ const vcmPoiStyle = feature => {
     });
 };
 
+class DefaultViewControl extends Control {
+    defaultView;
+
+    constructor(opt_options) {
+        const options = opt_options || {};
+
+        super({
+            element: document.createElement('div'),
+            render: options.render,
+            target: options.target
+        });
+
+        const i = document.createElement('i');
+        i.className = 'fa fa-home';
+
+        const button = document.createElement('button');
+        button.appendChild(i);
+
+        const element = this.element;
+        element.className = 'default-view ol-unselectable ol-control';
+        element.appendChild(button);
+
+        button.addEventListener('click', this.handleClick.bind(this), false);
+    }
+
+    handleClick() {
+        // this.getMap().setView(this.defaultView);
+        this.getMap().getView().animate({
+            center: this.defaultView.getCenter(),
+            zoom: this.defaultView.getZoom(),
+            rotation: this.defaultView.getRotation(),
+            duration: 750
+        });
+    }
+}
+
 const ResourceOverlay = inject('map')(observer(({map, id}) =>
     <div className="panel panel-default" id={id}>
         {map.selectedPosition.resource && <div className="panel-heading">
@@ -104,7 +141,13 @@ class MapComponent extends React.Component {
     map;
 
     componentDidMount() {
-        this.map = new Map({target: this.div});
+        const defaultViewControl = new DefaultViewControl();
+        this.map = new Map({
+            target: this.div,
+            controls: defaultControls().extend([
+                defaultViewControl
+            ])
+        });
         const {map: mapStore, resources: resourceListStore, auth} = this.props;
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
@@ -119,24 +162,27 @@ class MapComponent extends React.Component {
                     zIndex: -1
                 }));
             });
-        // set map position
+        // default view for VCM
+        const defaultView = new View({
+            center: [1821166.415347291, 6141958.138939653],
+            zoom: 17,
+            rotation: 1.375
+        });
+        // when(() => mapStore.mls, () => {
+        //     const {mls} = mapStore;
+        //     const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
+        //     this.map.setView(new View({
+        //         center: [x, y],
+        //         zoom: 13
+        //     }));
+        // });
+        defaultViewControl.defaultView = defaultView;
+
+        // set map view
         if (mapStore.view) {
             this.map.setView(mapStore.view);
         } else {
-            // set position for VCM
-            this.map.setView(new View({
-                center: [1821166.415347291, 6141958.138939653],
-                zoom: 17,
-                rotation: 1.375
-            }));
-            // when(() => mapStore.mls, () => {
-            //     const {mls} = mapStore;
-            //     const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
-            //     this.map.setView(new View({
-            //         center: [x, y],
-            //         zoom: 13
-            //     }));
-            // });
+            this.map.setView(defaultView);
         }
         this.map.on('moveend', e => {
             mapStore.view = e.map.getView();

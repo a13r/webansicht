@@ -10,3 +10,8 @@
     min-width: 200px;
     max-width: 400px;
 }
+
+.default-view {
+    top: 65px;
+    left: .5em;
+}
