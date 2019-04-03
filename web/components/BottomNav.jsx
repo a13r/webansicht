@@ -4,7 +4,7 @@ import restrictToRoles from "~/components/restrictToRoles";
 import {Navbar} from "react-bootstrap";
 
 export const BottomNav = restrictToRoles(['dispo'])(inject('calls', 'talkGroups')(observer(({calls, talkGroups}) =>
-    <Navbar fixedBottom fluid inverse>
+    <Navbar fixedBottom fluid inverse className="hidden-xs">
         {calls.lastIncomingTexts.map((l, i) =>
             <Navbar.Header key={i}>
                 <Navbar.Text>{l.talkGroup} [{l.timestamp}]</Navbar.Text>
