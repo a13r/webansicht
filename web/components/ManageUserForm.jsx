@@ -21,6 +21,7 @@ export default restrictToRoles(['admin'])(inject('manageUser', 'stations')(obser
             <Checkbox {...manageUser.form.$('admin').bind()}>Administrator</Checkbox>
             <Checkbox {...manageUser.form.$('dispo').bind()}>Disponent</Checkbox>
             <Checkbox {...manageUser.form.$('station').bind()}>SanHiSt</Checkbox>
+            <Checkbox {...manageUser.form.$('transports').bind()}>Transporte</Checkbox>
             {manageUser.form.$('station').value &&
             <Select field={manageUser.form.$('stationId')}>
                 <option value="">(keine)</option>

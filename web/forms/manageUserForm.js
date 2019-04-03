@@ -23,6 +23,10 @@ export class ManageUserForm extends BaseForm {
                     label: 'SanHiSt',
                     type: 'checkbox'
                 },
+                transports: {
+                    label: 'Transporte',
+                    type: 'checkbox'
+                },
                 username: {
                     label: 'Benutzername',
                     validators: [required()]
@@ -56,11 +60,12 @@ export class ManageUserForm extends BaseForm {
     hooks() {
         return {
             onSuccess: form => {
-                const {_id, admin, dispo, station, username, name, initials, password, stationId} = form.values();
+                const {_id, admin, dispo, station, transports, username, name, initials, password, stationId} = form.values();
                 const roles = [];
                 if (admin) roles.push('admin');
                 if (dispo) roles.push('dispo');
                 if (station) roles.push('station');
+                if (transports) roles.push('transports');
 
                 const data = {roles, username, name, initials, stationId};
                 if (!stationId) {

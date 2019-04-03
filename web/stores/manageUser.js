@@ -69,6 +69,7 @@ export default class ManageUserStore {
             admin: user.roles.includes('admin'),
             dispo: user.roles.includes('dispo'),
             station: user.roles.includes('station'),
+            transports: user.roles.includes('transports'),
             ...user
         });
     };

@@ -33,17 +33,26 @@ export default class AuthStore {
 
     @computed
     get isAdmin() {
-        return this.user && this.user.roles.includes('admin');
+        return this.hasRole('admin');
     }
 
     @computed
     get isDispo() {
-        return this.user && this.user.roles.includes('dispo');
+        return this.hasRole('dispo');
     }
 
     @computed
     get isStation() {
-        return this.user && this.user.roles.includes('station');
+        return this.hasRole('station');
+    }
+
+    @computed
+    get hasTransports() {
+        return this.hasRole('transports');
+    }
+
+    hasRole(role) {
+        return this.user && this.user.roles.includes(role);
     }
 
     @action

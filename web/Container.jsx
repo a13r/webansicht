@@ -71,9 +71,9 @@ export default class Container extends React.Component {
                                 {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
                                     <NavItem><i className="fa fa-hospital-o"/> SanHiSts</NavItem>
                                 </LinkContainer>}
-                                <LinkContainer to="/transports">
+                                {(auth.isDispo || auth.isStation || auth.hasTransports) && <LinkContainer to="/transports">
                                     <NavItem><i className="fa fa-ambulance"/> Transporte</NavItem>
-                                </LinkContainer>
+                                </LinkContainer>}
                                 <LinkContainer to="/map">
                                     <NavItem><i className="fa fa-map"/> Karte</NavItem>
                                 </LinkContainer>
