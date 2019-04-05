@@ -116,6 +116,7 @@ module.exports = function () {
                 type: 'showNotification',
                 data: {
                     title: `Callout-Rückmeldung von ${issi}`,
+                    message: text,
                     level: 'info'
                 }
             });
