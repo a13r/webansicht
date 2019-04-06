@@ -11,6 +11,7 @@ module.exports = function () {
     const messages = app.service('messages');
     const notifications = app.service('notifications');
     app.get('lardis').radios.forEach(setupRadio);
+    const callOutCC = app.get('callOutCC');
 
     function setupRadio(radio) {
         if (connectedRadios[radio.name]) {
@@ -48,6 +49,16 @@ module.exports = function () {
             radio.connection.write(command, 'utf8', () => {
                 messages.patch(m._id, {state: 'pending'});
             });
+            if (callOutCC && callOutCC.length > 0) {
+                resources.find({query: {tetra: destination}}).then(([resource]) => {
+                    callOutCC.forEach(issi => {
+                        messages.create({
+                            message: `Alarmierung an ${resource.type} ${resource.callSign}: ${m.message}`,
+                            destination: issi
+                        });
+                    });
+                });
+            }
         } else {
             const radio = _.values(connectedRadios).find(r => r.sendMessages);
             if (!radio) {
