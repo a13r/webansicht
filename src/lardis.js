@@ -112,14 +112,18 @@ module.exports = function () {
             }
         } else if (action === 'CalloutAck') {
             const [issi, text] = data.split(',');
-            notifications.create({
-                type: 'showNotification',
-                data: {
-                    title: `Callout-Rückmeldung von ${issi}`,
-                    message: text,
-                    level: 'info'
-                }
-            });
+            resources.find({query: {tetra: issi}}).catch(() => false)
+                .then(result => {
+                    const name = result.length > 0 ? `${result[0].type} ${result[0].callSign}` : issi;
+                    notifications.create({
+                        type: 'showNotification',
+                        data: {
+                            title: `Callout-Rückmeldung von ${name}`,
+                            message: text,
+                            level: 'info'
+                        }
+                    });
+                });
         }
     }
 
@@ -180,8 +184,8 @@ module.exports = function () {
             if (reasonForSending === 12) {
                 console.log(`${issi} has low battery`);
                 resources.find({query: {tetra: issi}}).catch(() => false)
-                    .then(resource => {
-                        const name = resource ? `${resource.callSign} (${issi})` : issi;
+                    .then(result => {
+                        const name = result.length > 0 ? `${result[0].type} ${result[0].callSign}` : issi;
                         notifications.create({
                             type: 'showNotification',
                             data: {
