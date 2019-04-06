@@ -180,10 +180,6 @@ module.exports = function () {
         }
         // positionError = 2 * 10^n
         let positionError = 2 * Math.pow(10, extractInt(bin, 53, 56));
-        if (positionError > 200) {
-            console.log(`skipping LIP, position error is ${positionError}`);
-            return;
-        }
         let position = {
             lon: (bin[4] === '0' ? extractInt(bin, 4, 29) : (~extractInt(bin, 4, 29) + 1)) * 360.0 / Math.pow(2, 25),
             lat: (bin[29] === '0' ? extractInt(bin, 29, 53) : (~extractInt(bin, 29, 53) + 1)) * 180.0 / Math.pow(2, 24),
