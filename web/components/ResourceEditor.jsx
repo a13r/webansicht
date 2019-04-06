@@ -6,16 +6,15 @@ import {inject, observer} from "mobx-react";
 import _ from "lodash";
 import {PositionTextInput} from "~/components/formControls";
 import {SendMessageForm} from "~/components/SendMessageForm";
-import restrictToRoles from "~/components/restrictToRoles";
 
-export default restrictToRoles(['dispo'])(inject('resources', 'log')(observer(({resources, log, onClose}) =>
+export default inject('resources', 'log')(observer(({resources, log, onClose}) =>
     <div className="panel panel-default">
         <div className="panel-heading">
             <h2 className="panel-title">
                 Status ändern
-                <Button bsSize="xs" className="close" onClick={onClose}>
+                {onClose && <Button bsSize="xs" className="close" onClick={onClose}>
                     <i className="fa fa-times"></i>
-                </Button>
+                </Button>}
             </h2>
         </div>
         <div className="panel-body">
@@ -42,4 +41,4 @@ export default restrictToRoles(['dispo'])(inject('resources', 'log')(observer(({
             </form>
             {resources.sendMessageVisible && <SendMessageForm form={resources.sendMessageForm}/>}
         </div>
-    </div>)));
+    </div>));
