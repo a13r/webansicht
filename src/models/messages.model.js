@@ -13,7 +13,8 @@ module.exports = function (app) {
         callout: {
             severity: Number
         },
-        userId: String
+        userId: String,
+        resource: {type: Object}
     }, {
         timestamps: true
     });

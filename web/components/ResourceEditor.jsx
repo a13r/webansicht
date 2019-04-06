@@ -13,11 +13,10 @@ export default restrictToRoles(['dispo'])(inject('resources', 'log')(observer(({
         <div className="panel-heading">
             <h2 className="panel-title">
                 Status ändern
-                {onClose && <Button bsSize="xs" className="close" onClick={onClose}>
+                <Button bsSize="xs" className="close" onClick={onClose}>
                     <i className="fa fa-times"></i>
-                </Button>}
+                </Button>
             </h2>
-
         </div>
         <div className="panel-body">
             <form onSubmit={resources.form.onSubmit}>

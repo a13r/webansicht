@@ -28,6 +28,7 @@ import {TodoDropdown} from "~/components/TodoDropdown";
 import {TodoForm} from "~/components/TodoForm";
 import {BottomNav} from "~/components/BottomNav";
 import {TransportDropdown} from "~/components/TransportDropdown";
+import MessageList from "~/components/MessageList";
 
 const {auth, journal, notification, router} = stores;
 const browserHistory = createBrowserHistory();
@@ -60,10 +61,13 @@ export default class Container extends React.Component {
                                     <NavItem><i className="fa fa-home"/> Übersicht</NavItem>
                                 </IndexLinkContainer>
                                 {auth.isDispo && <LinkContainer to="/journal">
-                                    <NavItem><i className="fa fa-list"/> Einsatztagebuch</NavItem>
+                                    <NavItem><i className="fa fa-list"/> ETB</NavItem>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/log">
                                     <NavItem><i className="fa fa-history"/> Statusverlauf</NavItem>
+                                </LinkContainer>}
+                                {auth.isDispo && <LinkContainer to="/messages">
+                                    <NavItem><i className="fa fa-envelope"/> Nachrichen</NavItem>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/resourceAdmin">
                                     <NavItem><i className="fa fa-ambulance"/> Ressourcen</NavItem>
@@ -104,6 +108,7 @@ export default class Container extends React.Component {
                     <Route path="/log" component={Log}/>
                     <Route path="/settings" component={Settings}/>
                     <Route path="/journal" component={Journal}/>
+                    <Route path="/messages" component={MessageList}/>
                     <Route path="/stations" component={Stations}/>
                     <Route path="/transports" component={Transports}/>
                     <Route path="/map" component={Map}/>
