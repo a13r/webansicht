@@ -92,10 +92,9 @@ export default class Container extends React.Component {
                                     <NavDropdown id="user"
                                                  title={<span><i
                                                      className="fa fa-user-circle"/> {auth.user.name}</span>}>
-                                        {auth.isDispo &&
                                         <LinkContainer to="/settings">
                                             <MenuItem><i className="fa fa-cogs"/> Einstellungen</MenuItem>
-                                        </LinkContainer>}
+                                        </LinkContainer>
                                         <MenuItem onClick={() => auth.logout()}><i className="fa fa-sign-out"/> Abmelden</MenuItem>
                                     </NavDropdown> :
                                     <NavItem onClick={() => auth.logout()}>Abmelden</NavItem>}
