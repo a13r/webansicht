@@ -31,7 +31,14 @@ export default restrictToRoles(['dispo'])(inject('messages')(observer(({messages
                     <td>{m.resource ? `${m.resource.type} ${m.resource.callSign}` : m.destination}</td>
                     <td>{m.message}</td>
                     <td>{stateMap[m.state]}</td>
-                    <td>{m.callout && <i className="fa fa-bullhorn"/>}</td>
+                    <td>
+                        {m.callout && <span>
+                            <i className="fa fa-bullhorn"/>
+                            {m.callout.ackReceived && <span>
+                                <i className="fa fa-check"/> {moment(m.callout.ackReceived).format('HH:mm:ss')}
+                            </span>}
+                        </span>}
+                    </td>
                 </tr>)}
             </tbody>
         </table>

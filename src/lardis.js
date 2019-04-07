@@ -130,6 +130,18 @@ module.exports = function () {
             resources.find({query: {tetra: issi}}).catch(() => false)
                 .then(result => {
                     const name = result.length > 0 ? `${result[0].type} ${result[0].callSign}` : issi;
+                    messages.patch(null, {callout: {ackReceived: Date.now()}}, {
+                        query: {
+                            destination: issi,
+                            callout: {
+                                severity: 1
+                            },
+                            $limit: 1,
+                            $sort: {
+                                createdAt: -1
+                            }
+                        }
+                    });
                     notifications.create({
                         type: 'showNotification',
                         data: {

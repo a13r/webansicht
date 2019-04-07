@@ -11,7 +11,8 @@ module.exports = function (app) {
         state: {type: String, enum: ['pending', 'sent', 'delivered', 'error'], required: true, default: 'pending'},
         errorType: {type: String, enum: ['no_radio', 'tetra']},
         callout: {
-            severity: Number
+            severity: Number,
+            ackReceived: {type: Date}
         },
         userId: String,
         resource: {type: Object}
