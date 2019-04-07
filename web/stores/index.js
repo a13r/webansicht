@@ -49,6 +49,14 @@ export default stores;
 
 loginReaction(({user}) => {
     if (user.roles.includes('dispo')) {
+        bind('f1', '/');
+        bind('f2', '/journal');
+        bind('f3', '/log');
+        bind('f4', '/messages');
+        bind('f5', '/resourceAdmin');
+        bind('f6', '/stations');
+        bind('f7', '/transports');
+        bind('f8', '/map');
         bind('ctrl+e', stores.journal.createEntry);
         bind('shift+f6', stores.transports.createNew);
     }
