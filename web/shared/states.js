@@ -41,7 +41,7 @@ class States {
             backgroundColor: '#FFFFFF',
             color: '#FF0000'
         },
-        name: 'Pause'
+        name: 'Bereitschaft'
     };
     8 = {
         rowStyle: {
