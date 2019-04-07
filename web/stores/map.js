@@ -70,7 +70,7 @@ export class MapStore {
     get positionFeatures() {
         return this.positions.filter(p => !p.resource || p.resource.showOnMap).map(pos => new Feature({
             geometry: new Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
-            name: pos.resource ? pos.resource.callSign : pos.name,
+            name: pos.resource ? pos.resource.callSign : pos.issi,
             color: pos.resource && pos.resource.state ? States[pos.resource.state].rowStyle.backgroundColor : 'red',
             position: pos,
             accuracy: pos.accuracy,
