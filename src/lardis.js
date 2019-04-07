@@ -102,7 +102,11 @@ module.exports = function () {
             message = message.substring(1, message.length - 1);
             console.log(`[${radio.name}] incoming message from ${issi}: ${message}`);
             if (/^\*\d$/.test(message)) {
-                resources.patch(null, {state: parseInt(message.substring(1))}, {query: {tetra: issi}});
+                resources.find({query: {tetra: issi}}).then(result => {
+                    if (result.length === 1) {
+                        resources.patch(result[0]._id, {state: parseInt(message.substring(1))}).catch();;
+                    }
+                });
             }
         } else if (action === 'LIP') {
             let [issi, hex] = data.split(',');
