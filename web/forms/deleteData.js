@@ -1,6 +1,6 @@
 import {action, computed, observable} from "mobx";
 import {BaseForm} from "~/forms/baseForm";
-import {log, resources, users, journal, stations, transports, calls, todos, messages} from "~/app";
+import {log, resources, users, journal, stations, transports, calls, todos, messages, positions} from "~/app";
 import {notification} from "~/stores";
 import {equalsConst} from "~/forms/validators";
 
@@ -20,6 +20,7 @@ export class DeleteDataForm extends BaseForm {
                 todos: {type: 'checkbox'},
                 calls: {type: 'checkbox'},
                 messages: {type: 'checkbox'},
+                positions: {type: 'checkbox'},
                 confirm: {
                     label: 'Bitte "ja, wirklich" eingeben:',
                     validators: [equalsConst('ja, wirklich')]
@@ -59,6 +60,10 @@ export class DeleteDataForm extends BaseForm {
                 if (form.values().messages) {
                     removeAll(messages, 'Nachrichten gelöscht');
                 }
+                if (form.values().positions) {
+                    positions.find().then(positions => positions.filter(p => !!p.issi))
+                        .then(list => removeList(positions, list, 'Positionen gelöscht'));
+                }
                 form.hide();
             }
         }
@@ -82,6 +87,10 @@ export class DeleteDataForm extends BaseForm {
         if (this.values().stations) descriptions.push('SanHiSts');
         if (this.values().users) descriptions.push('Benutzer');
         if (this.values().transports) descriptions.push('Transporte');
+        if (this.values().todos) descriptions.push('Todos');
+        if (this.values().calls) descriptions.push('Funksprüche');
+        if (this.values().messages) descriptions.push('Nachrichten');
+        if (this.values().positions) descriptions.push('Positionen');
         return descriptions;
     }
 }
