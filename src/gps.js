@@ -16,7 +16,9 @@ module.exports = function () {
         .then(position => position._id);
 
     function updatePosition({lat, lon, time}) {
-        myPositionId.then(id => positions.patch(id, {lat, lon, time}));
+        console.log('Updating MLS position to', lat, lon);
+        myPositionId.then(id => positions.patch(id, {lat, lon, time}))
+            .catch(error => console.log('Could not update MLS position', error));
     }
 
     if (!config || !config.hostname) {
@@ -30,7 +32,7 @@ module.exports = function () {
         // console.error(e.message);
     });
     listener.on('TPV', data => {
-        _.throttle(() => updatePosition(data), 60000);
+        _.throttle(() => updatePosition(data), 30000, {leading: true, trailing: false})();
     });
     listener.connect(() => {
         console.log('Connected to GPSd');

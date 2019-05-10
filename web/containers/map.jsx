@@ -162,21 +162,24 @@ class MapComponent extends React.Component {
                     zIndex: -1
                 }));
             });
-        // default view for VCM
+
         const defaultView = new View({
             center: [1821166.415347291, 6141958.138939653],
-            zoom: 17,
-            rotation: 1.375
+	    zoom: 13
+            // default view for VCM
+            //zoom: 17,
+            //rotation: 1.375
         });
-        // when(() => mapStore.mls, () => {
-        //     const {mls} = mapStore;
-        //     const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
-        //     this.map.setView(new View({
-        //         center: [x, y],
-        //         zoom: 13
-        //     }));
-        // });
         defaultViewControl.defaultView = defaultView;
+
+        when(() => mapStore.mls, () => {
+             const {mls} = mapStore;
+             const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
+             this.map.setView(new View({
+                 center: [x, y],
+                 zoom: 13
+             }));
+         });
 
         // set map view
         if (mapStore.view) {
