@@ -222,11 +222,10 @@ module.exports = function () {
         positions.find({query: {issi}})
             .then(result => {
                 if (result.length > 0) {
-                    return result[0];
+                    return positions.patch(result[0]._id, position);
                 } else {
-                    return positions.create({issi});
+                    return positions.create({issi, ...position});
                 }
-            })
-            .then(({_id}) => positions.patch(_id, position));
+            });
     }
 };
