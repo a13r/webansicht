@@ -1,6 +1,6 @@
 import {positions, resources} from '~/app';
 import {loginReaction} from "~/stores/index";
-import {action, computed, observable} from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 import _ from "lodash";
 import States from '../shared/states';
 import Feature from 'ol/Feature';
@@ -32,7 +32,10 @@ export class MapStore {
 
     @action
     onPositionCreated = entry => {
-        this.positions.unshift(entry);
+        if (!_.find(this.positions, {_id: entry._id})) {
+            this.positions.unshift(entry);
+        }
+        console.log(toJS(this.positions));
     };
 
     @action

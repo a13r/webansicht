@@ -1,5 +1,6 @@
 const {authenticate} = require('@feathersjs/authentication').hooks;
 const {populate, when, isProvider} = require('feathers-hooks-common');
+const upsert = require('../../hooks/upsert');
 
 const resourceSchema = {
     include: {
@@ -21,7 +22,7 @@ module.exports = {
         all: [when(isProvider('external'), authenticate('jwt'))],
         find: [],
         get: [],
-        create: [],
+        create: [upsert({key: 'issi'})],
         update: [],
         patch: [],
         remove: []
