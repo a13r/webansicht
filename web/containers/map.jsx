@@ -164,8 +164,9 @@ class MapComponent extends React.Component {
             });
 
         const defaultView = new View({
-            center: [1821166.415347291, 6141958.138939653],
-	    zoom: 13
+            // AKW Zwentendorf
+            center: new Point([15.888, 48.353]).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
+	        zoom: 16
             // default view for VCM
             //zoom: 17,
             //rotation: 1.375
