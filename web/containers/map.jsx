@@ -172,7 +172,7 @@ class MapComponent extends React.Component {
             //rotation: 1.375
         });
         defaultViewControl.defaultView = defaultView;
-
+/*
         when(() => mapStore.mls, () => {
              const {mls} = mapStore;
              const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
@@ -181,7 +181,7 @@ class MapComponent extends React.Component {
                  zoom: 13
              }));
          });
-
+*/
         // set map view
         if (mapStore.view) {
             this.map.setView(mapStore.view);
