@@ -291,8 +291,7 @@ class MapComponent extends React.Component {
         const gridLayer = new Vector({
             source,
             style: rectangleStyle(false),
-            zIndex: 0,
-            minResolution: 13
+            zIndex: 0
         });
         let anchor = [startX, startY];
         for (let x = startX, i = 0; i < cols; i++, x += xSize) {
