@@ -1,8 +1,8 @@
 import React from 'react';
 import authenticate from '~/components/authenticate';
 import {inject, observer} from 'mobx-react';
-import {observable, reaction, when} from "mobx";
-import {defaults as defaultControls, Control} from "ol/control"
+import {observable, reaction} from "mobx";
+import {Control, defaults as defaultControls} from "ol/control"
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
 import Circle from 'ol/style/Circle';
@@ -25,9 +25,14 @@ import Feature from "ol/Feature";
 import {pointerMove} from "ol/events/condition";
 import Overlay from "ol/Overlay";
 import {fromExtent} from "ol/geom/Polygon";
+import {register} from "ol/proj/proj4";
+import proj4 from "proj4";
 import ResourceEditor from "~/components/ResourceEditor";
 import moment from "moment";
 import umfeld from "~/pois/umfeld.json";
+
+proj4.defs('EPSG:32633', '+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs');
+register(proj4);
 
 const pointStyle = selected => feature => {
     return new Style({
@@ -54,7 +59,7 @@ const rectangleStyle = selected => feature => new Style({
     }),
     text: new Text({
         text: feature.get('name'),
-        font: '20px sans-serif',
+        font: '14px sans-serif',
         textAlign: 'center',
         fill: new Fill({color: selected ? '#333' : '#AAA'})
     }),
@@ -142,13 +147,14 @@ class MapComponent extends React.Component {
 
     componentDidMount() {
         const defaultViewControl = new DefaultViewControl();
-        this.map = new Map({
+        window.map = this.map = new Map({
             target: this.div,
             controls: defaultControls().extend([
                 defaultViewControl
             ])
         });
         const {map: mapStore, resources: resourceListStore, auth} = this.props;
+        const rotation = 5.562;
 
         fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
             .then(text => {
@@ -165,11 +171,9 @@ class MapComponent extends React.Component {
 
         const defaultView = new View({
             // AKW Zwentendorf
-            center: new Point([15.888, 48.353]).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
-	        zoom: 16
-            // default view for VCM
-            //zoom: 17,
-            //rotation: 1.375
+            center: [1768162, 6165940],
+	        zoom: 17,
+            rotation
         });
         defaultViewControl.defaultView = defaultView;
 /*
@@ -206,9 +210,11 @@ class MapComponent extends React.Component {
             }),
             zIndex: 5
         });
-        this.map.addLayer(vcmPoiLayer);
+        //this.map.addLayer(vcmPoiLayer);
         this.map.addLayer(resourceLayer);
         this.map.addLayer(accuracyLayer);
+        // shutdown festival grid
+        this.createGrid([1768040.9364032568, 6166667.045987979], 19, 13, 30, -30, rotation);
         const hoverInteraction = new Select({
             style: pointStyle(true),
             layers: [resourceLayer],
@@ -272,25 +278,31 @@ class MapComponent extends React.Component {
      * Shows rectangular grid on the map.
      * Example on how to create a grid: this.createGrid([x - 500, y + 500], 10, 10, 100, -100)
      *
-     * @param startX the corner of the grid with the smallest latitude and longitude
-     * @param startY
+     * @param origin the corner of the grid with the smallest latitude and longitude in EPSG:3857
      * @param cols number of columns
      * @param rows number of rows
      * @param xSize cell size in x direction
      * @param ySize cell size in y direction
+     * @param angle rotation angle (rad)
      */
-    createGrid([startX, startY], cols, rows, xSize, ySize) {
+    createGrid(origin, cols, rows, xSize, ySize, angle) {
+        const [startX, startY] = new Point(origin).transform('EPSG:3857', 'EPSG:32633').getCoordinates();
         const source = new VectorSource();
         const gridLayer = new Vector({
             source,
             style: rectangleStyle(false),
-            zIndex: 0
+            zIndex: 0,
+            minResolution: 13
         });
+        let anchor = [startX, startY];
         for (let x = startX, i = 0; i < cols; i++, x += xSize) {
             for (let y = startY, j = 0; j < rows; j++, y += ySize) {
+                const polygon = fromExtent([x, y, x + xSize, y + ySize]);
+                polygon.rotate(angle, anchor);
+
                 source.addFeature(new Feature({
-                    geometry: fromExtent([x, y, x + xSize, y + ySize]),
-                    name: String.fromCharCode('A'.charCodeAt(0) + i) + (j + 1)
+                    geometry: polygon.transform('EPSG:32633', 'EPSG:3857'),
+                    name: 'A' + String.fromCharCode('A'.charCodeAt(0) + i) + (j + 1)
                 }));
             }
         }
