@@ -1,7 +1,7 @@
 import React from 'react';
 import authenticate from '~/components/authenticate';
 import {inject, observer} from 'mobx-react';
-import {observable, reaction} from "mobx";
+import {observable, reaction, when} from "mobx";
 import {Control, defaults as defaultControls} from "ol/control"
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
@@ -169,23 +169,32 @@ class MapComponent extends React.Component {
                 }));
             });
 
+/*
         const defaultView = new View({
             // AKW Zwentendorf
             center: [1768162, 6165940],
 	        zoom: 17,
             rotation
         });
+*/
+        const defaultView = new View({
+            // Wien
+            center: new Point([16.3100209, 48.220778]).transform('EPSG:4326', 'EPSG:3857').getCoordinates(),
+            zoom: 13
+        });
         defaultViewControl.defaultView = defaultView;
-/*
+
         when(() => mapStore.mls, () => {
              const {mls} = mapStore;
              const [x, y] = new Point([mls.lon, mls.lat]).transform('EPSG:4326', 'EPSG:3857').getCoordinates();
-             this.map.setView(new View({
-                 center: [x, y],
-                 zoom: 13
-             }));
+            const view = new View({
+                center: [x, y],
+                zoom: 13
+            });
+            this.map.setView(view);
+            defaultViewControl.defaultView = view;
          });
-*/
+
         // set map view
         if (mapStore.view) {
             this.map.setView(mapStore.view);
@@ -214,7 +223,7 @@ class MapComponent extends React.Component {
         this.map.addLayer(resourceLayer);
         this.map.addLayer(accuracyLayer);
         // shutdown festival grid
-        this.createGrid([1768040.9364032568, 6166667.045987979], 19, 13, 30, -30, rotation);
+        //this.createGrid([1768040.9364032568, 6166667.045987979], 19, 13, 30, -30, rotation);
         const hoverInteraction = new Select({
             style: pointStyle(true),
             layers: [resourceLayer],
