@@ -6,6 +6,7 @@ const restore = require('mongodb-restore');
 const fs = require('fs');
 const uploadDir = './uploads';
 const upload = require('multer')({ dest: uploadDir });
+const {states, priorities, types} = require('../web/shared/strings');
 
 module.exports = function() {
     const app = this;
@@ -109,10 +110,10 @@ function transportsToRows(entries) {
             'LNr.': index + 1,
             'Datum': createdAt.toDate(),
             'Uhrzeit': createdAt.format('HH:mm'),
-            'Status': t.state,
+            'Status': states[t.state],
             'Anfordernde Stelle': t.requester,
-            'Dringlichkeit': t.priority,
-            'Transportart': t.type + (t.hasCompany ? ' + Bgl.' : ''),
+            'Dringlichkeit': priorities[t.priority],
+            'Transportart': types[t.type] + (t.hasCompany ? ' + Bgl.' : ''),
             'Verdachtsdiagnose': t.diagnose,
             'Ziel': `${t.destination.hospital} ${t.destination.station}`,
             'Ressource': t.resource ? `${t.resource.type} ${t.resource.callSign}` : ''
