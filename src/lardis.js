@@ -49,16 +49,16 @@ module.exports = function () {
             radio.connection.write(command, 'utf8', () => {
                 messages.patch(m._id, {state: 'pending'});
             });
-            if (callOutCC && callOutCC.length > 0) {
-                resources.find({query: {tetra: destination}}).then(([resource]) => {
+            resources.patch(null, {state: 10}, {query: {tetra: destination}}).then(([resource]) => {
+                if (callOutCC && callOutCC.length > 0) {
                     callOutCC.forEach(issi => {
                         messages.create({
                             message: `Alarmierung an ${resource.type} ${resource.callSign}: ${m.message}`,
                             destination: issi
                         });
                     });
-                });
-            }
+                }
+            });
         } else {
             const radio = _.values(connectedRadios).find(r => r.sendMessages);
             if (!radio) {

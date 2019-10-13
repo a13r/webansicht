@@ -57,6 +57,13 @@ class States {
         },
         name: 'Außer Dienst'
     };
+    10 = {
+        rowStyle: {
+            backgroundColor: '#FFFF95',
+            color: '#000000',
+        },
+        name: 'Alarmiert'
+    };
 
     get(number) {
         const state = this[parseInt(number)];
