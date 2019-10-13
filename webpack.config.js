@@ -17,7 +17,7 @@ const config = {
         inline: true,
         historyApiFallback: true,
         proxy: [{
-            context: ['/socket.io', '/export.xlsx', '/export.tar', '/import.tar'],
+            context: ['/socket.io', '/export.xlsx', '/export.tar', '/import.tar', '/transports.xlsx'],
             target: 'http://localhost:3030',
             ws: true
         }],

@@ -13,7 +13,7 @@ export default restrictToRoles(['dispo'])(() =>
         </Row>
         <Row>
             <Col md={12}>
-                <ExportButton/>
+                <ExportButton path="/export.xlsx"/>
             </Col>
         </Row>
     </div>);

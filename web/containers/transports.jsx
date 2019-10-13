@@ -4,6 +4,7 @@ import React from "react";
 import moment from "moment";
 import {Button, FormGroup} from "react-bootstrap";
 import {priorities, states, types} from "~/shared/strings";
+import ExportButton from "~/components/ExportButton";
 
 const stateClass = {
     0: 'bg-danger',
@@ -62,5 +63,8 @@ export default authenticate(inject('transports')(observer(({transports}) =>
                     </tr>)}
                 </tbody>
             </table>
+        </div>
+        <div>
+            <ExportButton path="/transports.xlsx"/>
         </div>
     </div>)));

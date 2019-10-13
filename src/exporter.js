@@ -11,6 +11,7 @@ module.exports = function() {
     const app = this;
     // needs Authorization header or accessToken in body
     app.post('/export.xlsx', auth.express.authenticate('jwt'), sendExcel);
+    app.post('/transports.xlsx', auth.express.authenticate('jwt'), sendTransports);
     app.post('/export.tar', auth.express.authenticate('jwt'), sendBackup);
     app.post('/import.tar', auth.express.authenticate('jwt'), upload.single('import'), restoreDatabase);
 
@@ -30,6 +31,20 @@ module.exports = function() {
                 ]);
                 res.end(new Buffer(wbbuf, 'base64'));
             });
+    }
+
+    function sendTransports(req, res) {
+        return app.service('transports').find()
+            .then(entries => {
+                const wb = X.utils.book_new();
+                X.utils.book_append_sheet(wb, X.utils.json_to_sheet(transportsToRows(entries)));
+                const wbbuf = X.write(wb, {type: 'base64'});
+                res.writeHead(200, [
+                    ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+                    ['Content-Disposition', `attachment; filename=Transporte_${dateTime()}.xlsx`]
+                ]);
+                res.end(new Buffer(wbbuf, 'base64'));
+            })
     }
 
     function sendBackup(req, res) {
@@ -84,5 +99,23 @@ function journalEntriesToRows(entries) {
             'Erledigungsvermerk': entry.comment,
             'Kurzzeichen': entry.user.initials
         };
+    });
+}
+
+function transportsToRows(entries) {
+    return entries.map((t, index) => {
+        const createdAt = moment(t.createdAt).tz('Europe/Vienna');
+        return ({
+            'LNr.': index + 1,
+            'Datum': createdAt.toDate(),
+            'Uhrzeit': createdAt.format('HH:mm'),
+            'Status': t.state,
+            'Anfordernde Stelle': t.requester,
+            'Dringlichkeit': t.priority,
+            'Transportart': t.type + (t.hasCompany ? ' + Bgl.' : ''),
+            'Verdachtsdiagnose': t.diagnose,
+            'Ziel': `${t.destination.hospital} ${t.destination.station}`,
+            'Ressource': t.resource ? `${t.resource.type} ${t.resource.callSign}` : ''
+        });
     });
 }
