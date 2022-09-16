@@ -12,6 +12,7 @@ module.exports = function () {
     const notifications = app.service('notifications');
     app.get('lardis').radios.forEach(setupRadio);
     const callOutCC = app.get('callOutCC');
+    const lardisKey = app.get('lardisKey');
 
     function setupRadio(radio) {
         if (connectedRadios[radio.name]) {
@@ -20,7 +21,10 @@ module.exports = function () {
         }
         console.log(`connecting to ${radio.name}`);
         const connection = net.createConnection({host: radio.boxIP, port: radio.boxPort});
-        connection.on('connect', () => console.log(`connected to ${radio.name}`));
+        connection.on('connect', () => {
+			console.log(`connected to ${radio.name}`);
+			connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
+		});
         connection.on('data', buffer => {
             buffer.toString().split('\n').forEach(line => dataReceived(radio, line));
         });

@@ -45,5 +45,6 @@
     "gpsd": {
         "hostname": null
     },
-    "callOutCC": ["6350921"]
+    "callOutCC": ["6350921"],
+    "lardisKey": "insertKeyHere"
 }
