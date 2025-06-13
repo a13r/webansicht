@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:latest
+FROM node:12-alpine
 
 ADD package.json /tmp/package.json
 ADD package-lock.json /tmp/package-lock.json
