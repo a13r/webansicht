@@ -6,10 +6,10 @@ This plan describes the steps necessary to support the current Node.js LTS versi
 
 ### Build Tools
 
-* [ ] Upgrade engine requirements in package.json
-* [ ] Upgrade Babel and related packages (babel-core, babel-loader, etc.)
-* [ ] Replace babel-preset-es2015 (deprecated) with @babel/preset-env
-* [ ] Upgrade Webpack to 5.x and related plugins
+* [x] Upgrade engine requirements in package.json
+* [x] Upgrade Babel and related packages (babel-core, babel-loader, etc.)
+* [x] Replace babel-preset-es2015 (deprecated) with @babel/preset-env
+* [x] Upgrade Webpack to 5.x and related plugins
 
 ### React Ecosystem
 
@@ -30,7 +30,7 @@ This plan describes the steps necessary to support the current Node.js LTS versi
 
 ### Development Dependencies
 
-* [ ] Upgrade webpack-dev-server to a version compatible with Webpack 5
+* [x] Upgrade webpack-dev-server to a version compatible with Webpack 5
 * [ ] Upgrade Mocha
 
 ## React
