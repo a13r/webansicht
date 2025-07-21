@@ -1,4 +1,4 @@
-import {action, computed, observable, reaction} from "mobx";
+import {action, computed, makeAutoObservable, makeObservable, observable, reaction} from "mobx";
 import {stations} from "~/app";
 import {auth} from "~/stores";
 import _ from "lodash";
@@ -7,14 +7,21 @@ import {required} from "~/forms/validators";
 import {BaseForm} from "~/forms/baseForm";
 
 export default class StationStore {
-    @observable
     list = [];
-    @observable
     selected;
-    @observable
     showDeleted = false;
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            selected: observable,
+            showDeleted: observable,
+            selectStation: action,
+            create: action,
+            remove: action,
+            submitNew: action,
+            setShowDeleted: action,
+        });
         stations.on('created', this.onCreated);
         stations.on('updated', this.onUpdated);
         stations.on('patched', this.onUpdated);
@@ -29,12 +36,10 @@ export default class StationStore {
             .then(action(list => this.list = list.map(s => new Station(s))));
     }
 
-    @action
     onCreated = entry => {
         this.list = _.orderBy(this.list.concat(new Station(entry)), ['ordering', 'name']);
     };
 
-    @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing) {
@@ -50,32 +55,31 @@ export default class StationStore {
         }
     };
 
-    @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
 
-    @action
     selectStation = station => this.selected = station;
 
     create = () => {
-        this.list.push(new Station({name: ''}));
+        this.list.push(new Station({name: '', currentPatients: 0, maxPatients: 1}));
     };
 
-    @action
-    removeNew = station => () => {
-        _.remove(this.list, s => s === station);
+    remove = station => () => {
+        if (station.isNew) {
+            _.remove(this.list, s => s === station);
+        } else {
+            station.reset();
+        }
     };
 
-    @action
     submitNew = station => e => {
         e.preventDefault();
         station.form.submit().then(() => {
             if (station.isNew) {
-                this.removeNew(station);
+                this.remove(station);
             }
         });
     };
 
-    @action
     setShowDeleted = event => this.showDeleted = !!event.target.checked;
 }
 
@@ -91,8 +95,7 @@ export class Station {
 
     constructor(values) {
         _.assign(this, values);
-        this.form = new StationForm(this);
-        this.form.update(values);
+        this.form = new StationForm(this, values);
     }
 
     update(values) {
@@ -104,8 +107,6 @@ export class Station {
 
     reset = () => {
         this.form.reset();
-        this.form.update(_.omit(this, ['form', '_id']));
-        this.form.validate();
     };
 
     get isNew() {
@@ -126,29 +127,33 @@ export class Station {
 }
 
 export class StationForm extends BaseForm {
-    constructor(station) {
-        super({fields});
+    constructor(station, values) {
+        super({fields, values});
+        makeObservable(this, {
+            loadPercentage: computed,
+            loadLabel: computed,
+        });
         this.station = station;
     }
 
-    hooks = () => ({
-        onSuccess: form => {
-            if (!this.station._id) {
-                return stations.create(form.values())
-                    .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
-            } else {
-                return stations.patch(this.station._id, form.values())
-                    .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
+    hooks() {
+        return {
+            onSuccess: form => {
+                if (!this.station._id) {
+                    return stations.create(form.values())
+                        .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
+                } else {
+                    return stations.patch(this.station._id, form.values())
+                        .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
+                }
             }
         }
-    });
+    }
 
-    @computed
     get loadPercentage() {
         return this.$('currentPatients').value / this.$('maxPatients').value * 100;
     }
 
-    @computed
     get loadLabel() {
         return this.$('currentPatients').value + '/' + this.$('maxPatients').value;
     }

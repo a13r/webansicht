@@ -1,26 +1,35 @@
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {BaseForm} from "~/forms/baseForm";
 import {log, resources, users, journal, stations, transports, calls, todos, messages, positions} from "~/app";
 import {notification} from "~/stores";
 import {equalsConst} from "~/forms/validators";
 
 export class DeleteDataForm extends BaseForm {
-    @observable
     modalVisible = false;
+
+    constructor() {
+        super();
+        makeObservable(this, {
+            modalVisible: observable,
+            show: action,
+            hide: action,
+            selectedItems: computed
+        });
+    }
 
     setup() {
         return {
             fields: {
-                resources: { type: 'checkbox' },
-                journal: { type: 'checkbox' },
-                log: { type: 'checkbox' },
-                stations: { type: 'checkbox' },
-                users: { type: 'checkbox' },
-                transports: { type: 'checkbox' },
-                todos: {type: 'checkbox'},
-                calls: {type: 'checkbox'},
-                messages: {type: 'checkbox'},
-                positions: {type: 'checkbox'},
+                resources: { type: 'checkbox', label: 'Ressourcen' },
+                journal: { type: 'checkbox', label: 'Einsatztagebuch' },
+                log: { type: 'checkbox', label: 'Statusverlauf' },
+                stations: { type: 'checkbox', label: 'SanHiSts' },
+                users: { type: 'checkbox', label: 'Benutzer' },
+                transports: { type: 'checkbox', label: 'Transporte' },
+                todos: {type: 'checkbox', label: 'Todos'},
+                calls: {type: 'checkbox', label: 'Funksprüche'},
+                messages: {type: 'checkbox', label: 'Nachrichten'},
+                positions: {type: 'checkbox', label: 'Positionen'},
                 confirm: {
                     label: 'Bitte "ja, wirklich" eingeben:',
                     validators: [equalsConst('ja, wirklich')]
@@ -69,16 +78,13 @@ export class DeleteDataForm extends BaseForm {
         }
     }
 
-    @action
     show = () => this.modalVisible = true;
 
-    @action
     hide = () => {
         this.modalVisible = false;
         this.clear();
     };
 
-    @computed
     get selectedItems() {
         const descriptions = [];
         if (this.values().resources) descriptions.push('Ressourcen');

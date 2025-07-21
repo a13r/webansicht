@@ -1,8 +1,9 @@
 import React from "react";
-import {Button, Checkbox, Modal} from "react-bootstrap";
+import Form from 'react-bootstrap/Form';
+import {Button, Modal} from "react-bootstrap";
 import {Select, TextInput} from "./formControls";
 import {inject, observer} from "mobx-react";
-import {selectOptions} from "../stores/journal";
+import {selectOptions} from "~/stores/journal";
 import authenticate from "./authenticate";
 import moment from "moment";
 import restrictToRoles from "~/components/restrictToRoles";
@@ -54,14 +55,14 @@ export default authenticate(inject('journal', 'journalForm')(observer(({journal,
                                    options={selectOptions.priority}/>
                 <SelectWithOptions field={form.$('state')}
                                    options={selectOptions.state}/>
-                <Checkbox {...form.$('transport').bind()}>{form.$('transport').label}</Checkbox>
+                <Form.Check {...form.$('transport').bind()}/>
                 <TextInput field={form.$('comment')}/>
             </Modal.Body>
             <AuditList/>
             <Modal.Footer>
                 <Button onClick={journal.createEntry}>Neuer Eintrag</Button>
                 <Button onClick={journal.closeEditor}>Abbrechen</Button>
-                <Button type="submit" bsStyle="primary">Speichern</Button>
+                <Button type="submit" variant="primary">Speichern</Button>
             </Modal.Footer>
         </form>
     </Modal>)));

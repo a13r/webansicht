@@ -1,6 +1,6 @@
 import React from 'react';
 import {inject, observer} from 'mobx-react';
-import {Button, Modal} from "react-bootstrap";
+import {Button, ButtonGroup, ButtonToolbar, Modal} from "react-bootstrap";
 import {TextInput} from "~/components/formControls";
 
 export const TodoForm = inject('todoForm')(observer(({todoForm: form}) =>
@@ -12,19 +12,19 @@ export const TodoForm = inject('todoForm')(observer(({todoForm: form}) =>
             <Modal.Body>
                 <TextInput field={form.$('description')}/>
                 <TextInput field={form.$('dueDate')}/>
-                <div className="btn-group">
-                    <Button onClick={form.addMinutes(-30)}>–0:30</Button>
-                    <Button onClick={form.addMinutes(-15)}>–0:15</Button>
-                    <Button onClick={form.setNow} bsStyle="primary">jetzt</Button>
-                    <Button onClick={form.trimMinutes}>:00</Button>
-                    <Button onClick={form.addMinutes(15)}>+0:15</Button>
-                    <Button onClick={form.addMinutes(30)}>+0:30</Button>
-                </div>
+                <ButtonGroup className="mt-3">
+                    <Button variant="outline-secondary" onClick={form.addMinutes(-30)}>–0:30</Button>
+                    <Button variant="outline-secondary" onClick={form.addMinutes(-15)}>–0:15</Button>
+                    <Button variant="outline-primary" onClick={form.setNow}>jetzt</Button>
+                    <Button variant="outline-secondary" onClick={form.trimMinutes}>:00</Button>
+                    <Button variant="outline-secondary" onClick={form.addMinutes(15)}>+0:15</Button>
+                    <Button variant="outline-secondary" onClick={form.addMinutes(30)}>+0:30</Button>
+                </ButtonGroup>
             </Modal.Body>
             <Modal.Footer>
-                {form.values()._id && <Button onClick={form.remove} bsStyle="danger">Löschen</Button>}
+                {form.values()._id && <Button onClick={form.remove} variant="danger">Löschen</Button>}
                 <Button onClick={form.hide}>Abbrechen</Button>
-                <Button type="submit" bsStyle="primary">Speichern</Button>
+                <Button type="submit" variant="primary">Speichern</Button>
             </Modal.Footer>
         </form>
     </Modal>));

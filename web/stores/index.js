@@ -4,7 +4,6 @@ import LogStore from './log';
 import {NotificationStore} from './notification';
 import ResourceListStore from './resourceList';
 import ResourceAdminStore from './resourceAdmin';
-import {RouterStore} from 'mobx-react-router';
 import {reaction} from 'mobx';
 import _ from 'lodash';
 import Mousetrap from 'mousetrap';
@@ -18,8 +17,9 @@ import {CallStore} from "~/stores/calls";
 import {TalkGroupStore} from "~/stores/talkGroups";
 import {MapStore} from "~/stores/map";
 import {MessageStore} from "~/stores/messages";
+import {routerStore} from "~/stores/routerStore";
 
-export const router = new RouterStore();
+export const router = routerStore;
 export const auth = new AuthStore();
 export const notification = new NotificationStore();
 export const manageUser = new ManageUserStore();

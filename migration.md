@@ -13,15 +13,15 @@ This plan describes the steps necessary to support the current Node.js LTS versi
 
 ### React Ecosystem
 
-* [ ] Upgrade React and React DOM to 18.x
-* [ ] Upgrade React Router to 6.x
-* [ ] Upgrade React Bootstrap
+* [x] Upgrade React and React DOM to 18.x
+* [x] Upgrade React Router to 6.x
+* [x] Upgrade React Bootstrap
 
 ### MobX
 
-* [ ] Upgrade MobX to 6.x
-* [ ] Upgrade mobx-react to 9.x
-* [ ] Update mobx-react-router
+* [x] Upgrade MobX to 6.x
+* [x] Upgrade mobx-react to 9.x
+* [x] Update mobx-react-router
 
 ### FeathersJS
 
@@ -32,29 +32,6 @@ This plan describes the steps necessary to support the current Node.js LTS versi
 
 * [x] Upgrade webpack-dev-server to a version compatible with Webpack 5
 * [ ] Upgrade Mocha
-
-## React
-
-First, upgrade `react` and `react-dom` to `^16.14.0`.
-
-* [ ] Replace `React.PropTypes` with `prop-types` package
-* [ ] Update any deprecated lifecycle methods
-* [ ] Handle changes in error handling
-
-Then, upgrade to `^18.2.0`.
-
-* [ ] Update the React 18 root API:
-    ```javascript
-    // Old React 15 code
-    import { render } from 'react-dom';
-    render(<App />, document.getElementById('root'));
-    
-    // New React 18 code
-    import { createRoot } from 'react-dom/client';
-    const container = document.getElementById('root');
-    const root = createRoot(container);
-    root.render(<App />);
-    ```
 
 ## Dockerfile
 

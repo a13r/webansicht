@@ -1,18 +1,24 @@
-import {action, computed, observable, reaction, toJS} from "mobx";
+import {action, computed, makeObservable, observable, reaction, toJS} from "mobx";
 import ResourceStore from "./resources";
 import _ from "lodash";
-import {resources} from "../app";
-import {required} from "../forms/validators";
+import {resources} from "~/app";
+import {required} from "~/forms/validators";
 import {loginReaction, notification} from "./index";
 import {DeleteResourceForm} from "~/forms/deleteResourceForm";
 
 export default class ResourceAdminStore extends ResourceStore {
-    @observable
     editorVisible = false;
     deleteResourceForm;
 
     constructor() {
         super(fields);
+        makeObservable(this, {
+            editorVisible: observable,
+            createResource: action,
+            showEditor: action,
+            selectResource: action,
+            selectedResource: computed,
+        })
         this.deleteResourceForm = new DeleteResourceForm();
         loginReaction(() => this.find(), () => {
             this.editorVisible = false;
@@ -25,14 +31,11 @@ export default class ResourceAdminStore extends ResourceStore {
         });
     }
 
-    @action
     createResource = () => {
         this.form.reset();
         this.showEditor(true);
-        setTimeout(() => this.form.$('callSign').input.focus(), 100);
     };
 
-    @action
     showEditor(show) {
         this.editorVisible = show;
         if (!show) {
@@ -40,7 +43,6 @@ export default class ResourceAdminStore extends ResourceStore {
         }
     }
 
-    @action
     selectResource = _id => {
         const resource = _.find(this.list, {_id});
         if (resource) {
@@ -52,7 +54,6 @@ export default class ResourceAdminStore extends ResourceStore {
         }
     };
 
-    @computed
     get selectedResource() {
         return _.find(this.list, {_id: this.selectedResourceId});
     }
@@ -61,7 +62,8 @@ export default class ResourceAdminStore extends ResourceStore {
         const id = form.$('_id').value;
         if (id) {
             resources.patch(form.$('_id').value, form.values())
-                .then(r => notification.success(`Die Ressource ${r.callSign} wurde geändert`));
+                .then(r => notification.success(`Die Ressource ${r.callSign} wurde geändert`))
+                .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
         } else {
             const newResource = form.values();
             _.unset(newResource, '_id');
@@ -111,13 +113,16 @@ const fields = {
         validators: [required()]
     },
     hidden: {
-        type: 'checkbox'
+        type: 'checkbox',
+        label: 'ausblenden'
     },
     hasCallout: {
-        type: 'checkbox'
+        type: 'checkbox',
+        label: 'hat Callout'
     },
     showOnMap: {
-        type: 'checkbox'
+        type: 'checkbox',
+        label: 'auf Karte anzeigen'
     },
     home: {
         label: 'Heimatstandort'

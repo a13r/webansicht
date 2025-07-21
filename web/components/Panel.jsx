@@ -1,5 +1,12 @@
 import React from "react";
-import {Panel as BsPanel} from "react-bootstrap";
+import Card from 'react-bootstrap/Card';
 
 export const Panel = ({title, children, ...props}) =>
-    <BsPanel header={<h2 className="panel-title">{title}</h2>} {...props}>{children}</BsPanel>;
+    <Card {...props}>
+        <Card.Header>
+            {title}
+        </Card.Header>
+        <Card.Body>
+            {children}
+        </Card.Body>
+    </Card>;

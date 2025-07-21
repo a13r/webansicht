@@ -1,6 +1,6 @@
 import {positions, resources} from '~/app';
 import {loginReaction} from "~/stores/index";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import _ from "lodash";
 import States from '../shared/states';
 import Feature from 'ol/Feature';
@@ -8,13 +8,23 @@ import Point from 'ol/geom/Point';
 import VectorSource from "ol/source/Vector";
 
 export class MapStore {
-    @observable
     positions = [];
-    @observable
     selectedPosition = {};
     view;
 
     constructor() {
+        makeObservable(this, {
+            positions: observable,
+            selectedPosition: observable,
+            onPositionCreated: action,
+            onPositionUpdated: action,
+            onPositionRemoved: action,
+            onResourceUpdated: action,
+            selectPosition: action,
+            vectorSource: computed,
+            positionFeatures: computed,
+            mls: computed,
+        });
         loginReaction(() => {
             this.find();
             positions.on('created', this.onPositionCreated);
@@ -30,14 +40,12 @@ export class MapStore {
         positions.find().then(action(t => this.positions = t));
     }
 
-    @action
     onPositionCreated = entry => {
         if (!_.find(this.positions, {_id: entry._id})) {
             this.positions.push(entry);
         }
     };
 
-    @action
     onPositionUpdated = entry => {
         const existing = _.find(this.positions, {_id: entry._id});
         if (existing) {
@@ -47,10 +55,8 @@ export class MapStore {
         }
     };
 
-    @action
     onPositionRemoved = ({_id}) => _.remove(this.positions, {_id});
 
-    @action
     onResourceUpdated = resource => {
         const position = _.find(this.positions, {issi: resource.tetra});
         if (position) {
@@ -58,17 +64,14 @@ export class MapStore {
         }
     };
 
-    @action
     selectPosition = position => {
         this.selectedPosition = position;
     };
 
-    @computed
     get vectorSource() {
         return new VectorSource({features: [...this.positionFeatures]});
     }
 
-    @computed
     get positionFeatures() {
         return this.positions.filter(p => p.lat && p.lon && (!p.resource || p.resource.showOnMap)).map(pos => new Feature({
             geometry: new Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
@@ -80,7 +83,6 @@ export class MapStore {
         }));
     }
 
-    @computed
     get mls() {
         return _.find(this.positions, {name: 'MLS'});
     }

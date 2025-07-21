@@ -1,31 +1,41 @@
-import {action, observable, computed, reaction} from 'mobx';
-import {journal} from '../app';
-import {Form} from 'mobx-react-form';
+import {action, computed, makeObservable, observable} from 'mobx';
+import {journal} from '~/app';
+import {Form} from 'mobx-react-form';
 import _ from 'lodash';
-import {auth, loginReaction, notification} from '../stores';
+import {loginReaction, notification} from '../stores';
 import moment from 'moment';
-import Mousetrap from 'mousetrap';
 import validator from "validator";
-import {required, date} from "../forms/validators";
+import {date, required} from "~/forms/validators";
 
 moment.locale('de');
 
 export default class JournalStore {
-    @observable
     list = [];
-    @observable
     query = {
         $sort: {
             createdAt: -1
         }
     };
     form;
-    @observable
     selectedEntry;
-    @observable
     editorVisible = false;
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            query: observable,
+            editorVisible: observable,
+            selectedEntry: observable,
+            onCreated: action,
+            onUpdated: action,
+            onRemoved: action,
+            closeEditor: action,
+            createEntry: action,
+            selectEntry: action,
+            selectedEntryId: computed,
+            sortOrder: computed,
+            toggleSortOrder: action,
+        })
         this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}});
         journal.on('created', this.onCreated);
         journal.on('updated', this.onUpdated);
@@ -41,7 +51,6 @@ export default class JournalStore {
             .then(action(list => this.list = list));
     }
 
-    @action
     onCreated = entry => {
         if (this.sortOrder === 1) {
             this.list.push(entry);
@@ -51,7 +60,6 @@ export default class JournalStore {
         this.list = _.orderBy(this.list, ['createdAt'], [this.sortOrder === 1 ? 'asc' : 'desc']);
     };
 
-    @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing && existing.createdAt === entry.createdAt) {
@@ -64,20 +72,16 @@ export default class JournalStore {
         }
     };
 
-    @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
 
-    @computed
     get sortOrder() {
         return this.query.$sort.createdAt;
     }
 
-    @computed
     get selectedEntryId() {
         return this.form.$('_id').value;
     }
 
-    @action
     createEntry = () => {
         this.selectedEntry = null;
         this.form.reset();
@@ -86,13 +90,11 @@ export default class JournalStore {
         setTimeout(() => this.form.$('text').input.focus(), 100);
     };
 
-    @action
     closeEditor = () => {
         this.editorVisible = false;
         this.form.reset();
     };
 
-    @action
     selectEntry = id => {
         const entry = _.find(this.list, {_id: id});
         if (entry) {
@@ -103,7 +105,6 @@ export default class JournalStore {
         }
     };
 
-    @action
     toggleSortOrder() {
         this.query.$sort.createdAt = this.query.$sort.createdAt === 1 ? -1 : 1;
         this.find();

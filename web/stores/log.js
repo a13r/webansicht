@@ -1,13 +1,11 @@
-import {action, computed, observable, reaction} from "mobx";
+import {action, computed, makeObservable, observable, reaction} from "mobx";
 import {log} from "../app";
 import _ from "lodash";
 import {Form} from "mobx-react-form";
 import {loginReaction, router} from '../stores';
 
 export default class LogStore {
-    @observable
     list = [];
-    @observable
     query = {
         $sort: {
             since: -1
@@ -16,6 +14,16 @@ export default class LogStore {
     form;
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            query: observable,
+            onCreated: action,
+            onRemoved: action,
+            updateList: action,
+            sortOrder: computed,
+            toggleSortOrder: action,
+            goToResourceId: action,
+        });
         log.on('created', this.onCreated);
         log.on('removed', this.onRemoved);
         this.form = new Form({fields});
@@ -23,7 +31,6 @@ export default class LogStore {
         loginReaction(() => this.find());
     }
 
-    @action
     onCreated = item => {
         if (this.sortOrder === 1) {
             this.list.push(item);
@@ -32,7 +39,6 @@ export default class LogStore {
         }
     };
 
-    @action
     onRemoved = ({_id}) => {
         _.remove(this.list, {_id});
     };
@@ -41,23 +47,19 @@ export default class LogStore {
         return log.find({query: _.merge({}, this.query, query)}).then(json => this.updateList(json));
     }
 
-    @action
     updateList = list => {
         this.list = list;
     };
 
-    @computed
     get sortOrder() {
         return this.query.$sort.since;
     }
 
-    @action
     toggleSortOrder() {
         this.query.$sort.since = this.query.$sort.since === 1 ? -1 : 1;
         this.find();
     }
 
-    @action
     goToResourceId = (resourceId) => () => {
         this.form.$('resource_id').set(resourceId);
         router.push('/log');

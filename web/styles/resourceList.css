@@ -5,3 +5,7 @@ tr.resourceRow {
 tr.resourceRow:hover {
     opacity: 0.8;
 }
+
+tr.resourceRow td, tr.logRow td {
+    background-color: transparent;
+}

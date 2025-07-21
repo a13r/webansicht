@@ -11,4 +11,4 @@ function styleForPercentage(now) {
     return "success";
 }
 
-export default ({now, ...props}) => <ProgressBar now={Math.min(now, 100)} bsStyle={styleForPercentage(now)} {...props}/>;
+export default ({now, ...props}) => <ProgressBar now={Math.min(now, 100)} variant={styleForPercentage(now)} {...props}/>;

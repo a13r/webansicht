@@ -36,7 +36,6 @@ export class ChangePasswordForm extends BaseForm {
                     .catch(error => {
                         notification.error(error.message, 'Das Passwort wurde nicht geändert');
                         form.$('oldPassword').clear();
-                        form.$('oldPassword').input.focus();
                     });
             }
         };

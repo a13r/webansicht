@@ -2,8 +2,8 @@ import {inject, observer} from "mobx-react";
 import React from "react";
 import states from "../shared/states";
 import moment from "moment";
-import {SortToggle} from "./SortToggle";
 import restrictToRoles from "~/components/restrictToRoles";
+import Card from "react-bootstrap/Card";
 
 const stateMap = {
     'delivered': 'zugestellt',
@@ -13,8 +13,8 @@ const stateMap = {
 };
 
 export default restrictToRoles(['dispo'])(inject('messages')(observer(({messages}) =>
-    <div className="panel panel-default">
-        <table className="table table-condensed table-striped">
+    <Card>
+        <table className="table table-condensed table-striped mb-0">
             <thead>
             <tr>
                 <th>Zeitpunkt</th>
@@ -42,4 +42,4 @@ export default restrictToRoles(['dispo'])(inject('messages')(observer(({messages
                 </tr>)}
             </tbody>
         </table>
-    </div>)));
+    </Card>)));

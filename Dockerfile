@@ -1,11 +1,10 @@
-FROM node:12-alpine
+FROM node:22-alpine
 
-ADD package.json /tmp/package.json
-ADD package-lock.json /tmp/package-lock.json
-RUN cd /tmp && npm install
-RUN mkdir -p /opt/app && cp -a /tmp/node_modules /opt/app/
+WORKDIR /opt/webansicht
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
 
-WORKDIR /opt/app
 COPY . .
 RUN npm run web:build
 

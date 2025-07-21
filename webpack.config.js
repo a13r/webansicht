@@ -9,7 +9,7 @@ const paths = {
 
 const config = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    entry: ['react-hot-loader/patch', './index.jsx'],
+    entry: ['./index.jsx'],
     context: paths.src,
     devtool: 'source-map',
     target: 'web',
@@ -63,7 +63,6 @@ const config = {
         clean: true
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
             template: path.join(paths.src, 'index.html'),
             inject: true

@@ -7,9 +7,9 @@ import {Panel} from "~/components/Panel";
 export default inject('auth', 'loginForm')(observer(({auth, loginForm: form}) =>
     <Panel title="Anmelden">
         <form onSubmit={form.onSubmit}>
-            <TextInput field={form.$('username')}/>
+            <TextInput field={form.$('username')} autoFocus/>
             <TextInput field={form.$('password')}/>
-            {form.error && <Alert bsStyle="danger">{form.error}</Alert>}
-            <Button type="submit" bsStyle="primary">Anmelden</Button>
+            {form.error && <Alert variant="danger">{form.error}</Alert>}
+            <Button type="submit" variant="primary">Anmelden</Button>
         </form>
     </Panel>));

@@ -1,8 +1,8 @@
 import React from "react";
 import {inject, observer} from "mobx-react";
 import {Select, TextInput} from "~/components/formControls";
-import {Button, Checkbox, Modal} from "react-bootstrap";
-import {states, types, prioritiesLong} from "~/shared/strings";
+import {Button, Form, Modal} from "react-bootstrap";
+import {prioritiesLong, states, types} from "~/shared/strings";
 
 const PatientSection = observer(({form}) =>
     <fieldset>
@@ -33,7 +33,7 @@ export const TransportForm = inject('auth', 'transportForm', 'resources')(observ
                     <option value={-1}>(bitte wählen)</option>
                     {types.map((t, i) => <option value={i} key={i}>{t}</option>)}
                 </Select>
-                <Checkbox {...form.$('hasCompany').bind()}>+ Begleitperson</Checkbox>
+                <Form.Check {...form.$('hasCompany').bind()}>+ Begleitperson</Form.Check>
                 <TextInput field={form.$('diagnose')}/>
                 <TextInput field={form.$('destination.station')}/>
                 {auth.isDispo && [
@@ -47,7 +47,7 @@ export const TransportForm = inject('auth', 'transportForm', 'resources')(observ
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={form.hide}>Abbrechen</Button>
-                <Button type="submit" bsStyle="primary">Speichern</Button>
+                <Button type="submit" variant="primary">Speichern</Button>
             </Modal.Footer>
         </form>
     </Modal>

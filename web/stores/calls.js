@@ -1,15 +1,24 @@
 import {calls} from '~/app';
-import {talkGroups, resourceAdmin} from '~/stores';
+import {resourceAdmin, talkGroups} from '~/stores';
 import {loginReaction} from "~/stores/index";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import _ from "lodash";
 import moment from "moment";
 
 export class CallStore {
-    @observable
     list = [];
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            lastIncoming: computed,
+            lastIncomings: computed,
+            lastIncomingsByCaller: computed,
+            lastIncomingTexts: computed,
+            find: action,
+            onCreated: action,
+            onRemoved: action,
+        })
         loginReaction(({auth}) => {
             if (auth.isDispo) {
                 this.find();
@@ -32,24 +41,20 @@ export class CallStore {
         }).then(action(t => this.list = t));
     }
 
-    @action
     onCreated = entry => {
         if (entry.direction === 'incoming') {
             this.list.unshift(entry);
         }
     };
 
-    @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
 
-    @computed
     get lastIncoming() {
         if (this.list.length > 0) {
             return this.list[0];
         }
     };
 
-    @computed
     get lastIncomings() {
         return talkGroups.list.filter(tg => resourceAdmin.list.some(r => r.gssi === tg.gssi)).map(tg => {
             const incomings = this.list.filter(e => e.gssi === tg.gssi);
@@ -57,7 +62,6 @@ export class CallStore {
         }).filter(e => e !== null);
     }
 
-    @computed
     get lastIncomingsByCaller() {
         return this.lastIncomings.reduce((map, current) => {
             map[current.issi] = current;
@@ -65,7 +69,6 @@ export class CallStore {
         }, {});
     }
 
-    @computed
     get lastIncomingTexts() {
         return this.lastIncomings.map(last => {
             let timestamp = moment(last.timestamp).format('HH:mm:ss');

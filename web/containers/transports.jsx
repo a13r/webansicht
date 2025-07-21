@@ -2,9 +2,10 @@ import authenticate from "~/components/authenticate";
 import {inject, observer} from "mobx-react";
 import React from "react";
 import moment from "moment";
-import {Button, FormGroup} from "react-bootstrap";
+import {Button, CardBody, FormGroup} from "react-bootstrap";
 import {priorities, states, types} from "~/shared/strings";
 import ExportButton from "~/components/ExportButton";
+import Card from "react-bootstrap/Card";
 
 const stateClass = {
     0: 'bg-danger',
@@ -28,11 +29,12 @@ function priorityBgClass(transport) {
 
 export default authenticate(inject('transports')(observer(({transports}) =>
     <div>
-        <FormGroup>
+        <div className="mb-3">
             <Button onClick={transports.createNew}><i className="fa fa-plus fa-fw"/> Abtransport anfordern</Button>
-        </FormGroup>
-        <div className="panel panel-default">
-            <table className="table table-bordered table-condensed table-responsive">
+            <ExportButton path="/transports.xlsx" className="float-end"/>
+        </div>
+        <Card className="mb-3">
+            <table className="table table-bordered table-condensed table-responsive mb-0">
                 <thead>
                 <tr>
                     <th style={{width: '3em'}}>#</th>
@@ -63,8 +65,7 @@ export default authenticate(inject('transports')(observer(({transports}) =>
                     </tr>)}
                 </tbody>
             </table>
-        </div>
+        </Card>
         <div>
-            <ExportButton path="/transports.xlsx"/>
         </div>
     </div>)));

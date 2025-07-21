@@ -1,13 +1,21 @@
 import {BaseForm} from "~/forms/baseForm";
 import {resources} from "~/app";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {isEqualTo} from "~/forms/validators";
 import {notification, resourceAdmin} from "~/stores";
 
 export class DeleteResourceForm extends BaseForm {
     resource;
-    @observable
     visible = false;
+
+    constructor() {
+        super();
+        makeObservable(this, {
+            visible: observable,
+            show: action,
+            hide: action,
+        });
+    }
 
     setup() {
         return {
@@ -36,7 +44,6 @@ export class DeleteResourceForm extends BaseForm {
         }
     }
 
-    @action
     show = resource => {
         this.clear();
         this.resource = resource;
@@ -44,6 +51,5 @@ export class DeleteResourceForm extends BaseForm {
         this.visible = true;
     };
 
-    @action
     hide = () => this.visible = false;
 }
