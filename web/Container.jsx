@@ -15,7 +15,6 @@ import stores from "./stores";
 import forms from "./forms";
 import LoginForm from "./components/LoginForm";
 import JournalEditor from "./components/JournalEditor";
-import NotificationSystem from "react-notification-system";
 import restrictToRoles from "~/components/restrictToRoles";
 import {TransportForm} from "~/components/TransportForm";
 import {TodoDropdown} from "~/components/TodoDropdown";
@@ -23,6 +22,7 @@ import {TodoForm} from "~/components/TodoForm";
 import {TransportDropdown} from "~/components/TransportDropdown";
 import MessageList from "~/components/MessageList";
 import MobxRouter from "~/components/MobxRouter";
+import {ToastContainer} from "react-toastify";
 
 const {auth, journal, notification, router} = stores;
 
@@ -30,7 +30,7 @@ const K = restrictToRoles(['dispo'])(({children}) => <kbd className="d-none d-lg
 
 Notification.requestPermission().then(value => {
     if (value !== 'granted') {
-        notification.warning('Systemweite Benachrichtigungen werden nicht angezeigt!', 'Achtung');
+        notification.warning('Systemweite Benachrichtigungen werden nicht angezeigt!');
         stores.transports.showWebsiteNotification = true;
     }
 });
@@ -82,7 +82,8 @@ const Container = observer(() =>
                                                  title={<span><i
                                                      className="fa fa-user-circle"/> {auth.user.name}</span>}>
                                         <LinkContainer to="/settings">
-                                            <NavDropdown.Item><i className="fa fa-cogs"/> Einstellungen</NavDropdown.Item>
+                                            <NavDropdown.Item><i
+                                                className="fa fa-cogs"/> Einstellungen</NavDropdown.Item>
                                         </LinkContainer>
                                         <NavDropdown.Item onClick={() => auth.logout()}><i
                                             className="fa fa-sign-out"/> Abmelden</NavDropdown.Item>
@@ -117,7 +118,17 @@ const Container = observer(() =>
                 {auth.isDispo && <JournalEditor/>}
                 <TransportForm/>
                 <TodoForm/>
-                <NotificationSystem ref={ns => notification.init(ns)}/>
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                />
             </div>
         </MobxRouter>
     </Provider>

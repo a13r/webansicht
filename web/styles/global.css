@@ -2,6 +2,7 @@ body {
     cursor: default;
     padding-top: 50px;
     padding-bottom: 50px;
+    --toastify-font-family: var(--bs-body-font-family);
 }
 
 #root {

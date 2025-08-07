@@ -1,18 +1,22 @@
+import React from 'react';
 import {messages, notifications} from "~/app";
 import {auth} from ".";
+import {toast} from "react-toastify";
+
+function CustomNotification({data}) {
+    return (
+        <div className={`flex flex-column w-100`}>
+            <p><strong>{data.title}</strong></p>
+            <p>{data.message}</p>
+        </div>
+    );
+}
 
 export class NotificationStore {
-    static system;
 
     constructor() {
         messages.on('patched', this.messageUpdated);
         notifications.on('created', this.onNotification);
-    }
-
-    init(system) {
-        if (system) {
-            NotificationStore.system = system;
-        }
     }
 
     messageUpdated = message => {
@@ -30,8 +34,11 @@ export class NotificationStore {
 
     onNotification = n => {
         if (n.type !== 'showNotification') return;
-        console.log(n.data);
-        NotificationStore.system.addNotification(n.data);
+        toast(<CustomNotification/>, {
+            type: n.data.level,
+            data: {title: n.data.title, message: n.data.message},
+            theme: 'colored'
+        });
         if (!window.document.hasFocus()) {
             const notification = new Notification(n.data.title, {body: n.data.message});
             notification.onclick = () => window.focus();
@@ -39,26 +46,34 @@ export class NotificationStore {
     };
 
     error(message, title = 'Fehler') {
-        NotificationStore.system.addNotification({
-            message, title, level: 'error'
+        toast(<CustomNotification/>, {
+            type: 'error',
+            data: {title, message},
+            theme: 'colored'
         });
     }
 
     warning(message, title) {
-        NotificationStore.system.addNotification({
-            message, title, level: 'warning'
-        })
+        toast(<CustomNotification/>, {
+            type: 'warning',
+            data: {title, message},
+            theme: 'colored'
+        });
     }
 
     success(message, title) {
-        NotificationStore.system.addNotification({
-            message, title, level: 'success'
+        toast(<CustomNotification/>, {
+            type: 'success',
+            data: {title, message},
+            theme: 'colored'
         });
     }
 
     info(message, title) {
-        NotificationStore.system.addNotification({
-            message, title, level: 'info'
-        })
+        toast(<CustomNotification/>, {
+            type: 'info',
+            data: {title, message},
+            theme: 'colored'
+        });
     }
 }
