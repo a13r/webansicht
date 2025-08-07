@@ -1,7 +1,7 @@
 import {BaseForm} from "~/forms/baseForm";
 import {minLength, passwordEqualTo} from "~/forms/validators";
 import {notification} from "~/stores";
-import {changePassword} from "~/app";
+import {service} from "~/app";
 import {auth} from "~/stores";
 
 export class ChangePasswordForm extends BaseForm {
@@ -30,7 +30,7 @@ export class ChangePasswordForm extends BaseForm {
     hooks() {
         return {
             onSubmit(form) {
-                changePassword(auth.user.username, form.$('oldPassword').value, form.$('password').value)
+                this.changePassword(auth.user.username, form.$('oldPassword').value, form.$('password').value)
                     .then(() => notification.success('Das Passwort wurde geändert'))
                     .then(() => form.clear())
                     .catch(error => {
@@ -39,5 +39,13 @@ export class ChangePasswordForm extends BaseForm {
                     });
             }
         };
+    }
+
+    changePassword(username, oldPassword, password) {
+        return service('auth-management/change-password').create({
+            user: {username},
+            oldPassword,
+            password
+        });
     }
 }

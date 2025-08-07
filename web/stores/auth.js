@@ -1,5 +1,5 @@
 import {action, computed, makeObservable, observable, reaction} from "mobx";
-import {client, registerAuthErrorHandler, users} from "../app";
+import {client} from "../app";
 import {router} from "./index";
 import {LoginForm} from "~/forms/login";
 import {ChangePasswordForm} from "~/forms/changePassword";
@@ -16,21 +16,24 @@ export default class AuthStore {
         makeObservable(this, {
             loggedIn: observable,
             user: observable,
-            token: observable,
             isAdmin: computed,
             isDispo: computed,
             isStation: computed,
             hasTransports: computed,
-            logout: action,
-            processToken: action
+            userLoggedIn: action,
+            userLoggedOut: action
         });
         this.loginForm = new LoginForm();
         this.changePasswordForm = new ChangePasswordForm();
-        client.passport.getJWT().then(this.processToken);
-        registerAuthErrorHandler(action(e => {
-            console.error(e);
+
+        this.reAuthenticate();
+
+        client.on('reauthentication-error', action(error => {
+            console.error('Authentication error:', error);
             this.loggedIn = false;
+            this.user = null;
         }));
+
         reaction(() => this.loggedIn, loggedIn => {
             if (!loggedIn) {
                 this.user = null;
@@ -60,29 +63,58 @@ export default class AuthStore {
         return this.user && this.user.roles.includes(role);
     }
 
-    logout = () => {
-        client.logout();
-        // import async to prevent cyclic module dependency
-        import('~/forms').then(module => module.clearForms());
-        if (router.location.pathname !== '/') {
-            router.push('/');
+    logout = async () => {
+        try {
+            await client.logout();
+            const module = await import('~/forms');
+            module.clearForms();
+            if (router.location.pathname !== '/') {
+                router.push('/');
+            }
+            this.loggedIn = false;
+            this.user = null;
+            this.accessToken = null;
+        } catch (error) {
+            console.error('Logout error:', error);
         }
-        this.loggedIn = false;
     };
 
-    processToken = token => {
-        if (!token) {
-            this.loggedIn = false;
+    reAuthenticate = async () => {
+        try {
+            // Authenticate using the stored JWT
+            const { accessToken, user } = await client.reAuthenticate();
+            this.userLoggedIn(accessToken, user);
+        } catch (error) {
+            this.userLoggedOut();
         }
-        this.token = token;
-        client.passport.verifyJWT(token)
-            .then(payload => client.authenticate().then(() => users.get(payload.userId)))
-            .then(action(user => {
-                this.loggedIn = true;
-                this.user = user;
-            }))
-            .catch(action(error => {
-                this.loggedIn = false;
-            }));
     };
+
+    login = async (credentials) => {
+        try {
+            // Authenticate with the provided credentials
+            const { accessToken, user } = await client.authenticate({
+                strategy: 'local',
+                ...credentials
+            });
+
+            this.userLoggedIn(accessToken, user);
+
+            return { user };
+        } catch (error) {
+            this.userLoggedOut();
+            throw error;
+        }
+    };
+
+    userLoggedIn(accessToken, user) {
+        this.user = user;
+        this.accessToken = accessToken;
+        this.loggedIn = true;
+    }
+
+    userLoggedOut() {
+        this.user = null;
+        this.accessToken = null;
+        this.loggedIn = false;
+    }
 }

@@ -11,8 +11,7 @@ const socketio = require('@feathersjs/socketio');
 
 const fallback = require('connect-history-api-fallback');
 
-const handler = require('@feathersjs/express/errors');
-const notFound = require('feathers-errors/not-found');
+const { errorHandler } = require('@feathersjs/express');
 
 const middleware = require('./middleware');
 const services = require('./services');
@@ -56,8 +55,8 @@ app.configure(lardis);
 app.configure(gps);
 
 // Configure a middleware for 404s and the error handler
-app.use(notFound());
-app.use(handler());
+app.use(express.notFound());
+app.use(errorHandler());
 
 app.hooks(appHooks);
 

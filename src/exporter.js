@@ -11,10 +11,10 @@ const {states, priorities, types} = require('../web/shared/strings');
 module.exports = function() {
     const app = this;
     // needs Authorization header or accessToken in body
-    app.post('/export.xlsx', auth.express.authenticate('jwt'), sendExcel);
-    app.post('/transports.xlsx', auth.express.authenticate('jwt'), sendTransports);
-    app.post('/export.tar', auth.express.authenticate('jwt'), sendBackup);
-    app.post('/import.tar', auth.express.authenticate('jwt'), upload.single('import'), restoreDatabase);
+    app.post('/export.xlsx', auth.authenticate('jwt'), sendExcel);
+    app.post('/transports.xlsx', auth.authenticate('jwt'), sendTransports);
+    app.post('/export.tar', auth.authenticate('jwt'), sendBackup);
+    app.post('/import.tar', auth.authenticate('jwt'), upload.single('import'), restoreDatabase);
 
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
