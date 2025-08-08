@@ -23,7 +23,6 @@ module.exports = function () {
         const connection = net.createConnection({host: radio.boxIP, port: radio.boxPort});
         connection.on('connect', () => {
 			console.log(`connected to ${radio.name}`);
-			connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
 		});
         connection.on('data', buffer => {
             buffer.toString().split('\n').forEach(line => dataReceived(radio, line));
@@ -80,7 +79,9 @@ module.exports = function () {
     function dataReceived(radio, line) {
         if (line.trim().length === 0) return;
         const [action, data] = line.split(':');
-        if (action === 'Call') {
+        if (action === 'AuthRequired') {
+            radio.connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
+        } else if (action === 'Call') {
             const split = data.split(',');
             let [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
             const prefix = /^23210000/;
@@ -156,6 +157,8 @@ module.exports = function () {
                         }
                     });
                 });
+        } else if (action.startsWith('LCConnectionParms')) {
+            // ignore
         } else {
             console.log(`[${radio.name}] other action: ${line}`);
         }
