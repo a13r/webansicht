@@ -7,7 +7,7 @@ services:
     links:
       - mongo
     volumes:
-      - ./config:/opt/app/config
+      - ./config:/opt/webansicht/config
       - ./data/import:/import
     restart: always
   mongo:
