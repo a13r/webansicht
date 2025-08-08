@@ -43,7 +43,7 @@ const Container = observer(() =>
                     <BsContainer fluid>
                         <Navbar.Brand>webansicht</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-                        <Navbar.Collapse id="basic-navbar-nav">
+                        {auth.loggedIn && <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
                                 <LinkContainer to="/">
                                     <Nav.Link><i className="fa fa-home"/> Übersicht</Nav.Link>
@@ -77,20 +77,18 @@ const Container = observer(() =>
                             <Nav>
                                 <TransportDropdown/>
                                 <TodoDropdown/>
-                                {auth.user ?
-                                    <NavDropdown id="user"
-                                                 title={<span><i
-                                                     className="fa fa-user-circle"/> {auth.user.name}</span>}>
-                                        <LinkContainer to="/settings">
-                                            <NavDropdown.Item><i
-                                                className="fa fa-cogs"/> Einstellungen</NavDropdown.Item>
-                                        </LinkContainer>
-                                        <NavDropdown.Item onClick={() => auth.logout()}><i
-                                            className="fa fa-sign-out"/> Abmelden</NavDropdown.Item>
-                                    </NavDropdown> :
-                                    <Nav.Link onClick={() => auth.logout()}>Abmelden</Nav.Link>}
+                                <NavDropdown id="user"
+                                                title={<span><i
+                                                    className="fa fa-user-circle"/> {auth.user.name}</span>}>
+                                    <LinkContainer to="/settings">
+                                        <NavDropdown.Item><i
+                                            className="fa fa-cogs"/> Einstellungen</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <NavDropdown.Item onClick={() => auth.logout()}><i
+                                        className="fa fa-sign-out"/> Abmelden</NavDropdown.Item>
+                                </NavDropdown>
                             </Nav>
-                        </Navbar.Collapse>
+                        </Navbar.Collapse>}
                     </BsContainer>
                 </Navbar>
                 {/*<BottomNav/>*/}
