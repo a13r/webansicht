@@ -3,3 +3,5 @@ npm-debug.log
 .git
 Dockerfile
 docker-compose.yml
+*.tar.gz
+data
