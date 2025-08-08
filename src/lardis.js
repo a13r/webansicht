@@ -1,5 +1,6 @@
 const net = require('net');
 const _ = require('lodash');
+const logger = require('./hooks/logger');
 
 const connectedRadios = {};
 
@@ -25,7 +26,7 @@ module.exports = function () {
 			console.log(`connected to ${radio.name}`);
 		});
         connection.on('data', buffer => {
-            buffer.toString().split('\n').forEach(line => dataReceived(radio, line));
+            buffer.toString().split('\n').forEach(line => dataReceived(radio, line, connection));
         });
         connection.on('error', error => {
             console.error(`error during connection to ${radio.name}`, error.code);
@@ -50,7 +51,7 @@ module.exports = function () {
             }
             const command = `Callout=${m._id},${destination},1,,${m.callout.severity},1,"${m.message}"\r`;
             radio.connection.write(command, 'utf8', () => {
-                messages.patch(m._id, {state: 'pending'});
+                messages.patch(m._id, {state: 'sent'});
             });
             resources.patch(null, {state: 10}, {query: {tetra: destination}}).then(([resource]) => {
                 if (callOutCC && callOutCC.length > 0) {
@@ -76,11 +77,11 @@ module.exports = function () {
         }
     });
 
-    function dataReceived(radio, line) {
+    function dataReceived(radio, line, connection) {
         if (line.trim().length === 0) return;
         const [action, data] = line.split(':');
-        if (action === 'AuthRequired') {
-            radio.connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
+        if (line.trim() === 'AuthRequired') {
+            connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
         } else if (action === 'Call') {
             const split = data.split(',');
             let [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
@@ -119,7 +120,7 @@ module.exports = function () {
             processLIP(issi, hex);
         } else if (action === 'MailState') {
             const [id, state] = data.split(',');
-            console.log(line);
+            if (id === "!!") return; // Callout MailState does not contain id
             switch (state) {
                 case '1':
                     messages.patch(id, {state: 'sent'});
@@ -131,9 +132,10 @@ module.exports = function () {
                     messages.patch(id, {state: 'error', errorType: 'tetra'});
                     break;
             }
-        } else if (action === 'CalloutAck') {
+        } else if (action === 'CalloutACK') {
+            console.log(`CalloutACK, data:`, data);
             const [issi, text] = data.split(',');
-            resources.find({query: {tetra: issi}}).catch(() => false)
+            resources.find({query: {tetra: issi}}).catch(() => logger.error(`Resource not found for ISSI ${issi}`))
                 .then(result => {
                     const name = result.length > 0 ? `${result[0].type} ${result[0].callSign}` : issi;
                     messages.patch(null, {callout: {ackReceived: Date.now()}}, {
