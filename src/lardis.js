@@ -78,11 +78,12 @@ module.exports = function () {
     });
 
     function dataReceived(radio, line) {
+        if (line.trim().length === 0) return;
         const [action, data] = line.split(':');
         if (action === 'Call') {
             const split = data.split(',');
             let [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
-            const prefix = /^232010000/;
+            const prefix = /^23210000/;
             issi = issi.replace(prefix, '');
             gssi = gssi.replace(prefix, '');
             if (Number(incomingActive) === 1) {
@@ -155,6 +156,8 @@ module.exports = function () {
                         }
                     });
                 });
+        } else {
+            console.log(`[${radio.name}] other action: ${line}`);
         }
     }
 
