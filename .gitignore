@@ -1,4 +1,5 @@
 config/mls-dev.json
+config/production.json
 
 # Logs
 logs
