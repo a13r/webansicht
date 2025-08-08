@@ -10,7 +10,7 @@ module.exports = app => {
     authentication.register('local', new LocalStrategy());
 
     app.use('/authentication', authentication);
-    app.use('/auth-management/password-change', new PasswordChangeService(app, {
+    app.use('/auth-management/change-password', new PasswordChangeService(app, {
         identifyUserProps: ['username'],
     }));
     app.configure(expressOauth());
