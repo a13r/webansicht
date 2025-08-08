@@ -32,7 +32,8 @@ export default class ResourceAdminStore extends ResourceStore {
     }
 
     createResource = () => {
-        this.form.reset();
+        this.form.clear();
+        this.form.invalidate();
         this.showEditor(true);
     };
 

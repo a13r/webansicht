@@ -1,6 +1,5 @@
 import React from "react";
 import {Button, Form, InputGroup} from "react-bootstrap";
-import FormGroup from 'react-bootstrap/FormGroup';
 import {observer} from "mobx-react";
 
 export const Select = observer(({field, children}) =>
@@ -11,11 +10,11 @@ export const Select = observer(({field, children}) =>
     </>);
 
 export const TextInput = observer(({field, ...props}) =>
-    <>
+    <Form.Group>
         <Form.Label htmlFor={field.id}>{field.label}</Form.Label>
-        <Form.Control className="mb-2" type="text" {...field.bind()} ref={i => field.input = i} {...props}/>
-        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
-    </>);
+        <Form.Control isInvalid={field.blurred && !field.isValid} className="mb-2" type="text" {...field.bind()} ref={i => field.input = i} {...props}/>
+        {field.blurred && !field.isValid && <Form.Text className="text-muted">{field.error}</Form.Text>}
+    </Form.Group>);
 
 export const PositionTextInput = observer(({field, onClickHome, onClickSwap}) =>
     <>

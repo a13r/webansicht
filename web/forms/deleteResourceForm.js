@@ -48,6 +48,7 @@ export class DeleteResourceForm extends BaseForm {
         this.clear();
         this.resource = resource;
         this.$('name').set(resource.callSign);
+        this.invalidate();
         this.visible = true;
     };
 

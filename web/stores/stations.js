@@ -17,8 +17,8 @@ export default class StationStore {
             selected: observable,
             showDeleted: observable,
             selectStation: action,
+            onCreated: action,
             create: action,
-            remove: action,
             submitNew: action,
             setShowDeleted: action,
         });
@@ -36,11 +36,15 @@ export default class StationStore {
             .then(action(list => this.list = list.map(s => new Station(s))));
     }
 
-    onCreated = entry => {
-        this.list = _.orderBy(this.list.concat(new Station(entry)), ['ordering', 'name']);
-    };
+    onCreated = action(entry => {
+        let newList = this.list;
+        if (!this.list.some(s => s._id === entry._id)) {
+            newList.push(new Station(entry));
+        }
+        this.list = _.orderBy(newList, ['ordering', 'name']);
+    });
 
-    onUpdated = entry => {
+    onUpdated = action(entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (existing) {
             if (entry.deleted !== existing.deleted) {
@@ -53,9 +57,9 @@ export default class StationStore {
         } else {
             this.find();
         }
-    };
+    });
 
-    onRemoved = ({_id}) => _.remove(this.list, {_id});
+    onRemoved = action(({_id}) => _.remove(this.list, {_id}));
 
     selectStation = station => this.selected = station;
 
@@ -63,21 +67,17 @@ export default class StationStore {
         this.list.push(new Station({name: '', currentPatients: 0, maxPatients: 1}));
     };
 
-    remove = station => () => {
+    remove = station => action(() => {
         if (station.isNew) {
             _.remove(this.list, s => s === station);
         } else {
             station.reset();
         }
-    };
+    });
 
     submitNew = station => e => {
         e.preventDefault();
-        station.form.submit().then(() => {
-            if (station.isNew) {
-                this.remove(station);
-            }
-        });
+        station.form.submit();
     };
 
     setShowDeleted = event => this.showDeleted = !!event.target.checked;
@@ -141,6 +141,7 @@ export class StationForm extends BaseForm {
             onSuccess: form => {
                 if (!this.station._id) {
                     return stations.create(form.values())
+                        .then(action(station => this.station._id = station._id))
                         .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
                 } else {
                     return stations.patch(this.station._id, form.values())
@@ -160,6 +161,10 @@ export class StationForm extends BaseForm {
 }
 
 const fields = {
+    _id: {
+        label: 'ID',
+        value: null
+    },
     name: {
         label: 'Name',
         validators: [required()]

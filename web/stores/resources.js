@@ -1,8 +1,8 @@
 import {action, computed, makeObservable, observable} from "mobx";
+import vjf from 'mobx-react-form/lib/validators/VJF';
 import {resources} from "../app";
 import _ from "lodash";
 import Form from "mobx-react-form";
-import validator from "validator";
 
 export default class ResourceStore {
     list = [];
@@ -22,7 +22,11 @@ export default class ResourceStore {
             onRemoved: action,
             selectedResourceId: computed,
         });
-        this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}, options});
+        this.form = new Form({fields}, {
+            hooks: this,
+            plugins: {vjf: vjf()},
+            options
+        });
         resources.on('created', this.onCreated);
         resources.on('updated', this.onUpdated);
         resources.on('patched', this.onUpdated);
