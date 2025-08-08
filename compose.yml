@@ -6,14 +6,13 @@ services:
       - "3030:3030"
     links:
       - mongo
+    volumes:
+      - ./config:/opt/app/config
+      - ./data/import:/import
     restart: always
   mongo:
-    image: mongo:4.0
+    image: mongo:4.4
     volumes:
-      - mongo-db:/data
-    ports:
-      - "127.0.0.1:27017:27017"
+      - ./data/configdb:/data/configdb
+      - ./data/db:/data/db
     restart: always
-
-volumes:
-  mongo-db:
