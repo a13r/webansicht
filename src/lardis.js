@@ -1,8 +1,24 @@
 const net = require('net');
 const _ = require('lodash');
-const logger = require('./hooks/logger');
+const logger = require('winston');
+const { error } = require('console');
 
 const connectedRadios = {};
+
+const statusToState = new Map([
+    ['35468', 1], // FREI WACHE
+    ['35469', 2], // HINFAHRT
+    ['35470', 3], // BERUFUNGSORT
+    ['35471', 4], // TRANSPORT
+    ['35472', 5], // ZIELORT
+    ['35473', 6], // FREI FUNK
+    ['35475', 7], // BEREITSCHAFT
+    ['36876', 8], // DIENSTFAHRT -> Standort halten
+    ['35476', 9], // QUITTIERUNG
+    ['35677', 0], // ABGEMELDET
+    ['35703', 11], // SPRECHWUNSCH
+    ['35678', 12] // MAYDAY
+]);
 
 module.exports = function () {
     const app = this;
@@ -109,11 +125,7 @@ module.exports = function () {
             message = message.substring(1, message.length - 1);
             console.log(`[${radio.name}] incoming message from ${issi}: ${message}`);
             if (/^\*\d$/.test(message)) {
-                resources.find({query: {tetra: issi}}).then(result => {
-                    if (result.length === 1) {
-                        resources.patch(result[0]._id, {state: parseInt(message.substring(1))}).catch();;
-                    }
-                });
+                setResourceState(issi, parseInt(message.substring(1)));
             }
         } else if (action === 'LIP') {
             let [issi, hex] = data.split(',');
@@ -159,11 +171,29 @@ module.exports = function () {
                         }
                     });
                 });
+        } else if (action === "RadioStatus") {
+            const [issi, status] = data.split(',');
+            if (!statusToState.has(status)) {
+                logger.warn(`${issi} sent unknown status ${status}`);
+                return;
+            }
+            setResourceState(issi, statusToState.get(status));
         } else if (action.startsWith('LCConnectionParms')) {
             // ignore
         } else {
             console.log(`[${radio.name}] other action: ${line}`);
         }
+    }
+
+    function setResourceState(issi, state) {
+        resources.find({query: {tetra: issi}}).then(result => {
+            if (result.length === 1) {
+                resources.patch(result[0]._id, {state})
+                    .catch(error => logger.error(`Failed to update resource state for ISSI ${issi}:`, error));
+            }
+        }).catch(error => {
+            logger.error(`Failed to find resource for ISSI ${issi}:`, error);
+        });
     }
 
     function processLIP(issi, hex) {

@@ -11,7 +11,7 @@ module.exports = function () { // eslint-disable-line no-unused-vars
             .then(currentData => {
                 const newData = _.merge({}, currentData, hook.data);
                 if (equal(_.omit(newData, '_id'), _.omit(currentData, '_id'))) {
-                    throw new Error('Skipping, no change');
+                    return undefined;
                 }
             });
     };
