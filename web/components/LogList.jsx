@@ -25,7 +25,7 @@ export default inject('log')(observer(({log}) =>
             </thead>
             <tbody>
             {log.list.map(r =>
-                <tr class="logRow" style={states.get(r.state).rowStyle} key={r._id}>
+                <tr className="logRow" style={states.get(r.state).rowStyle} key={r._id}>
                     <td>{r.since && moment(r.since).format('L LT')}</td>
                     <td>{r.tetra}</td>
                     <td>{r.type}</td>
