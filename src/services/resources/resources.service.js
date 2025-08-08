@@ -8,7 +8,7 @@ module.exports = function () {
   const Model = createModel(app);
 
   // Initialize our service with any options it requires
-  app.use('/resources', createService({ Model }));
+  app.use('/resources', createService({ Model, multi: true }));
 
   // Get our initialized service so that we can register hooks and filters
   const service = app.service('resources');
