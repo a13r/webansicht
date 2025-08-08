@@ -1,4 +1,6 @@
 // Initializes the `stations` service on path `/stations`
+const csvParse = require('csv').parse;
+const fs = require('fs');
 const createService = require('feathers-mongoose');
 const createModel = require('../../models/talkGroups.model');
 const hooks = require('./talkGroups.hooks');
@@ -13,4 +15,30 @@ module.exports = function (app) {
     const service = app.service('talkGroups');
 
     service.hooks(hooks);
+
+    const importPath = app.get('talkGroupsCsv');
+    if (importPath) {
+        service.find()
+            .then(found => {
+                if (found.length === 0) {
+                    importTalkGroups();
+                }
+            });
+
+        function importTalkGroups() {
+            fs.createReadStream(importPath)
+                .on('error', error => {
+                    console.error(error);
+                })
+                .pipe(csvParse({delimiter: ';'}))
+                .on('data', row => {
+                    const [name, gssi] = row;
+                    service.create({name, gssi});
+                })
+                .on('error', error => {
+                    console.error(error);
+                })
+                .on('end', () => console.log('Talk groups imported'));
+        }
+    }
 };
