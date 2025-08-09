@@ -46,31 +46,31 @@ const Container = observer(() =>
                         {auth.loggedIn && <Navbar.Collapse id="basic-navbar-nav">
                             <Nav className="me-auto">
                                 <LinkContainer to="/">
-                                    <Nav.Link><i className="fa fa-home"/> Übersicht</Nav.Link>
+                                    <Nav.Link title="F1"><i className="fa fa-home"/> Übersicht</Nav.Link>
                                 </LinkContainer>
                                 {auth.isDispo && <LinkContainer to="/journal">
-                                    <Nav.Link><i className="fa fa-list"/> ETB</Nav.Link>
+                                    <Nav.Link title="F2"><i className="fa fa-list"/> ETB</Nav.Link>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/log">
-                                    <Nav.Link><i className="fa fa-history"/> Statusverlauf</Nav.Link>
+                                    <Nav.Link title="F3"><i className="fa fa-history"/> Statusverlauf</Nav.Link>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/messages">
-                                    <Nav.Link><i className="fa fa-envelope"/> Nachrichen</Nav.Link>
+                                    <Nav.Link title="F4"><i className="fa fa-envelope"/> Nachrichen</Nav.Link>
                                 </LinkContainer>}
                                 {auth.isDispo && <LinkContainer to="/resourceAdmin">
-                                    <Nav.Link><i className="fa fa-ambulance"/> Ressourcen</Nav.Link>
+                                    <Nav.Link title="F5"><i className="fa fa-ambulance"/> Ressourcen</Nav.Link>
                                 </LinkContainer>}
                                 {(auth.isDispo || auth.isStation) && <LinkContainer to="/stations">
-                                    <Nav.Link><i className="fa fa-tent"/> SanHiSts</Nav.Link>
+                                    <Nav.Link title="F6"><i className="fa fa-tent"/> SanHiSts</Nav.Link>
                                 </LinkContainer>}
                                 {(auth.isDispo || auth.isStation || auth.hasTransports) &&
                                     <LinkContainer to="/transports">
-                                        <Nav.Link><i className="fa fa-hospital"/> Abtransporte</Nav.Link>
+                                        <Nav.Link title="F7"><i className="fa fa-hospital"/> Abtransporte</Nav.Link>
                                     </LinkContainer>}
                                 <LinkContainer to="/map">
-                                    <Nav.Link><i className="fa fa-map"/> Karte</Nav.Link>
+                                    <Nav.Link title="F8"><i className="fa fa-map"/> Karte</Nav.Link>
                                 </LinkContainer>
-                                {auth.isDispo && <Nav.Link onClick={() => journal.createEntry()}>
+                                {auth.isDispo && <Nav.Link title="Strg+E" onClick={() => journal.createEntry()}>
                                     <i className="fa fa-plus-circle"/> Neuer ETB-Eintrag
                                 </Nav.Link>}
                             </Nav>
