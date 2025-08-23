@@ -1,6 +1,5 @@
-const {authenticate} = require('@feathersjs/authentication').hooks;
+const { authenticate, setField } = require('@feathersjs/authentication').hooks;
 const {populate, when, isProvider} = require('feathers-hooks-common');
-const {associateCurrentUser} = require('feathers-authentication-hooks');
 
 const resourceSchema = {
     include: {
@@ -16,7 +15,7 @@ module.exports = {
         all: [when(isProvider('external'), authenticate('jwt'))],
         find: [],
         get: [],
-        create: [associateCurrentUser(), populate({schema: resourceSchema})],
+        create: [setField({ from: 'params.user._id', as: 'data.userId' }), populate({schema: resourceSchema})],
         update: [],
         patch: [],
         remove: []

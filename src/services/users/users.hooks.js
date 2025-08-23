@@ -1,26 +1,22 @@
-const { authenticate } = require('@feathersjs/authentication').hooks;
+const { authenticate, setField } = require('@feathersjs/authentication').hooks;
 const {when, isProvider} = require('feathers-hooks-common');
-const { restrictToOwner } = require('feathers-authentication-hooks');
 const {Forbidden} = require('@feathersjs/errors');
 const { hashPassword, protect } = require('@feathersjs/authentication-local').hooks;
 
 const restrict = [
   authenticate('jwt'),
-  restrictToAdminOrOwner({
-    idField: '_id',
-    ownerField: '_id'
-  })
+  restrictToAdminOrOwner()
 ];
 
-function restrictToAdminOrOwner(args) {
-    return context => {
-        const {user} = context.params;
+function restrictToAdminOrOwner() {
+    return async context => {
+        const { user } = context.params;
         if (user && user.roles.includes('admin')) {
             return context;
         }
 
-        return restrictToOwner(args)(context);
-    }
+        return setField({ from: 'params.user._id', as: 'params.query._id' })(context);
+    };
 }
 
 const restrictToAdmin = async context => {

@@ -1,5 +1,5 @@
 // Initializes the `journal` service on path `/journal`
-const createService = require('feathers-mongoose');
+const { MongooseService } = require('@feathersjs/mongoose');
 const createModel = require('../../models/journal.model');
 const hooks = require('./journal.hooks');
 
@@ -13,7 +13,7 @@ module.exports = function () {
   };
 
   // Initialize our service with any options it requires
-  app.use('/journal', createService(options));
+  app.use('/journal', new MongooseService(options));
 
   // Get our initialized service so that we can register hooks and filters
   const service = app.service('journal');
