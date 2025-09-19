@@ -26,7 +26,7 @@ This plan describes the steps necessary to support the current Node.js LTS versi
 ### FeathersJS
 
 * [x] Upgrade FeathersJS to 4.x
-* [ ] Upgrade FeathersJS to 5.x
+* [x] Upgrade FeathersJS to 5.x
 * [x] Upgrade Mongoose to 8.x
 
 ### Development Dependencies
