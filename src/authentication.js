@@ -1,6 +1,6 @@
 const {AuthenticationService, JWTStrategy} = require("@feathersjs/authentication");
 const {LocalStrategy} = require("@feathersjs/authentication-local");
-const {expressOauth} = require("@feathersjs/authentication-oauth");
+const {oauth} = require("@feathersjs/authentication-oauth");
 const {PasswordChangeService} = require('feathers-authentication-management');
 
 
@@ -13,5 +13,5 @@ module.exports = app => {
     app.use('/auth-management/change-password', new PasswordChangeService(app, {
         identifyUserProps: ['username'],
     }));
-    app.configure(expressOauth());
+    app.configure(oauth());
 };
