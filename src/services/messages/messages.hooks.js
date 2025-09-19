@@ -1,5 +1,5 @@
-const { authenticate, setField } = require('@feathersjs/authentication').hooks;
-const {populate, when, isProvider} = require('feathers-hooks-common');
+const { authenticate } = require('@feathersjs/authentication').hooks;
+const {populate, when, isProvider, setField} = require('feathers-hooks-common');
 
 const resourceSchema = {
     include: {

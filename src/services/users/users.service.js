@@ -1,5 +1,5 @@
 // Initializes the `users` service on path `/users`
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/users.model');
 const hooks = require('./users.hooks');
 

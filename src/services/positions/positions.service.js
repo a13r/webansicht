@@ -1,5 +1,5 @@
 // Initializes the `positions` service on path `/positions`
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/positions.model');
 const hooks = require('./positions.hooks');
 

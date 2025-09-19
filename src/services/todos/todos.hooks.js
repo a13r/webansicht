@@ -1,5 +1,5 @@
-const { authenticate, setField } = require('@feathersjs/authentication').hooks;
-const {when, isProvider, populate, setNow} = require('feathers-hooks-common');
+const { authenticate } = require('@feathersjs/authentication').hooks;
+const {when, isProvider, populate, setNow, setField} = require('feathers-hooks-common');
 const todoNotifier = require('../../hooks/todo-notifier');
 
 const loadResource = {

@@ -1,7 +1,7 @@
 // Initializes the `stations` service on path `/stations`
 const csvParse = require('csv').parse;
 const fs = require('fs');
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/talkGroups.model');
 const hooks = require('./talkGroups.hooks');
 

@@ -1,5 +1,5 @@
 // Initializes the `log` service on path `/log`
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/log.model');
 const hooks = require('./log.hooks');
 

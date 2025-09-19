@@ -1,5 +1,5 @@
 // Initializes the `journal` service on path `/journal`
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/journal.model');
 const hooks = require('./journal.hooks');
 

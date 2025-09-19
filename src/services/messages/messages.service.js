@@ -1,5 +1,5 @@
 // Initializes the `messages` service on path `/messages`
-const { MongooseService } = require('@feathersjs/mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/messages.model');
 const hooks = require('./messages.hooks');
 
