@@ -1,6 +1,5 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
-const {when, isProvider, populate, setNow} = require('feathers-hooks-common');
-const {associateCurrentUser} = require('feathers-authentication-hooks');
+const {when, isProvider, populate, setNow, setField} = require('feathers-hooks-common');
 const todoNotifier = require('../../hooks/todo-notifier');
 
 const loadResource = {
@@ -17,7 +16,7 @@ module.exports = {
     all: [ when(isProvider('external'), authenticate('jwt')) ],
     find: [],
     get: [],
-    create: [setNow('createdAt'), associateCurrentUser()],
+    create: [setNow('createdAt'), setField({ from: 'params.user._id', as: 'data.userId' })],
     update: [setNow('updatedAt')],
     patch: [setNow('updatedAt')],
     remove: []

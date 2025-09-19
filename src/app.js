@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const configuration = require('@feathersjs/configuration');
-const rest = require('@feathersjs/express/rest');
+const {rest} = require('@feathersjs/express');
 const socketio = require('@feathersjs/socketio');
 
 const fallback = require('connect-history-api-fallback');
