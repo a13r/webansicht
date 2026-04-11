@@ -1,4 +1,3 @@
-const auth = require('@feathersjs/authentication');
 const X = require('xlsx');
 const moment = require('moment-timezone');
 const backup = require('mongodb-backup');
@@ -8,20 +7,34 @@ const uploadDir = './uploads';
 const upload = require('multer')({ dest: uploadDir });
 const {states, priorities, types} = require('../web/shared/strings');
 
+function jwtMiddleware(app) {
+    return async (req, res, next) => {
+        try {
+            const token = req.body.accessToken || req.headers.authorization?.replace('Bearer ', '');
+            if (!token) return res.status(401).json({ message: 'Not authenticated' });
+            await app.service('authentication').verifyAccessToken(token);
+            next();
+        } catch (e) {
+            res.status(401).json({ message: 'Not authenticated' });
+        }
+    };
+}
+
 module.exports = function() {
     const app = this;
+    const jwt = jwtMiddleware(app);
     // needs Authorization header or accessToken in body
-    app.post('/export.xlsx', auth.authenticate('jwt'), sendExcel);
-    app.post('/transports.xlsx', auth.authenticate('jwt'), sendTransports);
-    app.post('/export.tar', auth.authenticate('jwt'), sendBackup);
-    app.post('/import.tar', auth.authenticate('jwt'), upload.single('import'), restoreDatabase);
+    app.post('/export.xlsx', jwt, sendExcel);
+    app.post('/transports.xlsx', jwt, sendTransports);
+    app.post('/export.tar', jwt, sendBackup);
+    app.post('/import.tar', jwt, upload.single('import'), restoreDatabase);
 
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
     }
 
     function sendExcel(req, res) {
-        return app.service('journal').find()
+        return app.service('journal').find({ paginate: false })
             .then(entries => {
                 const wb = X.utils.book_new();
                 X.utils.book_append_sheet(wb, X.utils.json_to_sheet(journalEntriesToRows(entries)));
@@ -30,12 +43,12 @@ module.exports = function() {
                     ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
                     ['Content-Disposition', `attachment; filename=Protokoll_${dateTime()}.xlsx`]
                 ]);
-                res.end(new Buffer(wbbuf, 'base64'));
+                res.end(Buffer.from(wbbuf, 'base64'));
             });
     }
 
     function sendTransports(req, res) {
-        return app.service('transports').find()
+        return app.service('transports').find({ paginate: false })
             .then(entries => {
                 const wb = X.utils.book_new();
                 X.utils.book_append_sheet(wb, X.utils.json_to_sheet(transportsToRows(entries)));
@@ -44,7 +57,7 @@ module.exports = function() {
                     ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
                     ['Content-Disposition', `attachment; filename=Transporte_${dateTime()}.xlsx`]
                 ]);
-                res.end(new Buffer(wbbuf, 'base64'));
+                res.end(Buffer.from(wbbuf, 'base64'));
             })
     }
 
