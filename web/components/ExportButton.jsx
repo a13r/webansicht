@@ -5,7 +5,7 @@ import {Button, FormGroup} from 'react-bootstrap';
 export default inject('auth')(observer(({auth, path, ...props}) =>
     <span {...props}>
         <form action={path} method="post" className="d-inline d-print-none">
-            <input type="hidden" name="accessToken" value={auth.token}/>
+            <input type="hidden" name="accessToken" value={auth.accessToken}/>
             <Button type="submit"><i className="fa fa-table"/> Excel-Export</Button>
         </form>
     </span>));

@@ -13,6 +13,7 @@ const fallback = require('connect-history-api-fallback');
 
 const { errorHandler } = require('@feathersjs/express');
 
+const {headerAuthMiddleware, ssoTokenRoute} = require('./strategies/header');
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
@@ -36,17 +37,21 @@ app.use(helmet());
 app.use(compress());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(fallback());
-// Host the public folder
+// SPA fallback + static files before API routes
+// htmlAcceptHeaders: ['text/html'] ensures only browser navigation is rewritten,
+// not fetch/XHR API calls (which send Accept: */* or application/json)
+app.use(fallback({htmlAcceptHeaders: ['text/html']}));
 app.use('/', express.static(app.get('public')));
-
 app.configure(mongoose);
+app.use(headerAuthMiddleware());
 app.configure(rest());
 app.configure(socketio());
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
 app.configure(authentication);
+ssoTokenRoute(app);
+
 // Set up our services (see `services/index.js`)
 app.configure(services);
 app.configure(channels);

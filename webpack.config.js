@@ -69,7 +69,8 @@ const config = {
         }),
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development', // default value if not specified
-            TEST: false // required for MobX as of 3.x, might not be required for future versions
+            TEST: false, // required for MobX as of 3.x, might not be required for future versions
+            BASEMAP_URL: 'https://webansicht.bran.at/basemap'
         })
     ],
     optimization: {

@@ -12,4 +12,8 @@ export default inject('auth', 'loginForm')(observer(({auth, loginForm: form}) =>
             {form.error && <Alert variant="danger">{form.error}</Alert>}
             <Button type="submit" variant="primary">Anmelden</Button>
         </form>
+        {auth.ssoAvailable &&
+            <Button variant="outline-secondary" className="mt-2" onClick={() => auth.loginSSO()}>
+                Mit SSO anmelden
+            </Button>}
     </Panel>));
