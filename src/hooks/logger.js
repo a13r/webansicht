@@ -28,7 +28,7 @@ module.exports = function () {
     }
 
     if (hook.error) {
-      logger.error(hook.error);
+      logger.error(` message=${hook.error.message}, stack=${hook.error.stack}`);
     }
   };
 };
