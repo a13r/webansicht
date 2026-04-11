@@ -1,6 +1,6 @@
 const net = require('net');
 const _ = require('lodash');
-const logger = require('winston');
+const logger = require('./logger');
 const { error } = require('console');
 
 const connectedRadios = {};

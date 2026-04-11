@@ -1,5 +1,5 @@
 const {NotAuthenticated} = require('@feathersjs/errors');
-const logger = require('winston');
+const logger = require('../logger');
 
 function normalizeIP(ip) {
     if (ip && ip.startsWith('::ffff:')) {

@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const equal = require("deep-equal");
-const logger = require("winston")
+const logger = require("../logger")
 
 module.exports = function () { // eslint-disable-line no-unused-vars
     return async function dedup(hook) {

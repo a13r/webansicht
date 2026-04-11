@@ -12,6 +12,7 @@ const socketio = require('@feathersjs/socketio');
 const fallback = require('connect-history-api-fallback');
 
 const { errorHandler } = require('@feathersjs/express');
+const logger = require('./logger');
 
 const {headerAuthMiddleware, ssoTokenRoute} = require('./strategies/header');
 const middleware = require('./middleware');
@@ -61,7 +62,7 @@ app.configure(gps);
 
 // Configure a middleware for 404s and the error handler
 app.use(express.notFound());
-app.use(errorHandler());
+app.use(errorHandler({ logger }));
 
 app.hooks(appHooks);
 
