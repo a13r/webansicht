@@ -153,7 +153,7 @@ class MapComponent extends React.Component {
         const {map: mapStore, resources: resourceListStore, auth} = this.props;
         const rotation = 5.562;
 
-        fetch('https://webansicht.bran.at/basemap/wmts/1.0.0/WMTSCapabilities.xml').then(response => response.text())
+        fetch(`${process.env.BASEMAP_URL}/wmts/1.0.0/WMTSCapabilities.xml`).then(response => response.text())
             .then(text => {
                 const capabilities = new WMTSCapabilities().read(text);
                 const options = optionsFromCapabilities(capabilities, {
