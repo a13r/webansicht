@@ -1,14 +1,18 @@
-import React from 'react';
-import {action, observable} from 'mobx';
+import {action, makeObservable, observable} from 'mobx';
 import {loginReaction} from "~/stores/index";
 import {messages} from "~/app";
 import _ from "lodash";
 
 export class MessageStore {
-    @observable
     list = [];
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            onCreated: action,
+            onRemoved: action,
+            onUpdated: action,
+        });
         loginReaction(({auth}) => {
             if (auth.isDispo) {
                 this.find();
@@ -29,12 +33,10 @@ export class MessageStore {
         messages.find({query: {$sort: {createdAt: -1}}}).then(action(t => this.list = t));
     }
 
-    @action
     onCreated = entry => {
         this.list.unshift(entry);
     };
 
-    @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (!existing) {
@@ -44,6 +46,5 @@ export class MessageStore {
         _.assign(existing, entry);
     };
 
-    @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
 }

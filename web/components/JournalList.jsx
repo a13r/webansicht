@@ -4,24 +4,25 @@ import moment from "moment";
 import "../styles/resourceList.css";
 import {SortToggle} from "./SortToggle";
 import "../styles/journalList.css";
+import Card from "react-bootstrap/Card";
 
 function priorityClass(e) {
     if (e.priority === 'hoch')
-        return 'bg-danger';
+        return 'bg-danger-subtle';
 }
 
 function stateClass(e) {
     if (e.state === 'erledigt')
-        return 'bg-success';
+        return 'bg-success-subtle';
     if (e.state === 'bearb.')
-        return 'bg-warning';
+        return 'bg-warning-subtle';
     if (e.state === 'offen')
-        return 'bg-danger';
+        return 'bg-danger-subtle';
 }
 
 export default inject('journal')(observer(({journal}) =>
-    <div className="panel panel-default">
-        <table className="table table-condensed table-hover journal-table">
+    <Card className="mb-3">
+        <table className="table table-condensed table-hover journal-table mb-0">
             <thead>
             <tr>
                 <th style={{width: '10em'}}>Zeitpunkt <SortToggle store={journal}/></th>
@@ -29,7 +30,7 @@ export default inject('journal')(observer(({journal}) =>
                 <th style={{width: '10%'}}>Melder</th>
                 <th style={{width: '8em'}}>Meldeweg</th>
                 <th style={{width: '5em'}}>Ein/Aus</th>
-                <th style={{width: '5em'}}>Priorität</th>
+                <th style={{width: '6em'}}>Priorität</th>
                 <th style={{width: '5em'}}>Status</th>
                 <th style={{width: '15%'}}>Vermerk</th>
                 <th style={{width: '5em'}}>Trsp.</th>
@@ -53,4 +54,4 @@ export default inject('journal')(observer(({journal}) =>
                 </tr>)}
             </tbody>
         </table>
-    </div>));
+    </Card>));

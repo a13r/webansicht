@@ -8,13 +8,16 @@ const paths = {
 };
 
 const config = {
-    entry: ['react-hot-loader/patch', './index.jsx'],
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    entry: ['./index.jsx'],
     context: paths.src,
-    devtool: 'eval-source-map',
+    devtool: 'source-map',
+    target: 'web',
     devServer: {
         hot: true,
-        contentBase: paths.dist,
-        inline: true,
+        static: {
+            directory: paths.dist
+        },
         historyApiFallback: true,
         proxy: [{
             context: ['/socket.io', '/export.xlsx', '/export.tar', '/import.tar', '/transports.xlsx'],
@@ -22,12 +25,15 @@ const config = {
             ws: true
         }],
         host: '0.0.0.0',
-        disableHostCheck: true
+        allowedHosts: 'all'
     },
     resolve: {
         extensions: ['.js', '.jsx'],
         alias: {
             '~': paths.src
+        },
+        fallback: {
+            'process': require.resolve('process/browser')
         }
     },
     module: {
@@ -38,36 +44,47 @@ const config = {
             }, {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
-                loaders: ['babel-loader']
+                use: ['babel-loader']
             }, {
-                'test': /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?/,
-                loader: 'url-loader',
-                query: {
-                    prefix: 'font/',
-                    limit: 10000,
-                    mimetype: 'application/font-woff'
+                test: /\.(woff2?|ttf|eot|svg)$/,
+                type: 'asset',
+                parser: {
+                    dataUrlCondition: {
+                        maxSize: 10 * 1024 // 10kb
+                    }
                 }
-                // include: PATHS.fonts,
-            }, {
-                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?/,
-                loader: 'url-loader'
-                // include: PATHS.fonts,
             }
         ]
     },
     output: {
         path: paths.dist,
         publicPath: '/',
-        filename: 'app.js'
+        filename: '[name].[contenthash].js',
+        clean: true
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.NamedModulesPlugin(),
-        new HtmlWebpackPlugin({ template: path.join(paths.src, 'index.html') }),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        new HtmlWebpackPlugin({
+            template: path.join(paths.src, 'index.html'),
+            inject: true
+        }),
+        new webpack.EnvironmentPlugin({
+            NODE_ENV: 'development', // default value if not specified
+            TEST: false // required for MobX as of 3.x, might not be required for future versions
         })
-    ]
+    ],
+    optimization: {
+        moduleIds: 'deterministic',
+        runtimeChunk: 'single',
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
+    }
 };
 
 module.exports = config;

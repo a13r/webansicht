@@ -1,25 +1,26 @@
 import React from 'react';
 import restrictToRoles from "~/components/restrictToRoles";
 import {inject, observer} from 'mobx-react';
-import {Button, Checkbox, Modal} from "react-bootstrap";
+import Form from 'react-bootstrap/Form';
+import {Button, Modal} from "react-bootstrap";
 import {TextInput} from "~/components/formControls";
 import {Panel} from "~/components/Panel";
 
 export default restrictToRoles(['admin'])(inject('deleteDataForm')(observer(({deleteDataForm: form}) =>
     <div>
         <Panel title="Daten löschen">
-            Zu löschende Daten:
-            <Checkbox {...form.$('resources').bind()}>Ressourcen</Checkbox>
-            <Checkbox {...form.$('journal').bind()}>Einsatztagebuch</Checkbox>
-            <Checkbox {...form.$('log').bind()}>Statusverlauf</Checkbox>
-            <Checkbox {...form.$('stations').bind()}>SanHiSts</Checkbox>
-            <Checkbox {...form.$('users').bind()}>Benutzer (ausgen. Admins und Dispos)</Checkbox>
-            <Checkbox {...form.$('transports').bind()}>Transporte</Checkbox>
-            <Checkbox {...form.$('todos').bind()}>Todos</Checkbox>
-            <Checkbox {...form.$('calls').bind()}>Funksprüche</Checkbox>
-            <Checkbox {...form.$('messages').bind()}>Nachrichten</Checkbox>
-            <Checkbox {...form.$('positions').bind()}>Positionen</Checkbox>
-            <Button onClick={form.show} disabled={form.selectedItems.length === 0}>Löschen</Button>
+            <div className="mb-2">Zu löschende Daten:</div>
+            <Form.Check label="Ressourcen" {...form.$('resources').bind()} />
+            <Form.Check label="Einsatztagebuch" {...form.$('journal').bind()}/>
+            <Form.Check label="Statusverlauf" {...form.$('log').bind()}/>
+            <Form.Check label="SanHiSts" {...form.$('stations').bind()}/>
+            <Form.Check label="Benutzer (ausgen. Admins und Dispos)" {...form.$('users').bind()}/>
+            <Form.Check label="Transporte" {...form.$('transports').bind()}/>
+            <Form.Check label="Todos" {...form.$('todos').bind()}/>
+            <Form.Check label="Funksprüche" {...form.$('calls').bind()}/>
+            <Form.Check label="Nachrichten" {...form.$('messages').bind()}/>
+            <Form.Check label="Positionen" {...form.$('positions').bind()}/>
+            <Button onClick={form.show} disabled={form.selectedItems.length === 0} className="mt-3">Löschen</Button>
         </Panel>
         <Modal show={form.modalVisible} onHide={form.hide}>
             <form onSubmit={form.onSubmit}>
@@ -38,7 +39,7 @@ export default restrictToRoles(['admin'])(inject('deleteDataForm')(observer(({de
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={form.hide}>Abbrechen</Button>
-                    <Button bsStyle="danger" type="submit" disabled={!form.isValid}>
+                    <Button variant="danger" type="submit" disabled={!form.isValid}>
                         <i className="fa fa-trash fa-fw"/> Löschen
                     </Button>
                 </Modal.Footer>

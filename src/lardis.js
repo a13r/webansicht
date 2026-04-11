@@ -1,7 +1,24 @@
 const net = require('net');
 const _ = require('lodash');
+const logger = require('winston');
+const { error } = require('console');
 
 const connectedRadios = {};
+
+const statusToState = new Map([
+    ['35468', 1], // FREI WACHE
+    ['35469', 2], // HINFAHRT
+    ['35470', 3], // BERUFUNGSORT
+    ['35471', 4], // TRANSPORT
+    ['35472', 5], // ZIELORT
+    ['35473', 6], // FREI FUNK
+    ['35475', 7], // BEREITSCHAFT
+    ['36876', 8], // DIENSTFAHRT -> Standort halten
+    ['35476', 9], // QUITTIERUNG
+    ['35677', 0], // ABGEMELDET
+    ['35703', 11], // SPRECHWUNSCH
+    ['35678', 12] // MAYDAY
+]);
 
 module.exports = function () {
     const app = this;
@@ -23,10 +40,9 @@ module.exports = function () {
         const connection = net.createConnection({host: radio.boxIP, port: radio.boxPort});
         connection.on('connect', () => {
 			console.log(`connected to ${radio.name}`);
-			connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
 		});
         connection.on('data', buffer => {
-            buffer.toString().split('\n').forEach(line => dataReceived(radio, line));
+            buffer.toString().split('\n').forEach(line => dataReceived(radio, line, connection));
         });
         connection.on('error', error => {
             console.error(`error during connection to ${radio.name}`, error.code);
@@ -51,7 +67,7 @@ module.exports = function () {
             }
             const command = `Callout=${m._id},${destination},1,,${m.callout.severity},1,"${m.message}"\r`;
             radio.connection.write(command, 'utf8', () => {
-                messages.patch(m._id, {state: 'pending'});
+                messages.patch(m._id, {state: 'sent'});
             });
             resources.patch(null, {state: 10}, {query: {tetra: destination}}).then(([resource]) => {
                 if (callOutCC && callOutCC.length > 0) {
@@ -77,10 +93,12 @@ module.exports = function () {
         }
     });
 
-    function dataReceived(radio, line) {
+    function dataReceived(radio, line, connection) {
         if (line.trim().length === 0) return;
         const [action, data] = line.split(':');
-        if (action === 'Call') {
+        if (line.trim() === 'AuthRequired') {
+            connection.write(`Authenticate=${lardisKey},2\r`, 'utf8');
+        } else if (action === 'Call') {
             const split = data.split(',');
             let [lardisUserId, lardisUserName, radioPttState, incomingActive, outgoingActive, issi, unknown1, gssi] = split;
             const prefix = /^23210000/;
@@ -107,18 +125,14 @@ module.exports = function () {
             message = message.substring(1, message.length - 1);
             console.log(`[${radio.name}] incoming message from ${issi}: ${message}`);
             if (/^\*\d$/.test(message)) {
-                resources.find({query: {tetra: issi}}).then(result => {
-                    if (result.length === 1) {
-                        resources.patch(result[0]._id, {state: parseInt(message.substring(1))}).catch();;
-                    }
-                });
+                setResourceState(issi, parseInt(message.substring(1)));
             }
         } else if (action === 'LIP') {
             let [issi, hex] = data.split(',');
             processLIP(issi, hex);
         } else if (action === 'MailState') {
             const [id, state] = data.split(',');
-            console.log(line);
+            if (id === "!!") return; // Callout MailState does not contain id
             switch (state) {
                 case '1':
                     messages.patch(id, {state: 'sent'});
@@ -130,9 +144,10 @@ module.exports = function () {
                     messages.patch(id, {state: 'error', errorType: 'tetra'});
                     break;
             }
-        } else if (action === 'CalloutAck') {
+        } else if (action === 'CalloutACK') {
+            console.log(`CalloutACK, data:`, data);
             const [issi, text] = data.split(',');
-            resources.find({query: {tetra: issi}}).catch(() => false)
+            resources.find({query: {tetra: issi}}).catch(() => logger.error(`Resource not found for ISSI ${issi}`))
                 .then(result => {
                     const name = result.length > 0 ? `${result[0].type} ${result[0].callSign}` : issi;
                     messages.patch(null, {callout: {ackReceived: Date.now()}}, {
@@ -156,9 +171,29 @@ module.exports = function () {
                         }
                     });
                 });
+        } else if (action === "RadioStatus") {
+            const [issi, status] = data.split(',');
+            if (!statusToState.has(status)) {
+                logger.warn(`${issi} sent unknown status ${status}`);
+                return;
+            }
+            setResourceState(issi, statusToState.get(status));
+        } else if (action.startsWith('LCConnectionParms')) {
+            // ignore
         } else {
             console.log(`[${radio.name}] other action: ${line}`);
         }
+    }
+
+    function setResourceState(issi, state) {
+        resources.find({query: {tetra: issi}}).then(result => {
+            if (result.length === 1) {
+                resources.patch(result[0]._id, {state})
+                    .catch(error => logger.error(`Failed to update resource state for ISSI ${issi}:`, error));
+            }
+        }).catch(error => {
+            logger.error(`Failed to find resource for ISSI ${issi}:`, error);
+        });
     }
 
     function processLIP(issi, hex) {

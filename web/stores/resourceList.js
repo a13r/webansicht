@@ -1,4 +1,4 @@
-import {action, observable, reaction} from "mobx";
+import {action, makeObservable, observable, reaction} from "mobx";
 import {resources} from "../app";
 import ResourceStore from "./resources";
 import {loginReaction} from "./index";
@@ -7,11 +7,14 @@ import {SendMessageForm} from "~/forms/sendMessageForm";
 
 export default class ResourceListStore extends ResourceStore {
     sendMessageForm = new SendMessageForm();
-    @observable
     sendMessageVisible = false;
 
     constructor() {
         super(fields);
+        makeObservable(this, {
+            sendMessageVisible: observable,
+            selectResource: action
+        });
         loginReaction(() => this.find({hidden: false}).then(() => {
             if (this.list.length > 0) {
                 this.selectResource(this.list[0]._id);
@@ -30,7 +33,6 @@ export default class ResourceListStore extends ResourceStore {
                     this.sendMessageForm.$('destination').set(resource.tetra);
                     this.sendMessageVisible = true;
                     this.sendMessageForm.hasCallout = !!resource.hasCallout;
-                    this.sendMessageForm.$('callout').set(!!resource.hasCallout);
                 } else {
                     this.sendMessageVisible = false;
                 }
@@ -38,7 +40,6 @@ export default class ResourceListStore extends ResourceStore {
         });
     }
 
-    @action
     selectResource = _id => this.form.set({_id});
 
     onSuccess = form => {

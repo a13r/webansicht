@@ -1,5 +1,4 @@
 import {BaseForm} from "~/forms/baseForm";
-import {login} from "~/app";
 import {auth} from "~/stores";
 
 export class LoginForm extends BaseForm {
@@ -20,8 +19,7 @@ export class LoginForm extends BaseForm {
     hooks() {
         return {
             onSuccess(form) {
-                login(form.values())
-                    .then(response => auth.processToken(response.accessToken))
+                auth.login(form.values())
                     .catch(e => {
                         form.$('username').input.focus();
                         form.reset();

@@ -15,7 +15,7 @@ export default restrictToRoles(['admin'])(inject('deleteResourceForm')(observer(
             </Modal.Body>
             <Modal.Footer>
                 <Button onClick={form.hide}>abbrechen</Button>
-                <Button type="submit" bsStyle="danger"><i className="fa fa-trash"/> löschen</Button>
+                <Button disabled={!form.isValid} type="submit" variant="danger"><i className="fa fa-trash"/> löschen</Button>
             </Modal.Footer>
         </form>
     </Modal>

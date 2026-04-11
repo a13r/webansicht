@@ -1,30 +1,17 @@
-const authentication = require('@feathersjs/authentication');
-const authManagement = require('feathers-authentication-management');
-const jwt = require('@feathersjs/authentication-jwt');
-const local = require('@feathersjs/authentication-local');
+const {AuthenticationService, JWTStrategy} = require("@feathersjs/authentication");
+const {LocalStrategy} = require("@feathersjs/authentication-local");
+const {oauth} = require("@feathersjs/authentication-oauth");
+const {PasswordChangeService} = require('feathers-authentication-management');
 
 
-module.exports = function () {
-  const app = this;
-  const config = app.get('authentication');
+module.exports = app => {
+    const authentication = new AuthenticationService(app);
+    authentication.register('jwt', new JWTStrategy());
+    authentication.register('local', new LocalStrategy());
 
-  // Set up authentication with the secret
-  app.configure(authentication(config));
-  app.configure(jwt());
-  app.configure(local(config.local));
-  app.configure(authManagement(config.management));
-
-  // The `authentication` service is used to create a JWT.
-  // The before `create` hook registers strategies that can be used
-  // to create a new valid JWT (e.g. local or oauth2)
-  app.service('authentication').hooks({
-    before: {
-      create: [
-        authentication.hooks.authenticate(config.strategies)
-      ],
-      remove: [
-        authentication.hooks.authenticate('jwt')
-      ]
-    }
-  });
+    app.use('/authentication', authentication);
+    app.use('/auth-management/change-password', new PasswordChangeService(app, {
+        identifyUserProps: ['username'],
+    }));
+    app.configure(oauth());
 };

@@ -1,5 +1,5 @@
 // Initializes the `messages` service on path `/messages`
-const createService = require('feathers-mongoose');
+const { Service: MongooseService } = require('feathers-mongoose');
 const createModel = require('../../models/messages.model');
 const hooks = require('./messages.hooks');
 
@@ -9,11 +9,12 @@ module.exports = function (app) {
 
   const options = {
     Model,
-    paginate
+    paginate,
+    multi: true
   };
 
   // Initialize our service with any options it requires
-  app.use('/messages', createService(options));
+  app.use('/messages', new MongooseService(options));
 
   // Get our initialized service so that we can register hooks
   const service = app.service('messages');

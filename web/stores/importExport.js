@@ -1,10 +1,17 @@
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {auth, notification} from "~/stores";
 import "whatwg-fetch";
 
 export default class ImportExportStore {
-    @observable
     importFile;
+
+    constructor() {
+        makeObservable(this, {
+            importFile: observable,
+            isValidFile: computed,
+            setImportFile: action,
+        });
+    }
 
     sendFile = () => {
         const formData = new FormData();
@@ -24,12 +31,10 @@ export default class ImportExportStore {
             });
     };
 
-    @action
     setImportFile = e => {
         this.importFile = e.target.files[0];
     };
 
-    @computed
     get isValidFile() {
         return !this.importFile || this.importFile.type === 'application/x-tar';
     }

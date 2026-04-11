@@ -1,4 +1,4 @@
-import {action, observable, reaction} from "mobx";
+import {action, makeObservable, observable, reaction} from "mobx";
 import {loginReaction} from "~/stores";
 import {users} from "~/app";
 import _ from "lodash";
@@ -6,10 +6,17 @@ import {ManageUserForm} from "~/forms/manageUserForm";
 
 export default class ManageUserStore {
     form;
-    @observable
     userList = [];
 
     constructor() {
+        makeObservable(this, {
+            userList: observable,
+            addUser: action,
+            updateUser: action,
+            removeUser: action,
+            selectUser: action,
+            createUser: action,
+        });
         this.form = new ManageUserForm();
         loginReaction(({auth}) => {
             if (auth.isAdmin) {
@@ -31,10 +38,8 @@ export default class ManageUserStore {
         });
     }
 
-    @action
     addUser = user => this.userList.push(user);
 
-    @action
     updateUser = user => {
         const existing = _.find(this.userList, {_id: user._id});
         if (existing) {
@@ -47,7 +52,6 @@ export default class ManageUserStore {
         }
     };
 
-    @action
     removeUser = ({_id}) => {
         _.remove(this.userList, {_id});
         if (this.form.$('_id').value === _id) {

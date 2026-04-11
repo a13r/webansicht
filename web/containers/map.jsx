@@ -1,7 +1,7 @@
 import React from 'react';
 import authenticate from '~/components/authenticate';
 import {inject, observer} from 'mobx-react';
-import {observable, reaction, when} from "mobx";
+import {makeObservable, observable, reaction, when} from "mobx";
 import {Control, defaults as defaultControls} from "ol/control"
 import Style from 'ol/style/Style';
 import Fill from 'ol/style/Fill';
@@ -137,15 +137,12 @@ const ResourceOverlay = inject('map')(observer(({map, id}) =>
         </div>}
     </div>));
 
-@authenticate
-@inject('map', 'resources', 'auth')
-@observer
 class MapComponent extends React.Component {
-    @observable
     showEditor = false;
     map;
 
     componentDidMount() {
+        makeObservable(this, {showEditor: observable});
         const defaultViewControl = new DefaultViewControl();
         window.map = this.map = new Map({
             target: this.div,
@@ -167,7 +164,8 @@ class MapComponent extends React.Component {
                     source: new WMTS(options),
                     zIndex: -1
                 }));
-            });
+            })
+            .catch(error => console.error(error));
 
 /*
         const defaultView = new View({
@@ -280,7 +278,7 @@ class MapComponent extends React.Component {
                 clickInteraction.getFeatures().clear();
                 resourceLayer.setSource(vectorSource);
             }
-        }, true);
+        }, {fireImmediately: true});
     }
 
     /**
@@ -336,4 +334,4 @@ class MapComponent extends React.Component {
     }
 }
 
-export default MapComponent;
+export default authenticate(inject('map', 'resources', 'auth')(observer(MapComponent)));

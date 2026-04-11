@@ -1,6 +1,16 @@
 // A hook that logs service method before, after and error
 const logger = require('winston');
 
+logger.configure({
+    transports: [
+        new logger.transports.Console({
+            timestamp: true,
+            colorize: true,
+            level: 'info'
+        })
+    ]
+});
+
 module.exports = function () {
   return function (hook) {
     let message = `${hook.type}: ${hook.path} - Method: ${hook.method}`;

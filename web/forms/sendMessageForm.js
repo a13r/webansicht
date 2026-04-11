@@ -2,11 +2,17 @@ import {BaseForm} from "~/forms/baseForm";
 import {messages} from "~/app";
 import {notification} from "~/stores";
 import {required} from "~/forms/validators";
-import {observable} from "mobx";
+import {makeObservable, observable} from "mobx";
 
 export class SendMessageForm extends BaseForm {
-    @observable
     hasCallout = false;
+
+    constructor() {
+        super();
+        makeObservable(this, {
+            hasCallout: observable
+        })
+    }
 
     setup() {
         return {

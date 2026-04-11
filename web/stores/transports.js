@@ -1,16 +1,22 @@
-import {action, computed, observable} from "mobx";
-import {auth, loginReaction, notification, router} from "~/stores";
+import {action, computed, makeObservable, observable} from "mobx";
+import {auth, loginReaction, notification} from "~/stores";
 import {transports} from "~/app";
 import _ from "lodash";
 import {TransportForm} from "~/forms/transportForm";
 import {priorities} from "~/shared/strings";
 
 export class TransportStore {
-    @observable
     list = [];
     form = new TransportForm();
 
     constructor() {
+        makeObservable(this, {
+            list: observable,
+            onCreated: action,
+            onRemoved: action,
+            onUpdated: action,
+            existNewTransports: computed,
+        });
         loginReaction(({auth}) => {
             this.find();
             if (auth.isDispo) {
@@ -29,13 +35,11 @@ export class TransportStore {
         transports.find({query: {$sort: {createdAt: 1}}}).then(action(t => this.list = t));
     }
 
-    @action
     onCreated = entry => {
         this.list.push(entry);
         this.list = _.orderBy(this.list, ['createdAt']);
     };
 
-    @action
     onUpdated = entry => {
         const existing = _.find(this.list, {_id: entry._id});
         if (!existing) {
@@ -46,7 +50,6 @@ export class TransportStore {
         this.list = _.orderBy(this.list, ['createdAt']);
     };
 
-    @action
     onRemoved = ({_id}) => _.remove(this.list, {_id});
 
     showNotification = entry => {
@@ -100,7 +103,6 @@ export class TransportStore {
 
     openTransports = resource => this.list.filter(t => t.resourceId === resource._id && t.state < 3);
 
-    @computed
     get existNewTransports() {
         return this.list.some(t => t.state === 0);
     }

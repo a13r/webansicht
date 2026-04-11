@@ -5,6 +5,7 @@ import states from "../shared/states";
 import "../styles/resourceList.css";
 import {OverlayTrigger, Popover, Tooltip} from "react-bootstrap";
 import {priorities, types} from "~/shared/strings";
+import Card from "react-bootstrap/Card";
 
 const TransportSummary = ({diagnose, requester, priority, type, destination}) =>
     <div>
@@ -23,8 +24,8 @@ const TransportSummary = ({diagnose, requester, priority, type, destination}) =>
     </div>;
 
 export default inject('auth', 'resources', 'transports', 'calls')(observer(({auth, resources, transports, calls}) =>
-    <div className="panel panel-default">
-        <table className="table table-condensed">
+    <Card>
+        <table className="table table-condensed mb-0">
             <thead>
             <tr>
                 <th>TETRA</th>
@@ -53,22 +54,24 @@ export default inject('auth', 'resources', 'transports', 'calls')(observer(({aut
                     {auth.isDispo && <td className="text-right">
                         {transports.openTransports(r).map((t, i) =>
                             <OverlayTrigger key={i} container={this} trigger={['hover', 'focus']} placement="bottom"
-                                            overlay={<Popover title={`Transport ${transports.list.indexOf(t)+1}`}><TransportSummary {...t}/></Popover>}>
-                                <span><i className="fa fa-lg fa-fw fa-ambulance" key={i} onClick={transports.edit(t)}/></span>
+                                            overlay={<Popover
+                                                title={`Transport ${transports.list.indexOf(t) + 1}`}><TransportSummary {...t}/></Popover>}>
+                                    <span><i className="fa fa-lg fa-fw fa-ambulance" key={i}
+                                             onClick={transports.edit(t)}/></span>
                             </OverlayTrigger>)}
                         {calls.lastIncomingsByCaller[r.tetra] &&
-                        <OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={
-                            <Tooltip id="active-talkgroup">
-                                {moment(calls.lastIncomingsByCaller[r.tetra].timestamp).format('HH:mm:ss')}
-                                —
-                                {calls.lastIncomingsByCaller[r.tetra].talkGroup.name}
-                            </Tooltip>
-                        }>
-                            <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>
-                        </OverlayTrigger>}
+                            <OverlayTrigger trigger={['hover', 'focus']} placement="top" overlay={
+                                <Tooltip id="active-talkgroup">
+                                    {moment(calls.lastIncomingsByCaller[r.tetra].timestamp).format('HH:mm:ss')}
+                                    —
+                                    {calls.lastIncomingsByCaller[r.tetra].talkGroup.name}
+                                </Tooltip>
+                            }>
+                                <span><i className="fa fa-lg fa-fw fa-bullhorn"/></span>
+                            </OverlayTrigger>}
                         {resources.selectedResourceId === r._id && <i className="fa fa-lg fa-fw fa-pencil"/>}
                     </td>}
                 </tr>)}
             </tbody>
         </table>
-    </div>));
+    </Card>));

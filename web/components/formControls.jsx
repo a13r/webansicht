@@ -1,30 +1,28 @@
 import React from "react";
-import {Button, ControlLabel, FormControl, FormGroup, HelpBlock, InputGroup} from "react-bootstrap";
+import {Button, Form, InputGroup} from "react-bootstrap";
 import {observer} from "mobx-react";
 
 export const Select = observer(({field, children}) =>
-    <FormGroup>
-        <ControlLabel>{field.label}</ControlLabel>
-        <FormControl componentClass="select" {...field.bind()} inputRef={i => field.input = i}>{children}</FormControl>
-        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
-    </FormGroup>);
+    <>
+        <Form.Label htmlFor={field.id} column="1">{field.label}</Form.Label>
+        <Form.Select className="mb-2" {...field.bind()} ref={i => field.input = i}>{children}</Form.Select>
+        {!field.isValid && <Form.Control.Feedback>{field.error}</Form.Control.Feedback>}
+    </>);
 
 export const TextInput = observer(({field, ...props}) =>
-    <FormGroup>
-        <ControlLabel>{field.label}</ControlLabel>
-        <FormControl {...field.bind()} inputRef={i => field.input = i} {...props}/>
-        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
-    </FormGroup>);
+    <Form.Group>
+        <Form.Label htmlFor={field.id}>{field.label}</Form.Label>
+        <Form.Control isInvalid={field.blurred && !field.isValid} className="mb-2" type="text" {...field.bind()} ref={i => field.input = i} {...props}/>
+        {field.blurred && !field.isValid && <Form.Text className="text-muted">{field.error}</Form.Text>}
+    </Form.Group>);
 
 export const PositionTextInput = observer(({field, onClickHome, onClickSwap}) =>
-    <FormGroup>
-        <ControlLabel>{field.label}</ControlLabel>
-        <InputGroup>
-            <FormControl {...field.bind()} inputRef={i => field.input = i}/>
-            <InputGroup.Button>
-                <Button onClick={onClickSwap}><i className="fa fa-retweet"/></Button>
-                <Button onClick={onClickHome}><i className="glyphicon glyphicon-home"/></Button>
-            </InputGroup.Button>
+    <>
+        <Form.Label htmlFor={field.id}>{field.label}</Form.Label>
+        <InputGroup className="mb-2">
+            <Form.Control type="text" {...field.bind()} ref={i => field.input = i}/>
+            <Button onClick={onClickSwap} variant="outline-secondary"><i className="fa fa-retweet"/></Button>
+            <Button onClick={onClickHome} variant="outline-secondary"><i className="fa fa-home"/></Button>
         </InputGroup>
-        {!field.isValid && <HelpBlock>{field.error}</HelpBlock>}
-    </FormGroup>);
+        {!field.isValid && <Form.Control.Feedback>{field.error}</Form.Control.Feedback>}
+    </>);

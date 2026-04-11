@@ -1,12 +1,20 @@
 import {BaseForm} from "~/forms/baseForm";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {transports} from "~/app";
 import {notification} from "~/stores";
 import {requiredSelect} from "~/forms/validators";
 
 export class TransportForm extends BaseForm {
-    @observable
     isVisible;
+
+    constructor() {
+        super();
+        makeObservable(this, {
+            isVisible: observable,
+            show: action,
+            hide: action,
+        });
+    }
 
     setup() {
         return {
@@ -87,8 +95,6 @@ export class TransportForm extends BaseForm {
         }
     }
 
-    @action
     hide = () => this.isVisible = false;
-    @action
     show = () => this.isVisible = true;
 }

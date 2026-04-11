@@ -1,17 +1,17 @@
 import {Form} from "mobx-react-form";
-import validator from "validator";
+import vjf from "mobx-react-form/lib/validators/VJF";
 
 export class BaseForm extends Form {
     plugins() {
         return {
-            dvr: validator
+            vjf: vjf()
         };
     }
 
     options() {
         return {
             validateOnChange: true,
-            validateOnBlur: false
+            validateOnBlur: true
         };
     }
 }

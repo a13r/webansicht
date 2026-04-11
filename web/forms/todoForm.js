@@ -1,5 +1,5 @@
 import {BaseForm} from "~/forms/baseForm";
-import {action, observable} from 'mobx';
+import {action, makeObservable, observable} from 'mobx';
 import _ from 'lodash';
 import moment from "moment";
 import {todos} from "~/app";
@@ -8,8 +8,16 @@ import {notification} from "~/stores";
 const format = 'L HH:mm';
 
 export class TodoForm extends BaseForm {
-    @observable
     isVisible;
+
+    constructor() {
+        super();
+        makeObservable(this, {
+            isVisible: observable,
+            show: action,
+            hide: action
+        })
+    }
 
     setup() {
         return {
@@ -49,10 +57,8 @@ export class TodoForm extends BaseForm {
         };
     }
 
-    @action
     show = () => this.isVisible = true;
 
-    @action
     hide = () => this.isVisible = false;
 
     remove = () => {

@@ -2,6 +2,7 @@ body {
     cursor: default;
     padding-top: 50px;
     padding-bottom: 50px;
+    --toastify-font-family: var(--bs-body-font-family);
 }
 
 #root {
@@ -26,4 +27,21 @@ body {
 
 .progress-bar {
     color: #000;
+}
+
+.new-transport-warning {
+    display: inline-block;
+    animation: fadeLoop 2s ease-in-out infinite;
+}
+
+@keyframes fadeLoop {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
 }
