@@ -20,11 +20,11 @@
             "expiresIn": "1d"
         },
         "local": {
-            "usernameField": "\\username",
+            "usernameField": "username",
             "passwordField": "password"
         },
         "management": {
-            "identifyUserProps": ["\\username"]
+            "identifyUserProps": ["username"]
         }
     },
     "mongodb": "mongodb://localhost:27017/webansicht",
