@@ -1,4 +1,4 @@
-import {action, computed, makeObservable, observable, reaction} from "mobx";
+import {action, computed, makeObservable, observable, reaction, runInAction} from "mobx";
 import {client} from "../app";
 import {router} from "./index";
 import {LoginForm} from "~/forms/login";
@@ -11,11 +11,13 @@ export default class AuthStore {
     loggedIn = undefined;
     user;
     token;
+    ssoAvailable = false;
 
     constructor() {
         makeObservable(this, {
             loggedIn: observable,
             user: observable,
+            ssoAvailable: observable,
             isAdmin: computed,
             isDispo: computed,
             isStation: computed,
@@ -71,6 +73,7 @@ export default class AuthStore {
             if (router.location.pathname !== '/') {
                 router.push('/');
             }
+            sessionStorage.setItem('sso-disabled', '1');
             this.loggedIn = false;
             this.user = null;
             this.accessToken = null;
@@ -79,30 +82,75 @@ export default class AuthStore {
         }
     };
 
+    _fetchSsoToken = async () => {
+        try {
+            const response = await fetch('/sso-token');
+            return await response.json();
+        } catch {
+            return {sso: false};
+        }
+    };
+
+    _authenticateWithSso = async (ssoResult) => {
+        const {accessToken, user} = await client.authenticate({
+            strategy: 'jwt',
+            accessToken: ssoResult.accessToken
+        });
+        this.userLoggedIn(accessToken, user);
+    };
+
     reAuthenticate = async () => {
         try {
-            // Authenticate using the stored JWT
-            const { accessToken, user } = await client.reAuthenticate();
+            const {accessToken, user} = await client.reAuthenticate();
             this.userLoggedIn(accessToken, user);
-        } catch (error) {
+            this._fetchSsoToken().then(result => {
+                if (result.accessToken) {
+                    runInAction(() => { this.ssoAvailable = true; });
+                }
+            });
+        } catch {
+            const ssoDisabled = sessionStorage.getItem('sso-disabled');
+
+            const ssoResult = await this._fetchSsoToken();
+            if (ssoResult.accessToken) {
+                runInAction(() => { this.ssoAvailable = true; });
+
+                if (!ssoDisabled) {
+                    try {
+                        await this._authenticateWithSso(ssoResult);
+                        return;
+                    } catch {
+                        // SSO user may not exist locally
+                    }
+                }
+            }
+
             this.userLoggedOut();
         }
     };
 
     login = async (credentials) => {
         try {
-            // Authenticate with the provided credentials
-            const { accessToken, user } = await client.authenticate({
+            const {accessToken, user} = await client.authenticate({
                 strategy: 'local',
                 ...credentials
             });
 
+            sessionStorage.removeItem('sso-disabled');
             this.userLoggedIn(accessToken, user);
 
-            return { user };
+            return {user};
         } catch (error) {
             this.userLoggedOut();
             throw error;
+        }
+    };
+
+    loginSSO = async () => {
+        sessionStorage.removeItem('sso-disabled');
+        const ssoResult = await this._fetchSsoToken();
+        if (ssoResult.accessToken) {
+            await this._authenticateWithSso(ssoResult);
         }
     };
 
