@@ -10,7 +10,7 @@ import Settings from "./containers/settings";
 import Journal from "./containers/journal";
 import Stations from "./containers/stations";
 import Transports from "./containers/transports";
-import Map from "~/containers/map";
+const Map = React.lazy(() => import("~/containers/map"));
 import stores from "./stores";
 import forms from "./forms";
 import LoginForm from "./components/LoginForm";
@@ -102,7 +102,7 @@ const Container = observer(() =>
                     <Route path="/messages" element={<MessageList/>}/>
                     <Route path="/stations" element={<Stations/>}/>
                     <Route path="/transports" element={<Transports/>}/>
-                    <Route path="/map" element={<Map/>}/>
+                    <Route path="/map" element={<React.Suspense fallback={<div className="mt-5 text-center">Laden...</div>}><Map/></React.Suspense>}/>
                 </Routes>
 
                 {/* Conditional rendering outside Routes */}
