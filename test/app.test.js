@@ -16,9 +16,20 @@ describe('Feathers application tests', () => {
 
   beforeAll(async () => {
     server = await app.listen(3030);
+    // Wait for the fire-and-forget admin user creation to finish
+    const users = app.service('users');
+    for (let i = 0; i < 50; i++) {
+      const found = await users.find({ query: { username: 'admin' } });
+      if (found.length > 0) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
   });
 
-  afterAll(() => new Promise(resolve => server.close(resolve)));
+  afterAll(async () => {
+    const mongoose = app.get('mongooseClient');
+    await mongoose.disconnect();
+    await new Promise(resolve => server.close(resolve));
+  });
 
   (publicExists ? it : it.skip)('starts and shows the index page', async () => {
     const res = await fetch('http://localhost:3030', {

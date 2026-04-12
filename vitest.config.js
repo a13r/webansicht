@@ -8,6 +8,7 @@ export default defineConfig({
     },
   },
   test: {
+    globalSetup: ['test/globalSetup.js'],
     globals: true,
     include: ['test/**/*.test.js'],
     testTimeout: 15000,
