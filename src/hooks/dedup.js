@@ -9,6 +9,7 @@ module.exports = function () { // eslint-disable-line no-unused-vars
         }
         const app = require('../app');
         const currentData = await app.service('resources').get(hook.id);
+        hook.params._currentData = currentData;
         const newData = _.merge({}, currentData, hook.data);
         // If the new data is equal to the current data (excluding _id), skip further processing
         if (equal(_.omit(newData, '_id'), _.omit(currentData, '_id'))) {
