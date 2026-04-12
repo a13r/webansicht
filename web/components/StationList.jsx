@@ -7,7 +7,7 @@ import Card from "react-bootstrap/Card";
 
 const Station = inject('auth', 'stations')(observer(({auth, stations: store, station}) =>
     <Col lg={3} md={4}>
-        <Card className={station.form.changed ? 'bg-warning-subtle mb-3' : 'mb-3'}>
+        <Card className={station.isNew || station.form.changed ? 'bg-warning-subtle mb-3' : 'mb-3'}>
             <CardHeader>
                 {station.name || station.form.$('name').value || 'Neue SanHiSt'}
             </CardHeader>
