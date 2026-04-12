@@ -57,7 +57,7 @@ npm run web:dev    # Start Vite dev server with HMR
 
 On first startup, a default admin user is created with username `admin` and password `changeme`.
 
-Open the app at [http://localhost:3030](http://localhost:3030) (or the Vite dev server URL for frontend-only changes).
+Open the app at the Vite dev server URL shown in the terminal (usually [http://localhost:5173](http://localhost:5173)). The backend API runs on port 3030 but does not serve the frontend in dev mode — run `npm run web:build` first if you need to access it at [http://localhost:3030](http://localhost:3030).
 
 ### Production (Docker)
 
