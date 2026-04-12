@@ -1,8 +1,10 @@
 const X = require('xlsx');
 const moment = require('moment-timezone');
-const backup = require('mongodb-backup');
-const restore = require('mongodb-restore');
+const BSON = require('bson');
+const tar = require('tar');
 const fs = require('fs');
+const path = require('path');
+const { pipeline } = require('stream/promises');
 const uploadDir = './uploads';
 const upload = require('multer')({ dest: uploadDir });
 const {states, priorities, types} = require('../web/shared/strings');
@@ -61,35 +63,118 @@ module.exports = function() {
             })
     }
 
-    function sendBackup(req, res) {
-        console.log(this);
-        res.writeHead(200, {
-            'Content-Type': 'application/x-tar',
-            'Content-Disposition': `attachment; filename=webansicht_${dateTime()}.tar`
-        });
+    async function sendBackup(req, res) {
+        let tmpDir;
+        try {
+            const db = app.get('mongooseClient').connection.db;
+            const dbName = db.databaseName;
+            tmpDir = fs.mkdtempSync(path.join(uploadDir, 'backup-'));
+            const dbDir = path.join(tmpDir, dbName);
+            fs.mkdirSync(dbDir);
 
-        backup({
-            uri: app.get('mongodb'),
-            stream: res
-        });
-    }
-
-    function restoreDatabase(req, res) {
-        restore({
-            uri: app.get('mongodb'),
-            root: req.file.destination,
-            tar: req.file.filename,
-            drop: true,
-            callback(error) {
-                fs.unlink(req.file.path, e => { if (e) console.error(e); });
-                if (error) {
-                    res.status(500).send(error);
-                } else {
-                    res.status(200).end();
-                    app.service('notifications').create({type: 'reloadClient'});
+            const collections = await db.listCollections().toArray();
+            for (const collInfo of collections) {
+                if (collInfo.name.startsWith('system.')) continue;
+                const collDir = path.join(dbDir, collInfo.name);
+                fs.mkdirSync(collDir);
+                const cursor = db.collection(collInfo.name).find();
+                for await (const doc of cursor) {
+                    const bsonData = BSON.serialize(doc);
+                    fs.writeFileSync(path.join(collDir, `${doc._id}.bson`), bsonData);
                 }
             }
-        });
+
+            res.writeHead(200, {
+                'Content-Type': 'application/x-tar',
+                'Content-Disposition': `attachment; filename=webansicht_${dateTime()}.tar`
+            });
+
+            await pipeline(
+                tar.create({ cwd: tmpDir }, [dbName]),
+                res
+            );
+        } catch (error) {
+            console.error('Backup failed:', error);
+            if (!res.headersSent) {
+                res.status(500).json({ message: error.message });
+            }
+        } finally {
+            if (tmpDir) fs.rmSync(tmpDir, { recursive: true, force: true });
+        }
+    }
+
+    async function restoreDatabase(req, res) {
+        let extractDir;
+        try {
+            const db = app.get('mongooseClient').connection.db;
+            extractDir = fs.mkdtempSync(path.join(uploadDir, 'restore-'));
+
+            await tar.extract({
+                file: req.file.path,
+                cwd: extractDir
+            });
+
+            // Find the database directory (first subdirectory in the extracted TAR)
+            const entries = fs.readdirSync(extractDir);
+            const dbDirName = entries.find(e =>
+                fs.statSync(path.join(extractDir, e)).isDirectory()
+            );
+            if (!dbDirName) {
+                return res.status(400).json({ message: 'Invalid backup: no database directory found' });
+            }
+
+            const dbDir = path.join(extractDir, dbDirName);
+            const collectionDirs = fs.readdirSync(dbDir).filter(e =>
+                fs.statSync(path.join(dbDir, e)).isDirectory()
+            );
+
+            // Drop all existing collections except users
+            const existingCollections = await db.listCollections().toArray();
+            for (const collInfo of existingCollections) {
+                if (collInfo.name.startsWith('system.') || collInfo.name === 'users') continue;
+                await db.collection(collInfo.name).drop();
+            }
+
+            // Restore collections from backup
+            for (const collName of collectionDirs) {
+                const collDir = path.join(dbDir, collName);
+                const files = fs.readdirSync(collDir).filter(f => f.endsWith('.bson'));
+                if (files.length === 0) continue;
+
+                const docs = files.map(f => {
+                    const data = fs.readFileSync(path.join(collDir, f));
+                    return BSON.deserialize(data);
+                });
+
+                if (collName === 'users') {
+                    // Merge: only insert users that don't already exist
+                    const usersCollection = db.collection('users');
+                    for (const doc of docs) {
+                        const exists = await usersCollection.findOne({ _id: doc._id });
+                        if (!exists) {
+                            await usersCollection.insertOne(doc);
+                        }
+                    }
+                } else {
+                    // Bulk insert in batches of 1000
+                    const collection = db.collection(collName);
+                    for (let i = 0; i < docs.length; i += 1000) {
+                        await collection.insertMany(docs.slice(i, i + 1000));
+                    }
+                }
+            }
+
+            res.status(200).end();
+            app.service('notifications').create({type: 'reloadClient'});
+        } catch (error) {
+            console.error('Restore failed:', error);
+            if (!res.headersSent) {
+                res.status(500).json({ message: error.message });
+            }
+        } finally {
+            if (extractDir) fs.rmSync(extractDir, { recursive: true, force: true });
+            if (req.file) fs.unlink(req.file.path, e => { if (e) console.error(e); });
+        }
     }
 };
 

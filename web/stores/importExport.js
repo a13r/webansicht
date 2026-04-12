@@ -20,7 +20,7 @@ export default class ImportExportStore {
             method: 'POST',
             body: formData,
             headers: {
-                'Authorization': 'Bearer ' + auth.token
+                'Authorization': 'Bearer ' + auth.accessToken
             }
         };
         fetch('/import.tar', options)
