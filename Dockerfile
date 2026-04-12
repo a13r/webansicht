@@ -3,7 +3,7 @@ FROM node:25-alpine
 WORKDIR /opt/webansicht
 COPY package.json .
 COPY package-lock.json .
-RUN npm install
+RUN --mount=type=cache,target=/root/.npm npm install
 
 COPY vite.config.js .
 COPY web web
