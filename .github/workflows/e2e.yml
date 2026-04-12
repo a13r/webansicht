@@ -24,28 +24,8 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Build and start services
-        run: docker compose -f compose.e2e.yml up -d --build --wait
-        timeout-minutes: 10
-
-      - name: Wait for app readiness
-        run: |
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:3030 > /dev/null 2>&1; then
-              echo "App is ready"
-              exit 0
-            fi
-            echo "Waiting... attempt $i"
-            sleep 2
-          done
-          echo "App failed to start"
-          docker compose -f compose.e2e.yml logs webansicht
-          exit 1
-
       - name: Run E2E tests
-        run: npx playwright test --config=e2e/playwright.config.js
-        env:
-          E2E_BASE_URL: http://localhost:3030
+        run: npm run e2e
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
@@ -62,7 +42,3 @@ jobs:
           name: playwright-traces
           path: test-results/
           retention-days: 7
-
-      - name: Tear down
-        if: always()
-        run: docker compose -f compose.e2e.yml down -v

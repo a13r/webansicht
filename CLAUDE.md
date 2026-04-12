@@ -18,7 +18,7 @@ web/           Frontend (React/MobX)
   forms/       mobx-react-form implementations
 e2e/           Playwright e2e tests
 test/          Vitest unit tests
-config/        Feathers config (default.json, production.json, e2e.json)
+config/        Feathers config (default.json, production.json)
 ```
 
 ## Commands
@@ -28,22 +28,19 @@ npm run api:dev        # Start backend in dev mode
 npm run web:dev        # Start Vite dev server (HMR)
 npm run web:build      # Build frontend → /public
 npm test               # Run unit tests (Vitest)
-npm run e2e            # Run Playwright e2e tests
-npm run e2e:docker:up  # Rebuild and start Docker for e2e
-npm run e2e:docker:down
+npm run e2e            # Run Playwright e2e tests (starts MongoDB + app via testcontainers)
 ```
 
 ## E2E Tests
 
-After making code changes, rebuild the Docker containers before running tests:
+E2E tests use testcontainers to start an ephemeral MongoDB and the app server automatically:
 
 ```bash
-npm run e2e:docker:up   # Rebuild with your changes
-npm run e2e:test        # Run Playwright only
+npm run web:build       # Rebuild frontend if you changed web/ files
+npm run e2e             # Run Playwright e2e tests
 ```
 
-`e2e:docker:up` rebuilds the app with your changes. Without it, tests run against stale code.
-`npm run e2e` does everything (up + test + down) but is slower for iteration.
+The frontend is built once and cached in `public/`. Rebuild with `web:build` after changing frontend code.
 
 ## Key Patterns
 
