@@ -54,6 +54,10 @@ test.describe('Stations', () => {
     await page.goto('/stations');
     await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
 
+    // Dismiss any toast notifications that may block clicks
+    await page.locator('.Toastify__toast').first().waitFor({ timeout: 3_000 }).catch(() => {});
+    await page.evaluate(() => document.querySelector('.Toastify')?.remove());
+
     await page.getByRole('button', { name: 'hinzufügen' }).click();
 
     const newCard = page.locator('.card', { hasText: 'Neue SanHiSt' });
@@ -64,9 +68,36 @@ test.describe('Stations', () => {
     await newCard.getByRole('button', { name: 'abbrechen' }).click();
   });
 
+  test('station card is not highlighted after saving changes', async ({ page }) => {
+    await api.createStation({
+      name: 'Highlight Test',
+      currentPatients: 0,
+      maxPatients: 10,
+      ordering: 1,
+    });
+
+    await page.goto('/stations');
+
+    // Dismiss any toast notifications that may block clicks
+    await page.locator('.Toastify__toast').first().waitFor({ timeout: 3_000 }).catch(() => {});
+    await page.evaluate(() => document.querySelector('.Toastify')?.remove());
+
+    const card = page.locator('.card', { hasText: 'Highlight Test' });
+    await expect(card).toBeVisible({ timeout: 10_000 });
+
+    // Change a field so the card becomes highlighted
+    await card.getByLabel('Patienten maximal').fill('20');
+    await expect(card).toHaveClass(/bg-warning-subtle/);
+
+    // Save
+    await card.getByRole('button', { name: 'speichern' }).click();
+
+    // After saving, the card should no longer be highlighted
+    await expect(card).not.toHaveClass(/bg-warning-subtle/, { timeout: 10_000 });
+  });
+
   test('creating a station via UI shows exactly one entry', async ({ page }) => {
     const stationName = `UI Station ${Date.now()}`;
-
     await page.goto('/stations');
     await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
 
@@ -92,6 +123,10 @@ test.describe('Stations', () => {
 
     // Bug: after saving, there should be exactly ONE card with this station name, not two
     await expect(page.locator('.card-header', { hasText: stationName })).toHaveCount(1);
+
+    // After saving a new station, the card should no longer be highlighted
+    const savedCard = page.locator('.card', { hasText: stationName });
+    await expect(savedCard).not.toHaveClass(/bg-warning-subtle/, { timeout: 10_000 });
 
     // Clean up the created station via API
     const stations = await api._request('GET', `/stations?name=${encodeURIComponent(stationName)}`);

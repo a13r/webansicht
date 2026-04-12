@@ -8,6 +8,6 @@ export default restrictToRoles(['admin'])(inject('stations')(observer(({stations
     <Row className="mb-2">
         <Col md={12}>
             <Button onClick={stations.create}><i className="fa fa-plus-circle"/> hinzufügen</Button>
-            <Form.Check onChange={e => stations.setShowDeleted(e)} checked={stations.showDeleted} className="float-end" label="ausgeblendete anzeigen"/>
+            <Form.Check id="showDeleted" onChange={e => stations.setShowDeleted(e)} checked={stations.showDeleted} className="float-end" label="ausgeblendete anzeigen"/>
         </Col>
     </Row>)));

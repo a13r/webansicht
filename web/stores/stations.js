@@ -1,4 +1,4 @@
-import {action, computed, makeAutoObservable, makeObservable, observable, reaction} from "mobx";
+import {action, computed, makeObservable, observable, reaction} from "mobx";
 import {stations} from "~/app";
 import {auth} from "~/stores";
 import _ from "lodash";
@@ -37,15 +37,17 @@ export default class StationStore {
     }
 
     onCreated = action(entry => {
-        if (this.list.some(s => s._id === entry._id)) {
-            return;
-        }
-        const pending = this.list.find(s => !s._id);
-        if (pending) {
-            pending._id = entry._id;
-            pending.update(entry);
+        const existing = this.list.find(s => s._id === entry._id);
+        if (existing) {
+            existing.update(entry);
         } else {
-            this.list.push(new Station(entry));
+            const pending = this.list.find(s => !s._id);
+            if (pending) {
+                pending._id = entry._id;
+                pending.update(entry);
+            } else {
+                this.list.push(new Station(entry));
+            }
         }
         this.list = _.orderBy(this.list, ['ordering', 'name']);
     });
@@ -100,15 +102,27 @@ export class Station {
     deleted;
 
     constructor(values) {
+        makeObservable(this, {
+            form: observable.ref,
+            _id: observable,
+            name: observable,
+            contact: observable,
+            currentPatients: observable,
+            maxPatients: observable,
+            ordering: observable,
+            deleted: observable,
+            isNew: computed,
+            loadPercentage: computed,
+            loadLabel: computed,
+            canWrite: computed,
+        });
         _.assign(this, values);
         this.form = new StationForm(this, values);
     }
 
     update(values) {
         _.assign(this, values);
-        this.form.reset();
-        this.form.update(values);
-        this.form.validate();
+        this.form = new StationForm(this, values);
     }
 
     reset = () => {
@@ -146,11 +160,18 @@ export class StationForm extends BaseForm {
         return {
             onSuccess: form => {
                 if (!this.station._id) {
-                    return stations.create(form.values())
-                        .then(action(station => this.station._id = station._id))
+                    const data = _.omit(form.values(), '_id');
+                    return stations.create(data)
+                        .then(action(result => {
+                            this.station._id = result._id;
+                            this.station.update(result);
+                        }))
                         .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
                 } else {
                     return stations.patch(this.station._id, form.values())
+                        .then(action(result => {
+                            this.station.update(result);
+                        }))
                         .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
                 }
             }
