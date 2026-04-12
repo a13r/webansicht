@@ -50,6 +50,20 @@ test.describe('Stations', () => {
     await expect(page.getByText('Update SanHiSt')).toBeVisible({ timeout: 10_000 });
   });
 
+  test('new station card is highlighted before saving', async ({ page }) => {
+    await page.goto('/stations');
+    await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole('button', { name: 'hinzufügen' }).click();
+
+    const newCard = page.locator('.card', { hasText: 'Neue SanHiSt' });
+    await expect(newCard).toBeVisible();
+    await expect(newCard).toHaveClass(/bg-warning-subtle/);
+
+    // Clean up by clicking "abbrechen"
+    await newCard.getByRole('button', { name: 'abbrechen' }).click();
+  });
+
   test('creating a station via UI shows exactly one entry', async ({ page }) => {
     const stationName = `UI Station ${Date.now()}`;
 
