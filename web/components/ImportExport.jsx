@@ -9,7 +9,7 @@ export default restrictToRoles(['admin'])(inject('auth', 'importExport')(observe
         <Panel title="Export" className="mb-3">
             <div className="btn-toolbar">
                 <form action="/export.tar" method="post">
-                    <input type="hidden" name="accessToken" value={auth.token}/>
+                    <input type="hidden" name="accessToken" value={auth.accessToken}/>
                     <Button type="submit"><i className="fa fa-database"/> Datenbank exportieren</Button>
                 </form>
             </div>

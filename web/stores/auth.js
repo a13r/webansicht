@@ -10,7 +10,7 @@ export default class AuthStore {
 
     loggedIn = undefined;
     user;
-    token;
+    accessToken;
     ssoAvailable = false;
 
     constructor() {
