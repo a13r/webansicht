@@ -1,7 +1,6 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const rp = require('request-promise');
 const app = require('../src/app');
 
 const publicDir = path.resolve(app.get('public'));
@@ -27,24 +26,26 @@ describe('Static asset serving', () => {
     server.close(done);
   });
 
-  it('serves a static file', () => {
-    return rp('http://localhost:3031/_test-asset.txt').then(body => {
-      assert.equal(body, 'hello');
+  it('serves a static file', async () => {
+    const res = await fetch('http://localhost:3031/_test-asset.txt', {
+      headers: { 'Connection': 'close' }
     });
+    const body = await res.text();
+    assert.equal(body, 'hello');
   });
 
-  it('serves an HTML file directly', () => {
-    return rp('http://localhost:3031/_test-index.html').then(body => {
-      assert.ok(body.indexOf('<html>') !== -1);
+  it('serves an HTML file directly', async () => {
+    const res = await fetch('http://localhost:3031/_test-index.html', {
+      headers: { 'Connection': 'close' }
     });
+    const body = await res.text();
+    assert.ok(body.indexOf('<html>') !== -1);
   });
 
-  it('returns correct content-type for text files', () => {
-    return rp({
-      url: 'http://localhost:3031/_test-asset.txt',
-      resolveWithFullResponse: true
-    }).then(res => {
-      assert.ok(res.headers['content-type'].includes('text/plain'));
+  it('returns correct content-type for text files', async () => {
+    const res = await fetch('http://localhost:3031/_test-asset.txt', {
+      headers: { 'Connection': 'close' }
     });
+    assert.ok(res.headers.get('content-type').includes('text/plain'));
   });
 });

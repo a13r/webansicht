@@ -1,7 +1,6 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const rp = require('request-promise');
 const app = require('../src/app');
 
 const publicExists = fs.existsSync(path.join(__dirname, '..', 'public', 'index.html'));
@@ -17,38 +16,35 @@ describe('Feathers application tests', () => {
     server.close(done);
   });
 
-  (publicExists ? it : it.skip)('starts and shows the index page', () => {
-    return rp({
-      url: 'http://localhost:3030',
-      headers: { 'Accept': 'text/html' }
-    }).then(body =>
-      assert.ok(body.indexOf('<html') !== -1)
-    );
+  (publicExists ? it : it.skip)('starts and shows the index page', async () => {
+    const res = await fetch('http://localhost:3030', {
+      headers: { 'Accept': 'text/html', 'Connection': 'close' }
+    });
+    const body = await res.text();
+    assert.ok(body.indexOf('<html') !== -1);
   });
 
   describe('404', function() {
-    it('shows a 404 HTML page', () => {
-      return rp({
-        url: 'http://localhost:3030/path/to/nowhere',
-        headers: {
-          'Accept': 'text/html'
-        }
-      }).catch(res => {
-        assert.equal(res.statusCode, 404);
-        assert.ok(res.error.indexOf('<html>') !== -1);
+    it('shows a 404 HTML page', async () => {
+      const res = await fetch('http://localhost:3030/path/to/nowhere', {
+        headers: { 'Accept': 'text/html', 'Connection': 'close' }
       });
+      if (!res.ok) {
+        assert.equal(res.status, 404);
+        const body = await res.text();
+        assert.ok(body.indexOf('<html>') !== -1);
+      }
     });
 
-    it('shows a 404 JSON error without stack trace', () => {
-      return rp({
-        url: 'http://localhost:3030/path/to/nowhere',
-        json: true
-      }).catch(res => {
-        assert.equal(res.statusCode, 404);
-        assert.equal(res.error.code, 404);
-        assert.equal(res.error.message, 'Page not found');
-        assert.equal(res.error.name, 'NotFound');
+    it('shows a 404 JSON error without stack trace', async () => {
+      const res = await fetch('http://localhost:3030/path/to/nowhere', {
+        headers: { 'Connection': 'close' }
       });
+      assert.equal(res.status, 404);
+      const error = await res.json();
+      assert.equal(error.code, 404);
+      assert.equal(error.message, 'Page not found');
+      assert.equal(error.name, 'NotFound');
     });
   });
 
@@ -68,52 +64,41 @@ describe('Feathers application tests', () => {
   describe('Authentication', () => {
     let accessToken;
 
-    it('logs in with the default admin user', () => {
-      return rp({
+    it('logs in with the default admin user', async () => {
+      const res = await fetch('http://localhost:3030/authentication', {
         method: 'POST',
-        url: 'http://localhost:3030/authentication',
-        json: true,
-        body: { strategy: 'local', username: 'admin', password: 'changeme' }
-      }).then(res => {
-        assert.ok(res.accessToken, 'should return an accessToken');
-        accessToken = res.accessToken;
+        headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
+        body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'changeme' })
       });
+      const data = await res.json();
+      assert.ok(data.accessToken, 'should return an accessToken');
+      accessToken = data.accessToken;
     });
 
-    it('accesses a protected route with a valid JWT', () => {
-      return rp({
-        url: 'http://localhost:3030/users',
-        json: true,
-        headers: { Authorization: `Bearer ${accessToken}` }
-      }).then(res => {
-        const users = res.data || res;
-        assert.ok(Array.isArray(users), 'should return user list');
-        assert.ok(users.length > 0, 'should have at least one user');
+    it('accesses a protected route with a valid JWT', async () => {
+      const res = await fetch('http://localhost:3030/users', {
+        headers: { Authorization: `Bearer ${accessToken}`, 'Connection': 'close' }
       });
+      const data = await res.json();
+      const users = data.data || data;
+      assert.ok(Array.isArray(users), 'should return user list');
+      assert.ok(users.length > 0, 'should have at least one user');
     });
 
-    it('rejects unauthenticated requests', () => {
-      return rp({
-        url: 'http://localhost:3030/users',
-        json: true
-      }).then(() => {
-        assert.fail('should have been rejected');
-      }).catch(res => {
-        assert.equal(res.statusCode, 401);
+    it('rejects unauthenticated requests', async () => {
+      const res = await fetch('http://localhost:3030/users', {
+        headers: { 'Connection': 'close' }
       });
+      assert.equal(res.status, 401);
     });
 
-    it('rejects invalid credentials', () => {
-      return rp({
+    it('rejects invalid credentials', async () => {
+      const res = await fetch('http://localhost:3030/authentication', {
         method: 'POST',
-        url: 'http://localhost:3030/authentication',
-        json: true,
-        body: { strategy: 'local', username: 'admin', password: 'wrongpassword' }
-      }).then(() => {
-        assert.fail('should have been rejected');
-      }).catch(res => {
-        assert.equal(res.statusCode, 401);
+        headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
+        body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'wrongpassword' })
       });
+      assert.equal(res.status, 401);
     });
   });
 });

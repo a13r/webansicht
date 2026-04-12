@@ -1,6 +1,5 @@
 const assert = require('assert');
 const Transport = require('winston-transport');
-const rp = require('request-promise');
 const logger = require('../src/logger');
 const app = require('../src/app');
 
@@ -46,33 +45,29 @@ describe('Logging', () => {
     server.close(done);
   });
 
-  it('logs successful service calls', () => {
-    return rp({
+  it('logs successful service calls', async () => {
+    await fetch('http://localhost:3032/authentication', {
       method: 'POST',
-      url: 'http://localhost:3032/authentication',
-      json: true,
-      body: { strategy: 'local', username: 'admin', password: 'changeme' }
-    }).then(() => {
-      const logged = capture.messages.map(m => m.message);
-      assert.ok(
-        logged.some(m => m.includes('authentication') && m.includes('create')),
-        'should log the authentication service call'
-      );
+      headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
+      body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'changeme' })
     });
+    const logged = capture.messages.map(m => m.message);
+    assert.ok(
+      logged.some(m => m.includes('authentication') && m.includes('create')),
+      'should log the authentication service call'
+    );
   });
 
-  it('logs errors for failed requests', () => {
-    return rp({
+  it('logs errors for failed requests', async () => {
+    await fetch('http://localhost:3032/authentication', {
       method: 'POST',
-      url: 'http://localhost:3032/authentication',
-      json: true,
-      body: { strategy: 'local', username: 'admin', password: 'wrong' }
-    }).catch(() => {
-      const logged = capture.messages.map(m => m.message);
-      assert.ok(
-        logged.some(m => m.includes('error')),
-        'should log an error for failed authentication'
-      );
+      headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
+      body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'wrong' })
     });
+    const logged = capture.messages.map(m => m.message);
+    assert.ok(
+      logged.some(m => m.includes('error')),
+      'should log an error for failed authentication'
+    );
   });
 });
