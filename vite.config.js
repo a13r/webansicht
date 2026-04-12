@@ -13,7 +13,7 @@ export default defineConfig({
   },
   define: {
     'process.env.BASEMAP_URL': JSON.stringify(
-      process.env.BASEMAP_URL || 'https://rkhe4.n.roteskreuz.at/basemap'
+      process.env.BASEMAP_URL || '/basemap'
     ),
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     'process.env.TEST': JSON.stringify(process.env.TEST || false),
@@ -47,6 +47,11 @@ export default defineConfig({
       '/export.tar': 'http://localhost:3030',
       '/import.tar': 'http://localhost:3030',
       '/transports.xlsx': 'http://localhost:3030',
+      '/basemap': {
+        target: 'https://basemap.at',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/basemap/, ''),
+      },
     },
   },
 });
