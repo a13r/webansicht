@@ -1,4 +1,8 @@
-const assert = require('assert');
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import assert from 'node:assert';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const Transport = require('winston-transport');
 const logger = require('../src/logger');
 const app = require('../src/app');
@@ -25,7 +29,7 @@ describe('Logging', () => {
   let consoleTransport;
   const savedLevel = logger.level;
 
-  before(async function() {
+  beforeAll(async () => {
     capture = new CaptureTransport();
     consoleTransport = logger.transports.find(t => t.name === 'console');
     if (consoleTransport) logger.remove(consoleTransport);
@@ -34,15 +38,15 @@ describe('Logging', () => {
     server = await app.listen(3032);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     capture.clear();
   });
 
-  after(function(done) {
+  afterAll(() => {
     logger.remove(capture);
     if (consoleTransport) logger.add(consoleTransport);
     logger.level = savedLevel;
-    server.close(done);
+    return new Promise(resolve => server.close(resolve));
   });
 
   it('logs successful service calls', async () => {

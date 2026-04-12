@@ -5,8 +5,7 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm install
 
-COPY .babelrc .
-COPY webpack.config.js .
+COPY vite.config.js .
 COPY web web
 RUN npm run web:build
 

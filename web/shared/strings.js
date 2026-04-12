@@ -3,6 +3,4 @@ const states = ['neu', 'angenommen', 'in Durchführung', 'abgeschlossen', 'storn
 const prioritiesLong = ['normal (stabiler Patient)', 'dringend (möglicherweise lebensbedrohend)', 'sofort (lebensbedrohend)'];
 const types = ['liegend', 'sitzend', 'gehfähig'];
 
-module.exports = {
-    priorities, states, prioritiesLong, types
-};
+export { priorities, states, prioritiesLong, types };
