@@ -1,6 +1,12 @@
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
+import { describe, it, beforeAll, afterAll } from 'vitest';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 const app = require('../src/app');
 
 const publicExists = fs.existsSync(path.join(__dirname, '..', 'public', 'index.html'));
@@ -8,13 +14,11 @@ const publicExists = fs.existsSync(path.join(__dirname, '..', 'public', 'index.h
 describe('Feathers application tests', () => {
   let server;
 
-  before(async function() {
+  beforeAll(async () => {
     server = await app.listen(3030);
   });
 
-  after(function(done) {
-    server.close(done);
-  });
+  afterAll(() => new Promise(resolve => server.close(resolve)));
 
   (publicExists ? it : it.skip)('starts and shows the index page', async () => {
     const res = await fetch('http://localhost:3030', {
@@ -24,7 +28,7 @@ describe('Feathers application tests', () => {
     assert.ok(body.indexOf('<html') !== -1);
   });
 
-  describe('404', function() {
+  describe('404', () => {
     it('shows a 404 HTML page', async () => {
       const res = await fetch('http://localhost:3030/path/to/nowhere', {
         headers: { 'Accept': 'text/html', 'Connection': 'close' }
@@ -54,9 +58,9 @@ describe('Feathers application tests', () => {
       'stations', 'transports', 'todos'
     ];
 
-    services.forEach(path => {
-      it(`registered the ${path} service`, () => {
-        assert.ok(app.service(path), `${path} service should be registered`);
+    services.forEach(svcPath => {
+      it(`registered the ${svcPath} service`, () => {
+        assert.ok(app.service(svcPath), `${svcPath} service should be registered`);
       });
     });
   });

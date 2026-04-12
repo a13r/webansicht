@@ -1,4 +1,8 @@
-const assert = require('assert');
+import { describe, it } from 'vitest';
+import assert from 'node:assert';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const app = require('../../src/app');
 
 describe('\'resources\' service', () => {

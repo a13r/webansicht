@@ -7,7 +7,7 @@ const path = require('path');
 const { pipeline } = require('stream/promises');
 const uploadDir = './uploads';
 const upload = require('multer')({ dest: uploadDir });
-const {states, priorities, types} = require('../web/shared/strings');
+const stringsPromise = import('../web/shared/strings.js');
 
 function jwtMiddleware(app) {
     return async (req, res, next) => {
@@ -48,7 +48,7 @@ module.exports = function() {
 
     async function sendTransports(req, res) {
         const entries = await app.service('transports').find({ paginate: false });
-        const rows = transportsToRows(entries);
+        const rows = await transportsToRows(entries);
         const buffer = await jsonToXlsx(rows);
         res.writeHead(200, [
             ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
@@ -205,7 +205,8 @@ function journalEntriesToRows(entries) {
     });
 }
 
-function transportsToRows(entries) {
+async function transportsToRows(entries) {
+    const {states, priorities, types} = await stringsPromise;
     return entries.map((t, index) => {
         const createdAt = moment(t.createdAt).tz('Europe/Vienna');
         return ({

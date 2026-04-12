@@ -1,6 +1,10 @@
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
+import { describe, it, beforeAll, afterAll } from 'vitest';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const app = require('../src/app');
 
 const publicDir = path.resolve(app.get('public'));
@@ -9,7 +13,7 @@ const fixtures = ['_test-asset.txt', '_test-index.html'];
 describe('Static asset serving', () => {
   let server;
 
-  before(async function() {
+  beforeAll(async () => {
     if (!fs.existsSync(publicDir)) {
       fs.mkdirSync(publicDir, { recursive: true });
     }
@@ -18,12 +22,12 @@ describe('Static asset serving', () => {
     server = await app.listen(3031);
   });
 
-  after(function(done) {
+  afterAll(() => {
     for (const f of fixtures) {
       const p = path.join(publicDir, f);
       if (fs.existsSync(p)) fs.unlinkSync(p);
     }
-    server.close(done);
+    return new Promise(resolve => server.close(resolve));
   });
 
   it('serves a static file', async () => {

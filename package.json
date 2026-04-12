@@ -22,12 +22,12 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "test": "npm run eslint && npm run mocha",
+    "test": "npm run vitest",
     "start": "cross-env NODE_ENV=production node src/",
     "api:dev": "cross-env NODE_ENV=development node src/",
-    "web:build": "cross-env NODE_ENV=production webpack --mode production",
-    "web:dev": "cross-env NODE_ENV=development webpack-dev-server --mode development",
-    "mocha": "cross-env NODE_ENV=test mocha test/ --recursive --exit",
+    "web:build": "vite build",
+    "web:dev": "vite dev",
+    "vitest": "cross-env NODE_ENV=test vitest run",
     "e2e": "npx playwright test --config=e2e/playwright.config.js",
     "e2e:docker:up": "docker compose -f compose.e2e.yml up -d --build --wait",
     "e2e:docker:down": "docker compose -f compose.e2e.yml down -v"
@@ -90,44 +90,13 @@
     "exceljs": "^4.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-transform-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-decorators": "^7.0.0",
-    "@babel/plugin-proposal-do-expressions": "^7.0.0",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-transform-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0",
-    "@babel/plugin-proposal-function-sent": "^7.0.0",
-    "@babel/plugin-transform-json-strings": "^7.0.0",
-    "@babel/plugin-transform-logical-assignment-operators": "^7.0.0",
-    "@babel/plugin-transform-nullish-coalescing-operator": "^7.0.0",
-    "@babel/plugin-transform-numeric-separator": "^7.0.0",
-    "@babel/plugin-transform-optional-chaining": "^7.0.0",
-    "@babel/plugin-proposal-pipeline-operator": "^7.28.6",
-    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/plugin-syntax-import-meta": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
     "@playwright/test": "^1.59.1",
-    "babel-loader": "^8.0.0",
-    "babel-root-import": "^4.1.8",
+    "@vitejs/plugin-react": "^4.0.0",
     "cross-env": "^5.2.0",
-    "css-loader": "^6.8.1",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.6.3",
-    "mocha": "^11.7.5",
-    "process": "^0.11.10",
-    "style-loader": "^3.3.4",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.106.1",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.1"
+    "vite": "^6.0.0",
+    "vitest": "^3.0.0"
   },
   "overrides": {
-    "glob": "^13.0.0",
-    "diff": "^8.0.3",
-    "serialize-javascript": "^7.0.5",
     "unzipper": "^0.12.3"
   }
 }
