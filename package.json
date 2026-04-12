@@ -87,7 +87,7 @@
     "validator": "^13.15.35",
     "whatwg-fetch": "^3.0.0",
     "winston": "^3.19.0",
-    "xlsx": "^0.11.3"
+    "exceljs": "^4.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -125,8 +125,9 @@
     "webpack-dev-server": "^5.2.1"
   },
   "overrides": {
-    "mocha": {
-      "glob": "^13.0.0"
-    }
+    "glob": "^13.0.0",
+    "diff": "^8.0.3",
+    "serialize-javascript": "^7.0.5",
+    "unzipper": "^0.12.3"
   }
 }

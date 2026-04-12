@@ -1,4 +1,4 @@
-const X = require('xlsx');
+const ExcelJS = require('exceljs');
 const moment = require('moment-timezone');
 const BSON = require('bson');
 const tar = require('tar');
@@ -35,32 +35,26 @@ module.exports = function() {
         fs.mkdirSync(uploadDir);
     }
 
-    function sendExcel(req, res) {
-        return app.service('journal').find({ paginate: false })
-            .then(entries => {
-                const wb = X.utils.book_new();
-                X.utils.book_append_sheet(wb, X.utils.json_to_sheet(journalEntriesToRows(entries)));
-                const wbbuf = X.write(wb, {type: 'base64'});
-                res.writeHead(200, [
-                    ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-                    ['Content-Disposition', `attachment; filename=Protokoll_${dateTime()}.xlsx`]
-                ]);
-                res.end(Buffer.from(wbbuf, 'base64'));
-            });
+    async function sendExcel(req, res) {
+        const entries = await app.service('journal').find({ paginate: false });
+        const rows = journalEntriesToRows(entries);
+        const buffer = await jsonToXlsx(rows);
+        res.writeHead(200, [
+            ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+            ['Content-Disposition', `attachment; filename=Protokoll_${dateTime()}.xlsx`]
+        ]);
+        res.end(buffer);
     }
 
-    function sendTransports(req, res) {
-        return app.service('transports').find({ paginate: false })
-            .then(entries => {
-                const wb = X.utils.book_new();
-                X.utils.book_append_sheet(wb, X.utils.json_to_sheet(transportsToRows(entries)));
-                const wbbuf = X.write(wb, {type: 'base64'});
-                res.writeHead(200, [
-                    ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-                    ['Content-Disposition', `attachment; filename=Transporte_${dateTime()}.xlsx`]
-                ]);
-                res.end(Buffer.from(wbbuf, 'base64'));
-            })
+    async function sendTransports(req, res) {
+        const entries = await app.service('transports').find({ paginate: false });
+        const rows = transportsToRows(entries);
+        const buffer = await jsonToXlsx(rows);
+        res.writeHead(200, [
+            ['Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+            ['Content-Disposition', `attachment; filename=Transporte_${dateTime()}.xlsx`]
+        ]);
+        res.end(buffer);
     }
 
     async function sendBackup(req, res) {
@@ -177,6 +171,16 @@ module.exports = function() {
         }
     }
 };
+
+async function jsonToXlsx(rows) {
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Sheet1');
+    if (rows.length > 0) {
+        ws.columns = Object.keys(rows[0]).map(key => ({ header: key, key }));
+        rows.forEach(row => ws.addRow(row));
+    }
+    return wb.xlsx.writeBuffer();
+}
 
 function dateTime() {
     return moment().format('YYYY-MM-DD_HH-mm-ss');
