@@ -27,7 +27,7 @@ web/                Frontend
   containers/       Page-level components (routes)
   forms/            mobx-react-form definitions and validators
   app.js            Feathers client (Socket.io transport)
-config/             Environment configs (default.json, production.json, e2e.json)
+config/             Environment configs (default.json, production.json)
 e2e/                Playwright end-to-end tests
 test/               Vitest unit tests
 ```
@@ -38,7 +38,7 @@ test/               Vitest unit tests
 
 - Node.js >= 20
 - npm >= 10
-- MongoDB (local instance or Docker)
+- Docker (for running MongoDB via testcontainers in tests)
 
 ### Installation
 
@@ -75,25 +75,18 @@ This starts the app and MongoDB. The app is available at [http://localhost:3030]
 npm test
 ```
 
-Runs Vitest against `test/` directory. Tests cover server startup, service behavior, and static asset serving.
+Runs Vitest against `test/` directory. An ephemeral MongoDB is started automatically via testcontainers.
 
 ### End-to-End Tests
 
-E2E tests use Playwright against a Dockerized instance of the app.
+E2E tests use Playwright with testcontainers for an ephemeral MongoDB and a local app server.
 
 ```bash
-npm run e2e   # Build containers, run tests, tear down
+npm run web:build   # Build frontend (cached in public/)
+npm run e2e         # Run Playwright e2e tests
 ```
 
-To iterate without rebuilding containers each time:
-
-```bash
-npm run e2e:docker:up   # Build and start containers
-npm run e2e:test        # Run Playwright only (fast, repeatable)
-npm run e2e:docker:down # Tear down when done
-```
-
-When iterating, re-run `e2e:docker:up` after code changes to rebuild.
+Rebuild with `npm run web:build` after changing frontend code.
 
 ## User Roles
 

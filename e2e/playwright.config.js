@@ -2,6 +2,7 @@ const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
 
 module.exports = defineConfig({
+  globalSetup: require.resolve('./containerSetup.js'),
   testDir: './tests',
   timeout: 60_000,
   expect: { timeout: 10_000 },
