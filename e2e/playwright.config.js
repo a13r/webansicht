@@ -6,9 +6,8 @@ module.exports = defineConfig({
   testDir: './tests',
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  fullyParallel: false,
+  fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
-  workers: 1,
   reporter: process.env.CI
     ? [['html', { open: 'never' }], ['github']]
     : [['html', { open: 'on-failure' }]],
