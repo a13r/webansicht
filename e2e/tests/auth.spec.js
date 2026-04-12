@@ -55,10 +55,12 @@ test.describe('Authentication', () => {
   });
 
   test('hides dispo nav items for station-only user', async ({ browser }) => {
+    const suffix = Math.random().toString(36).slice(2, 8);
+    const username = `stationuser-${suffix}`;
     const api = new ApiHelper();
     await api.authenticate();
     const user = await api.createUser({
-      username: 'stationuser',
+      username,
       name: 'Station User',
       password: 'station123',
       initials: 'SU',
@@ -69,7 +71,7 @@ test.describe('Authentication', () => {
       const context = await browser.newContext({ storageState: undefined });
       const page = await context.newPage();
       await page.goto('/');
-      await page.getByLabel('Benutzername').fill('stationuser');
+      await page.getByLabel('Benutzername').fill(username);
       await page.getByLabel('Passwort').fill('station123');
       await page.getByRole('button', { name: 'Anmelden' }).click();
       await expect(page.getByText('Station User')).toBeVisible({ timeout: 15_000 });
