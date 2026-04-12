@@ -28,7 +28,8 @@
     "web:build": "vite build",
     "web:dev": "vite dev",
     "vitest": "cross-env NODE_ENV=test vitest run",
-    "e2e": "npx playwright test --config=e2e/playwright.config.js",
+    "e2e": "npm run e2e:docker:up && npx playwright test --config=e2e/playwright.config.js; npm run e2e:docker:down",
+    "e2e:test": "npx playwright test --config=e2e/playwright.config.js",
     "e2e:docker:up": "docker compose -f compose.e2e.yml up -d --build --wait",
     "e2e:docker:down": "docker compose -f compose.e2e.yml down -v"
   },
