@@ -1,0 +1,21 @@
+services:
+  webansicht:
+    build: .
+    ports:
+      - "3030:3030"
+    depends_on:
+      mongo:
+        condition: service_started
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./config/default.json:/opt/webansicht/config/default.json:ro
+      - ./config/e2e.json:/opt/webansicht/config/production.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3030"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+  mongo:
+    image: mongo:4.4
