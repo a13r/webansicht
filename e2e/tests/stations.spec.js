@@ -50,6 +50,42 @@ test.describe('Stations', () => {
     await expect(page.getByText('Update SanHiSt')).toBeVisible({ timeout: 10_000 });
   });
 
+  test('creating a station via UI shows exactly one entry', async ({ page }) => {
+    const stationName = `UI Station ${Date.now()}`;
+
+    await page.goto('/stations');
+    await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
+
+    // Click "hinzufügen" to add a new station
+    await page.getByRole('button', { name: 'hinzufügen' }).click();
+
+    // Fill in the name field for the new station
+    const newCard = page.locator('.card', { hasText: 'Neue SanHiSt' });
+    await expect(newCard).toBeVisible();
+    await newCard.getByLabel('Name').fill(stationName);
+
+    // After typing the name, the card header updates dynamically — re-locate by new name
+    const namedCard = page.locator('.card', { hasText: stationName });
+
+    // Click "speichern" to save
+    await namedCard.getByRole('button', { name: 'speichern' }).click();
+
+    // Wait for the station to be persisted (card header updates to the station name)
+    await expect(page.locator('.card-header', { hasText: stationName })).toBeVisible({ timeout: 10_000 });
+
+    // Give the socket 'created' event time to propagate and potentially create a duplicate
+    await page.waitForTimeout(2000);
+
+    // Bug: after saving, there should be exactly ONE card with this station name, not two
+    await expect(page.locator('.card-header', { hasText: stationName })).toHaveCount(1);
+
+    // Clean up the created station via API
+    const stations = await api._request('GET', `/stations?name=${encodeURIComponent(stationName)}`);
+    for (const s of stations.data || stations) {
+      await api._request('DELETE', `/stations/${s._id}`).catch(() => {});
+    }
+  });
+
   test('station accessible for station-role user', async ({ browser }) => {
     const api2 = new ApiHelper();
     await api2.authenticate();

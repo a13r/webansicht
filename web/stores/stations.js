@@ -37,11 +37,17 @@ export default class StationStore {
     }
 
     onCreated = action(entry => {
-        let newList = this.list;
-        if (!this.list.some(s => s._id === entry._id)) {
-            newList.push(new Station(entry));
+        if (this.list.some(s => s._id === entry._id)) {
+            return;
         }
-        this.list = _.orderBy(newList, ['ordering', 'name']);
+        const pending = this.list.find(s => !s._id);
+        if (pending) {
+            pending._id = entry._id;
+            pending.update(entry);
+        } else {
+            this.list.push(new Station(entry));
+        }
+        this.list = _.orderBy(this.list, ['ordering', 'name']);
     });
 
     onUpdated = action(entry => {
