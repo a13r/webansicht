@@ -2,6 +2,7 @@ const {authenticate} = require('@feathersjs/authentication').hooks;
 const {isProvider, setNow, when} = require('feathers-hooks-common');
 const createLogEntry = require('../../hooks/create-log-entry')();
 const dedup = require('../../hooks/dedup')();
+const stateTransitions = require('../../hooks/state-transitions')();
 
 const updateSince = setNow('since');
 
@@ -11,8 +12,8 @@ module.exports = {
     find: [],
     get: [],
     create: [],
-    update: [updateSince],
-    patch: [dedup, updateSince],
+    update: [stateTransitions, updateSince],
+    patch: [dedup, stateTransitions, updateSince],
     remove: []
   },
 
