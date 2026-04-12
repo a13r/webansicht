@@ -1,6 +1,6 @@
 # webansicht
 
-Real-time operational dashboard for emergency medical services (Sanitätshilfsstellen). Provides dispatchers and station operators with live resource tracking, patient load monitoring, transport management, and a shared operational journal.
+Real-time operational dashboard for emergency medical services. Provides dispatchers and station operators with live resource tracking, patient load monitoring, transport management, and a shared operational journal.
 
 ## Tech Stack
 
