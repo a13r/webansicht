@@ -70,7 +70,7 @@ const config = {
         new webpack.EnvironmentPlugin({
             NODE_ENV: 'development', // default value if not specified
             TEST: false, // required for MobX as of 3.x, might not be required for future versions
-            BASEMAP_URL: 'https://webansicht.bran.at/basemap'
+            BASEMAP_URL: 'https://rkhe4.n.roteskreuz.at/basemap'
         })
     ],
     optimization: {
