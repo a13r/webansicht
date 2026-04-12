@@ -68,8 +68,8 @@ export default class AuthStore {
     logout = async () => {
         try {
             await client.logout();
-            const module = await import('~/forms');
-            module.clearForms();
+            const { clearForms } = await import('~/forms');
+            clearForms();
             if (router.location.pathname !== '/') {
                 router.push('/');
             }

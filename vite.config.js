@@ -23,6 +23,18 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, 'public'),
     emptyOutDir: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-ol': ['ol'],
+          'vendor-react': ['react', 'react-dom', 'react-router', 'react-router-dom'],
+          'vendor-ui': ['react-bootstrap', 'bootstrap', 'react-toastify'],
+          'vendor-mobx': ['mobx', 'mobx-react'],
+          'vendor-moment': ['moment', 'moment-timezone'],
+          'vendor-feathers': ['@feathersjs/feathers', '@feathersjs/socketio-client', '@feathersjs/authentication-client', 'socket.io-client'],
+        },
+      },
+    },
   },
   server: {
     host: '0.0.0.0',
