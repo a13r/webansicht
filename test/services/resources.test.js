@@ -62,16 +62,15 @@ describe('\'resources\' service', () => {
     assert.ok(patchedSince > originalSince, `since should advance after state change (was ${originalSince}, got ${patchedSince})`);
   });
 
-  it('log entry gets updated since only when state changes', async () => {
+  it('log entry since is always the current time, even without state change', async () => {
     const resource = await createResource({state: 1, info: 'old'});
     const originalSince = new Date(resource.since).getTime();
     await sleep(10);
-    // Patching a non-state field should not update since on the log entry
     await service.patch(resource._id, {info: 'new'});
     const logs = await logService.find({query: {resource_id: resource._id.toString(), $sort: {since: -1}, $limit: 1}});
     assert.ok(logs.length > 0, 'should have created a log entry');
     const logSince = new Date(logs[0].since).getTime();
-    assert.equal(logSince, originalSince, 'log since should not change when only info changes');
+    assert.ok(logSince > originalSince, `log since should be current time, not resource since (was ${originalSince}, got ${logSince})`);
   });
 
   it('no new log entry when only non-tracked fields change', async () => {
