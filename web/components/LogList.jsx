@@ -36,7 +36,7 @@ export default inject('log')(observer(({log}) =>
                     <td>{r.contact}</td>
                     <td>{r.info}</td>
                     <td>{r.hidden && <i className="fa fa-eye-slash"/>}</td>
-                    <td>{r.user && r.user.initials}</td>
+                    <td>{r.source === 'tetra' ? 'TETRA' : r.user && r.user.initials}</td>
                 </tr>)}
             </tbody>
         </table>

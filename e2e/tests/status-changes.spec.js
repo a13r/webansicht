@@ -66,4 +66,57 @@ test.describe('LARDIS Status Simulation', () => {
     // Should update via Socket.IO
     await expect(row.locator('td', { hasText: 'zum Berufungsort' })).toBeVisible({ timeout: 10_000 });
   });
+
+  test('TETRA source shows tower icon in overview', async ({ page }) => {
+    const resource = await api.createResource({
+      callSign: 'TETRA-1',
+      type: 'RTW',
+      tetra: '88004',
+      state: 0,
+    });
+
+    await page.goto('/');
+    await expect(page.locator('td', { hasText: 'TETRA-1' })).toBeVisible({ timeout: 10_000 });
+
+    // Simulate LARDIS status change with source: 'tetra'
+    await api.patchResource(resource._id, { state: 1, source: 'tetra' });
+
+    const row = page.locator('tr', { hasText: 'TETRA-1' });
+    await expect(row.locator('.fa-tower-broadcast')).toBeVisible({ timeout: 10_000 });
+  });
+
+  test('TETRA source shows "TETRA" in log', async ({ page }) => {
+    const resource = await api.createResource({
+      callSign: 'TETRA-2',
+      type: 'RTW',
+      tetra: '88005',
+      state: 0,
+    });
+
+    await api.patchResource(resource._id, { state: 1, source: 'tetra' });
+
+    await page.goto('/log');
+    const row = page.locator('tr', { hasText: 'TETRA-2' }).first();
+    await expect(row).toBeVisible({ timeout: 10_000 });
+    await expect(row.locator('td', { hasText: 'TETRA' }).last()).toBeVisible();
+  });
+
+  test('manual state change shows no TETRA indicator', async ({ page }) => {
+    const resource = await api.createResource({
+      callSign: 'MANUAL-1',
+      type: 'RTW',
+      tetra: '88006',
+      state: 0,
+    });
+
+    await page.goto('/');
+    await expect(page.locator('td', { hasText: 'MANUAL-1' })).toBeVisible({ timeout: 10_000 });
+
+    // State change without source (manual/UI change)
+    await api.patchResource(resource._id, { state: 1 });
+
+    const row = page.locator('tr', { hasText: 'MANUAL-1' });
+    await expect(row.locator('td', { hasText: 'Einsatzbereit' })).toBeVisible({ timeout: 10_000 });
+    await expect(row.locator('.fa-tower-broadcast')).not.toBeVisible();
+  });
 });

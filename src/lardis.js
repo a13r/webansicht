@@ -69,7 +69,7 @@ module.exports = function () {
             radio.connection.write(command, 'utf8', () => {
                 messages.patch(m._id, {state: 'sent'});
             });
-            resources.patch(null, {state: 10}, {query: {tetra: destination}}).then(([resource]) => {
+            resources.patch(null, {state: 10}, {query: {tetra: destination}, source: 'tetra'}).then(([resource]) => {
                 if (callOutCC && callOutCC.length > 0) {
                     callOutCC.forEach(issi => {
                         messages.create({
@@ -188,7 +188,7 @@ module.exports = function () {
     function setResourceState(issi, state) {
         resources.find({query: {tetra: issi}}).then(result => {
             if (result.length === 1) {
-                resources.patch(result[0]._id, {state})
+                resources.patch(result[0]._id, {state}, {source: 'tetra'})
                     .catch(error => logger.error(`Failed to update resource state for ISSI ${issi}:`, error));
             }
         }).catch(error => {
