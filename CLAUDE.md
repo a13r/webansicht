@@ -52,4 +52,4 @@ The frontend is built once and cached in `public/`. Rebuild with `web:build` aft
 
 ## Git
 
-Do not include a co-author signature in commit messages.
+Do not include a co-author signature in commit messages or PR descriptions.
