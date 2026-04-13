@@ -18,6 +18,7 @@ module.exports = function (options = {}) { // eslint-disable-line no-unused-vars
         const entry = _.omit(hook.result, '_id');
         entry.resource_id = resourceId;
         entry.user_id = _.get(hook, 'params.user._id');
+        entry.since = new Date();
         return hook.app.service('log').create(entry).then(() => hook);
     };
 };

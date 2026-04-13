@@ -4,7 +4,14 @@ const createLogEntry = require('../../hooks/create-log-entry')();
 const dedup = require('../../hooks/dedup')();
 const stateTransitions = require('../../hooks/state-transitions')();
 
-const updateSince = setNow('since');
+const updateSince = async (hook) => {
+  if (hook.data && 'state' in hook.data) {
+    const current = hook.params._currentData || (hook.id && await hook.app.service('resources').get(hook.id));
+    if (!current || hook.data.state !== current.state) {
+      hook.data.since = new Date();
+    }
+  }
+};
 
 module.exports = {
   before: {
