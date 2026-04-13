@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import React from "react";
 import states from "../shared/states";
-import moment from "moment";
+import moment from "~/moment";
 import restrictToRoles from "~/components/restrictToRoles";
 import Card from "react-bootstrap/Card";
 

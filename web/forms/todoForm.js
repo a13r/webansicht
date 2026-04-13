@@ -1,7 +1,7 @@
 import {BaseForm} from "~/forms/baseForm";
 import {action, makeObservable, observable} from 'mobx';
 import _ from 'lodash';
-import moment from "moment";
+import moment from "~/moment";
 import {todos} from "~/app";
 import {notification} from "~/stores";
 

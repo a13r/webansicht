@@ -1,6 +1,6 @@
 import React from "react";
 import {inject, observer} from "mobx-react";
-import moment from "moment";
+import moment from "~/moment";
 import states from "../shared/states";
 import "../styles/resourceList.css";
 import {OverlayTrigger, Popover, Tooltip} from "react-bootstrap";

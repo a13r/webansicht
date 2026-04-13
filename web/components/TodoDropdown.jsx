@@ -2,7 +2,7 @@ import React from 'react';
 import {inject, observer} from 'mobx-react';
 import {NavDropdown} from 'react-bootstrap';
 import restrictToRoles from "~/components/restrictToRoles";
-import moment from "moment";
+import moment from "~/moment";
 
 export const TodoDropdown = restrictToRoles(['dispo'])(inject('todos')(observer(({todos}) =>
     <NavDropdown id="todos" title={<span><i className="fa fa-list"/> Todos</span>}>
