@@ -67,6 +67,14 @@ docker compose up
 
 This starts the app and MongoDB. The app is available at [http://localhost:3030](http://localhost:3030).
 
+**Pin the MongoDB version** by creating a `.env` file next to `compose.yml`:
+
+```
+MONGO_VERSION=8.2
+```
+
+This prevents unintended MongoDB upgrades when pulling new images. MongoDB requires a strict major-version upgrade path (e.g. 7.0 → 8.0 → 8.2) with `setFeatureCompatibilityVersion` at each step — skipping versions can make the data directory unreadable.
+
 ## Testing
 
 ### Unit Tests
