@@ -17,7 +17,8 @@ const schema = new mongoose.Schema({
         username: String,
         name: String,
         initials: String
-    }
+    },
+    source: String
 });
 
 module.exports = function (app) {

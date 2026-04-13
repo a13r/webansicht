@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
     vehicle: String,
     state: Number,
     since: {type: Date, default: Date.now},
+    source: String,
     lastPosition: String,
     destination: String,
     contact: String,

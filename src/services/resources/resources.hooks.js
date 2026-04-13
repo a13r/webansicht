@@ -9,6 +9,7 @@ const updateSince = async (hook) => {
     const current = hook.params._currentData || (hook.id && await hook.app.service('resources').get(hook.id));
     if (!current || hook.data.state !== current.state) {
       hook.data.since = new Date();
+      hook.data.source = hook.params.source || hook.data.source || null;
     }
   }
 };

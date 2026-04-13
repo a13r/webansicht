@@ -47,7 +47,7 @@ export default inject('auth', 'resources', 'transports', 'calls')(observer(({aut
                     <td>{r.type}</td>
                     <td>{r.callSign}</td>
                     <td>{states.get(r.state).name}</td>
-                    <td>{r.since && moment(r.since).format('LT')}</td>
+                    <td>{r.since && moment(r.since).format('LT')}{r.source === 'tetra' && <i className="fa-solid fa-tower-broadcast ms-2" title="TETRA"/>}</td>
                     <td>{r.lastPosition}</td>
                     <td>{r.destination}</td>
                     <td>{r.info}</td>
