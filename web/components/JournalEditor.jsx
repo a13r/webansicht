@@ -5,7 +5,7 @@ import {Select, TextInput} from "./formControls";
 import {inject, observer} from "mobx-react";
 import {selectOptions} from "~/stores/journal";
 import authenticate from "./authenticate";
-import moment from "moment";
+import moment from "~/moment";
 import restrictToRoles from "~/components/restrictToRoles";
 
 const SelectWithOptions = ({field, options}) =>

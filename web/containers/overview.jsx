@@ -5,7 +5,7 @@ import {CardBody, CardHeader, CardTitle, Col, Row} from "react-bootstrap";
 import {inject, observer} from "mobx-react";
 import authenticate from "../components/authenticate";
 import StationLoad from "~/components/StationLoad";
-import moment from "moment";
+import moment from "~/moment";
 import Card from "react-bootstrap/Card";
 
 export default authenticate(inject('auth', 'stations')(observer(({auth, stations}) =>

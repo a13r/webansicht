@@ -28,7 +28,7 @@ import {fromExtent} from "ol/geom/Polygon";
 import {register} from "ol/proj/proj4";
 import proj4 from "proj4";
 import ResourceEditor from "~/components/ResourceEditor";
-import moment from "moment";
+import moment from "~/moment";
 import umfeld from "~/pois/umfeld.json";
 
 proj4.defs('EPSG:32633', '+proj=utm +zone=33 +datum=WGS84 +units=m +no_defs');

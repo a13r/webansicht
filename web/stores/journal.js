@@ -3,7 +3,7 @@ import {journal} from '~/app';
 import {Form} from 'mobx-react-form';
 import _ from 'lodash';
 import {loginReaction, notification} from '../stores';
-import moment from 'moment';
+import moment from '~/moment';
 import validator from "validator";
 import {date, required} from "~/forms/validators";
 

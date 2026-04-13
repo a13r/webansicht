@@ -1,7 +1,7 @@
 import authenticate from "~/components/authenticate";
 import {inject, observer} from "mobx-react";
 import React from "react";
-import moment from "moment";
+import moment from "~/moment";
 import {Button, CardBody, FormGroup} from "react-bootstrap";
 import {priorities, states, types} from "~/shared/strings";
 import ExportButton from "~/components/ExportButton";

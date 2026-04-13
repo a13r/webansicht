@@ -3,7 +3,7 @@ import {resourceAdmin, talkGroups} from '~/stores';
 import {loginReaction} from "~/stores/index";
 import {action, computed, makeObservable, observable} from "mobx";
 import _ from "lodash";
-import moment from "moment";
+import moment from "~/moment";
 
 export class CallStore {
     list = [];
