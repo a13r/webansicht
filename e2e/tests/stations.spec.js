@@ -54,9 +54,14 @@ test.describe('Stations', () => {
 
   test('new station card is highlighted before saving', async ({ page }) => {
     await page.goto('/stations');
-    await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
+    const addButton = page.getByRole('button', { name: 'hinzufügen' });
+    await expect(addButton).toBeVisible({ timeout: 10_000 });
 
-    await page.getByRole('button', { name: 'hinzufügen' }).click({ force: true });
+    // Wait for the stations list to finish loading before clicking,
+    // otherwise find() can overwrite the locally added station.
+    await page.waitForLoadState('networkidle');
+
+    await addButton.click();
 
     const newCard = page.locator('.card', { hasText: 'Neue SanHiSt' });
     await expect(newCard).toBeVisible({ timeout: 10_000 });
