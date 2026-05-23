@@ -41,7 +41,7 @@
     "@feathersjs/socketio": "^5.0.0",
     "@feathersjs/socketio-client": "^5.0.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.5",
     "bootstrap": "^5.3.2",
     "bson": "^7.2.0",
     "compression": "^1.7.3",
