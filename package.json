@@ -92,7 +92,7 @@
     "cross-env": "^5.2.0",
     "testcontainers": "^11.14.0",
     "vite": "^6.0.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.2.6"
   },
   "overrides": {
     "unzipper": "^0.12.3"
