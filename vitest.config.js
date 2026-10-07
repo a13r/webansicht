@@ -15,11 +15,7 @@ export default defineConfig({
     dangerouslyIgnoreUnhandledErrors: true,
     fileParallelism: false,
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-        isolate: false,
-      },
-    },
+    maxWorkers: 1,
+    isolate: false,
   },
 });

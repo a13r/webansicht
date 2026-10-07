@@ -2,6 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// Matches modules inside the given top-level node_modules packages
+const vendor = (...pkgs) =>
+  new RegExp(`[\\\\/]node_modules[\\\\/](${pkgs.map((p) => p.replace('/', '[\\\\/]')).join('|')})[\\\\/]`);
+
 export default defineConfig({
   root: 'web',
   publicDir: false,
@@ -23,15 +27,17 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, 'public'),
     emptyOutDir: true,
     sourcemap: true,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          'vendor-ol': ['ol'],
-          'vendor-react': ['react', 'react-dom', 'react-router', 'react-router-dom'],
-          'vendor-ui': ['react-bootstrap', 'bootstrap', 'react-toastify'],
-          'vendor-mobx': ['mobx', 'mobx-react'],
-          'vendor-moment': ['moment', 'moment-timezone'],
-          'vendor-feathers': ['@feathersjs/feathers', '@feathersjs/socketio-client', '@feathersjs/authentication-client', 'socket.io-client'],
+        codeSplitting: {
+          groups: [
+            { name: 'vendor-ol', test: vendor('ol') },
+            { name: 'vendor-react', test: vendor('react', 'react-dom', 'react-router', 'react-router-dom') },
+            { name: 'vendor-ui', test: vendor('react-bootstrap', 'bootstrap', 'react-toastify') },
+            { name: 'vendor-mobx', test: vendor('mobx', 'mobx-react') },
+            { name: 'vendor-moment', test: vendor('moment', 'moment-timezone') },
+            { name: 'vendor-feathers', test: vendor('@feathersjs/feathers', '@feathersjs/socketio-client', '@feathersjs/authentication-client', 'socket.io-client') },
+          ],
         },
       },
     },
