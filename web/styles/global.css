@@ -1,8 +1,11 @@
 body {
     cursor: default;
-    padding-top: 50px;
+    /* --navbar-height is the measured height of the fixed navbar, set in Container.jsx */
+    padding-top: var(--navbar-height, 56px);
     padding-bottom: 50px;
     --toastify-font-family: var(--bs-body-font-family);
+    /* show toasts below the navbar, not on top of its menus */
+    --toastify-toast-top: calc(var(--navbar-height, 56px) + 8px);
 }
 
 #root {

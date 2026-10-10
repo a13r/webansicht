@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import {observer, Provider} from "mobx-react";
 import {Container as BsContainer, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {LinkContainer} from "react-router-bootstrap";
@@ -35,11 +35,28 @@ Notification.requestPermission().then(value => {
     }
 });
 
-const Container = observer(() =>
-    <Provider {...stores} {...forms}>
+// The fixed navbar wraps to several lines on narrow screens; publish its real height as
+// --navbar-height so the page content and the map start below it (see styles/global.css)
+function useNavbarHeight() {
+    const ref = useRef(null);
+    useEffect(() => {
+        const navbar = ref.current;
+        if (!navbar) return;
+        const update = () => document.documentElement.style.setProperty('--navbar-height', `${navbar.offsetHeight}px`);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(navbar);
+        return () => observer.disconnect();
+    }, []);
+    return ref;
+}
+
+const Container = observer(() => {
+    const navbarRef = useNavbarHeight();
+    return <Provider {...stores} {...forms}>
         <MobxRouter store={router}>
             <div className="container-fluid">
-                <Navbar fixed="top" expand="lg" collapseOnSelect bg="dark" data-bs-theme="dark">
+                <Navbar ref={navbarRef} fixed="top" expand="lg" collapseOnSelect bg="dark" data-bs-theme="dark">
                     <BsContainer fluid>
                         <Navbar.Brand>webansicht</Navbar.Brand>
                         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
@@ -129,7 +146,7 @@ const Container = observer(() =>
                 />
             </div>
         </MobxRouter>
-    </Provider>
-);
+    </Provider>;
+});
 
 export default Container;
