@@ -16,6 +16,9 @@ vi.mock('~/stores/index', () => ({
   notification: { error: () => {} },
 }));
 
+// The suite runs with isolate: false, so a store imported by another test file may still be
+// cached with that file's mocks; load a fresh copy that uses the mocks above.
+vi.resetModules();
 const { default: StationStore } = await import('~/stores/stations');
 
 describe('StationStore', () => {
