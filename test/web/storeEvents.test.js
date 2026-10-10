@@ -126,13 +126,19 @@ describe('StationStore events', () => {
     describe('reconciliation with a locally created, not yet saved station', () => {
         let pending;
 
+        // what the card does while its "speichern" request is in flight
+        function submit(station, name) {
+            station.form.$('name').set(name);
+            station.form.$submitting = true;
+        }
+
         beforeEach(() => {
             store.create();
             pending = store.list.find(s => !s._id);
         });
 
-        it('adopts the _id of the server entry instead of adding a duplicate', () => {
-            expect(pending.isNew).toBe(true);
+        it('adopts the _id of the server entry for the card being saved instead of adding a duplicate', () => {
+            submit(pending, 'Neu');
             store.onCreated({_id: 'n', name: 'Neu', ordering: 3, currentPatients: 0, maxPatients: 4});
             expect(store.list).toHaveLength(3);
             const adopted = store.list.find(s => s._id === 'n');
@@ -148,10 +154,20 @@ describe('StationStore events', () => {
             expect(store.list).toHaveLength(3);
         });
 
-        it('only the first of several pending stations is adopted', () => {
-            store.create();
+        it('adds a station created by another client next to the pending card', () => {
+            pending.form.$('name').set('Neu');
             store.onCreated({_id: 'n', name: 'Neu', ordering: 3, currentPatients: 0, maxPatients: 4});
-            expect(store.list.filter(s => s.isNew)).toHaveLength(1);
+            expect(pending.isNew).toBe(true);
+            expect(store.list).toHaveLength(4);
+        });
+
+        it('with several pending cards, only the one being saved under that name is adopted', () => {
+            store.create();
+            const other = store.list.find(s => !s._id && s !== pending);
+            submit(other, 'Neu');
+            store.onCreated({_id: 'n', name: 'Neu', ordering: 3, currentPatients: 0, maxPatients: 4});
+            expect(other._id).toBe('n');
+            expect(pending.isNew).toBe(true);
             expect(store.list).toHaveLength(4);
         });
     });
