@@ -1,6 +1,6 @@
 const ExcelJS = require('exceljs');
 const moment = require('moment-timezone');
-const BSON = require('bson');
+const { BSON } = require('mongoose').mongo;
 const tar = require('tar');
 const fs = require('fs');
 const path = require('path');
