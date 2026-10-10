@@ -2,7 +2,11 @@ const nodeSchedule = require('node-schedule');
 
 const jobs = {};
 
-function schedule({data: todo, app}) {
+// Used as an after hook (context.result is the stored todo, including its _id) and at startup,
+// where the todo is passed as `data`. `data` of a create/patch call has no _id, so using it
+// alone made all todos share the job slot `undefined` and cancel each other.
+function schedule({result, data, app}) {
+    const todo = result || data;
     const existing = jobs[todo._id];
     if (existing) {
         existing.cancel();
