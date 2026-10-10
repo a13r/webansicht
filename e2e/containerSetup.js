@@ -79,6 +79,7 @@ module.exports = async function globalSetup() {
 
   // Workers inherit the environment, so the config and helpers pick this up
   process.env.E2E_BASE_URL = baseURL;
+  process.env.E2E_MONGODB_URI = mongoUri;
 
   return stop;
 };
