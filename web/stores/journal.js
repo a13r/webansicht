@@ -113,7 +113,13 @@ export default class JournalStore {
     onSuccess = form => {
         const id = form.$('_id').value;
         const entry = form.values();
-        entry.createdAt = moment(entry.createdAt, 'L LT').toISOString();
+        // The form shows the time without seconds; when it wasn't changed, keep the stored
+        // value instead of rewriting it (and creating a spurious audit log entry)
+        if (id && this.selectedEntry && entry.createdAt === moment(this.selectedEntry.createdAt).format('L LT')) {
+            delete entry.createdAt;
+        } else {
+            entry.createdAt = moment(entry.createdAt, 'L LT').toISOString();
+        }
         if (id) {
             journal.patch(id, entry)
                 .then(() => notification.success('Protokolleintrag gespeichert'))
