@@ -17,5 +17,11 @@ export default defineConfig({
     pool: 'forks',
     maxWorkers: 1,
     isolate: false,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{js,jsx}', 'web/**/*.{js,jsx}'],
+      reporter: ['text', 'html'],
+      reportsDirectory: 'coverage',
+    },
   },
 });
