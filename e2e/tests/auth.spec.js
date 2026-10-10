@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const { ApiHelper } = require('../helpers/api');
+const { loginInNewContext } = require('../helpers/settings');
 
 test.describe('Authentication', () => {
   test('shows login form when not authenticated', async ({ browser }) => {
@@ -23,23 +24,40 @@ test.describe('Authentication', () => {
     await context.close();
   });
 
-  test('shows error on invalid credentials', async ({ browser }) => {
+  test('logout, then log in again in the same tab', async ({ browser }) => {
+    const { context, page } = await loginInNewContext(browser, 'admin', 'changeme', 'Administrator');
+
+    await page.getByText('Administrator').click();
+    await page.getByRole('button', { name: 'Abmelden' }).click();
+    await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByLabel('Benutzername')).toHaveValue('');
+
+    // Logging in again without reloading must work and land on the app (see #105)
+    await page.getByLabel('Benutzername').fill('admin');
+    await page.getByLabel('Passwort').fill('changeme');
+    await page.getByRole('button', { name: 'Anmelden' }).click();
+    await expect(page.getByText('Administrator')).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('link', { name: 'ETB' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Anmelden' })).not.toBeVisible();
+    await context.close();
+  });
+
+  test('wrong password shows an error, correct password then works in the same tab', async ({ browser }) => {
     const context = await browser.newContext({ storageState: undefined });
     const page = await context.newPage();
     await page.goto('/');
     await page.getByLabel('Benutzername').fill('admin');
-    await page.getByLabel('Passwort').fill('wrongpassword');
+    await page.getByLabel('Passwort').fill('definitely-wrong');
     await page.getByRole('button', { name: 'Anmelden' }).click();
     await expect(page.locator('.alert-danger')).toBeVisible({ timeout: 5_000 });
-    await context.close();
-  });
+    await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
+    await expect(page.getByText('Administrator')).not.toBeVisible();
 
-  test('logout successfully', async ({ page }) => {
-    await page.goto('/');
+    await page.getByLabel('Benutzername').fill('admin');
+    await page.getByLabel('Passwort').fill('changeme');
+    await page.getByRole('button', { name: 'Anmelden' }).click();
     await expect(page.getByText('Administrator')).toBeVisible({ timeout: 15_000 });
-    await page.evaluate(() => document.getElementById('user').click());
-    await page.evaluate(() => document.querySelector('.dropdown-item:last-child').click());
-    await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible({ timeout: 10_000 });
+    await context.close();
   });
 
   test('shows dispo nav items for admin/dispo user', async ({ page }) => {
