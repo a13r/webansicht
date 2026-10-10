@@ -23,12 +23,17 @@ export default class ImportExportStore {
                 'Authorization': 'Bearer ' + auth.accessToken
             }
         };
-        fetch('/import.tar', options)
+        return fetch('/import.tar', options)
             .then(response => {
-                if (response.status !== 200) {
-                    notification.error(result.data);
+                if (response.status === 200) {
+                    notification.success('Datenbank wurde importiert');
+                    return;
                 }
-            });
+                return response.json()
+                    .then(body => body.message, () => null)
+                    .then(message => notification.error(message || response.statusText || `Fehler ${response.status}`));
+            })
+            .catch(error => notification.error(error.message || 'Import fehlgeschlagen'));
     };
 
     setImportFile = e => {
