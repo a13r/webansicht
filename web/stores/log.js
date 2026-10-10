@@ -27,11 +27,20 @@ export default class LogStore {
         log.on('created', this.onCreated);
         log.on('removed', this.onRemoved);
         this.form = new Form({fields});
-        reaction(() => this.form.$('resource_id').value, id => this.find(id ? {resource_id: id} : {}));
+        reaction(() => this.form.$('resource_id').value, id => this.find());
         loginReaction(() => this.find());
     }
 
+    get filter() {
+        const id = this.form.$('resource_id').value;
+        return id ? {resource_id: id} : {};
+    }
+
     onCreated = item => {
+        const id = this.form.$('resource_id').value;
+        if (id && String(item.resource_id) !== String(id)) {
+            return;
+        }
         if (this.sortOrder === 1) {
             this.list.push(item);
         } else {
@@ -43,7 +52,7 @@ export default class LogStore {
         _.remove(this.list, {_id});
     };
 
-    find(query = {}) {
+    find(query = this.filter) {
         return log.find({query: _.merge({}, this.query, query)}).then(json => this.updateList(json));
     }
 
