@@ -4,7 +4,7 @@ import {Form} from 'mobx-react-form';
 import _ from 'lodash';
 import {loginReaction, notification} from '../stores';
 import moment from '~/moment';
-import validator from "validator";
+import vjf from 'mobx-react-form/lib/validators/VJF';
 import {date, required} from "~/forms/validators";
 
 moment.locale('de');
@@ -36,7 +36,7 @@ export default class JournalStore {
             sortOrder: computed,
             toggleSortOrder: action,
         })
-        this.form = new Form({fields}, {hooks: this, plugins: {vjf: validator}});
+        this.form = new Form({fields}, {hooks: this, plugins: {vjf: vjf()}});
         journal.on('created', this.onCreated);
         journal.on('updated', this.onUpdated);
         journal.on('patched', this.onUpdated);
