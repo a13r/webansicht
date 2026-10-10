@@ -10,13 +10,15 @@ vi.mock('~/app', () => ({
     patch: (...args) => patch(...args),
   },
 }));
-vi.mock('~/stores', () => ({
+// '~/stores' and '~/stores/index' are the same module, so both mocks must provide every
+// export the store uses; otherwise whichever mock is registered last wins
+const storesMock = vi.hoisted(() => ({
   auth: { isAdmin: true, isDispo: false, user: {} },
-}));
-vi.mock('~/stores/index', () => ({
   loginReaction: () => {},
   notification: { error: () => {} },
 }));
+vi.mock('~/stores', () => storesMock);
+vi.mock('~/stores/index', () => storesMock);
 
 // The suite runs with isolate: false, so a store imported by another test file may still be
 // cached with that file's mocks; load a fresh copy that uses the mocks above.
