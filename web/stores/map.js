@@ -7,6 +7,19 @@ import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import VectorSource from "ol/source/Vector";
 
+export const NO_RESOURCE_COLOR = 'red';
+export const UNKNOWN_STATE_COLOR = 'grey';
+
+export function positionColor(resource) {
+    if (!resource) {
+        return NO_RESOURCE_COLOR;
+    }
+    if (resource.state == null) {
+        return UNKNOWN_STATE_COLOR;
+    }
+    return States.get(resource.state).rowStyle.backgroundColor || UNKNOWN_STATE_COLOR;
+}
+
 export class MapStore {
     positions = [];
     selectedPosition = {};
@@ -76,7 +89,7 @@ export class MapStore {
         return this.positions.filter(p => p.lat && p.lon && (!p.resource || p.resource.showOnMap)).map(pos => new Feature({
             geometry: new Point([pos.lon, pos.lat]).transform('EPSG:4326', 'EPSG:3857'),
             name: pos.resource ? pos.resource.callSign : (pos.issi || pos.name || 'Unbekannt'),
-            color: pos.resource && pos.resource.state ? States[pos.resource.state].rowStyle.backgroundColor : 'red',
+            color: positionColor(pos.resource),
             position: pos,
             accuracy: pos.accuracy,
             resource: pos.resource
