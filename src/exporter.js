@@ -154,13 +154,14 @@ module.exports = function() {
             setTimeout(() => app.service('notifications').create({type: 'reloadClient'}), 2000).unref();
         } catch (error) {
             console.error('Restore failed:', error);
+            // Drop the temporary collections before answering, so the client never sees them
+            for (const tmpName of staged.values()) {
+                await db.collection(tmpName).drop().catch(e => console.error(e));
+            }
             if (!res.headersSent) {
                 res.status(500).json({ message: error.message });
             }
         } finally {
-            for (const tmpName of staged.values()) {
-                await db.collection(tmpName).drop().catch(e => console.error(e));
-            }
             if (extractDir) fs.rmSync(extractDir, { recursive: true, force: true });
             fs.unlink(req.file.path, e => { if (e) console.error(e); });
         }
