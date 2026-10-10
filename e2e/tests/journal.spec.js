@@ -5,8 +5,10 @@ const { loginAs, expectXlsxDownload } = require('../helpers/transports');
 
 test.describe('Journal (ETB)', () => {
   let api;
+  let id; // unique per test run, so parallel tests (and --repeat-each) never share data
 
   test.beforeEach(async () => {
+    id = Math.random().toString(36).slice(2, 8);
     api = new ApiHelper();
     await api.authenticate();
   });
@@ -18,6 +20,11 @@ test.describe('Journal (ETB)', () => {
   const row = (page, text) => page.locator('tr.journal-list', { hasText: text });
   const dialog = page => page.getByRole('dialog');
   // the editor focuses the "Eintrag" field after a short delay; wait for it so that it cannot steal the focus later
+  // centre the row first: new entries from parallel tests shift the list, and the fixed navbar may cover the row at the top
+  const openRow = async r => {
+    await r.evaluate(el => el.scrollIntoView({ block: 'center' }));
+    await r.click();
+  };
   const editorReady = page => expect(dialog(page).getByLabel('Eintrag', { exact: true })).toBeFocused();
 
   test('displays journal page for dispo user', async ({ page }) => {
@@ -29,25 +36,25 @@ test.describe('Journal (ETB)', () => {
 
   test('shows journal entry created via API', async ({ page }) => {
     await api.createJournalEntry({
-      text: 'E2E test journal entry',
+      text: `E2E test journal entry ${id}`,
       reporter: 'E2E Tester',
       state: 'offen',
     });
 
     await page.goto('/journal');
-    await expect(page.locator('td', { hasText: 'E2E test journal entry' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('td', { hasText: `E2E test journal entry ${id}` })).toBeVisible({ timeout: 10_000 });
   });
 
   test('exports the journal as a non-empty xlsx file', async ({ page }) => {
-    await api.createJournalEntry({ text: 'E2E export entry', reporter: 'E2E Tester', state: 'offen' });
+    await api.createJournalEntry({ text: `E2E export entry ${id}`, reporter: 'E2E Tester', state: 'offen' });
     await page.goto('/journal');
     await expect(page.getByRole('button', { name: /export/i })).toBeVisible({ timeout: 10_000 });
     await expectXlsxDownload(page, /^Protokoll_.*\.xlsx$/);
   });
 
   test('creates an entry via the "Neuer ETB-Eintrag" navbar link', async ({ browser }) => {
-    const text = 'E2E created via navbar';
-    const user = await api.createUser({ roles: ['dispo'], name: 'E2E Dispo Creator', initials: 'QA' });
+    const text = `E2E created via navbar ${id}`;
+    const user = await api.createUser({ roles: ['dispo'], name: `E2E Dispo Creator ${id}`, initials: 'QA' });
     const { context, page } = await loginAs(browser, user);
     await page.goto('/journal');
     await page.getByText('Neuer ETB-Eintrag').click();
@@ -77,7 +84,7 @@ test.describe('Journal (ETB)', () => {
   });
 
   test('creates an entry with the Ctrl+E shortcut', async ({ page }) => {
-    const text = 'E2E created via shortcut';
+    const text = `E2E created via shortcut ${id}`;
     await page.goto('/journal');
     await expect(page.locator('th', { hasText: 'Zeitpunkt' })).toBeVisible({ timeout: 10_000 });
     // wait until the shortcuts are bound after login
@@ -96,7 +103,7 @@ test.describe('Journal (ETB)', () => {
   });
 
   test('does not save an invalid "Zeitpunkt"', async ({ page }) => {
-    const text = 'E2E invalid timestamp';
+    const text = `E2E invalid timestamp ${id}`;
     await page.goto('/journal');
     await page.getByText('Neuer ETB-Eintrag').click();
     await editorReady(page);
@@ -126,10 +133,10 @@ test.describe('Journal (ETB)', () => {
   });
 
   test('edits an entry and shows the audit log to admins', async ({ browser }) => {
-    const admin = await api.createUser({ roles: ['admin', 'dispo'], name: 'E2E Admin Editor', initials: 'QA' });
+    const admin = await api.createUser({ roles: ['admin', 'dispo'], name: `E2E Admin Editor ${id}`, initials: 'QA' });
     const { context, page } = await loginAs(browser, admin);
     const entry = await api.createJournalEntry({
-      text: 'E2E before edit',
+      text: `E2E before edit ${id}`,
       reporter: 'E2E Tester',
       reportedVia: 'Funk',
       direction: 'Eingang',
@@ -137,35 +144,35 @@ test.describe('Journal (ETB)', () => {
       state: 'offen',
     });
     await page.goto('/journal');
-    await row(page, 'E2E before edit').click();
+    await openRow(row(page, `E2E before edit ${id}`));
 
     await expect(dialog(page).getByText('ETB-Eintrag bearbeiten')).toBeVisible();
     await editorReady(page);
-    await expect(dialog(page).getByLabel('Eintrag', { exact: true })).toHaveValue('E2E before edit');
+    await expect(dialog(page).getByLabel('Eintrag', { exact: true })).toHaveValue(`E2E before edit ${id}`);
     // a fresh entry has no audit log
     await expect(dialog(page).getByRole('columnheader', { name: 'Kürzel' })).toHaveCount(0);
 
-    await dialog(page).getByLabel('Eintrag', { exact: true }).fill('E2E after edit');
+    await dialog(page).getByLabel('Eintrag', { exact: true }).fill(`E2E after edit ${id}`);
     await dialog(page).getByLabel('Status').selectOption('erledigt');
     await dialog(page).getByLabel('Erledigungsvermerk').fill('alles klar');
     await dialog(page).getByRole('button', { name: 'Speichern' }).click();
 
     await expect(page.getByText('Protokolleintrag gespeichert')).toBeVisible();
     await expect(dialog(page)).toBeHidden();
-    const edited = row(page, 'E2E after edit');
+    const edited = row(page, `E2E after edit ${id}`);
     await expect(edited).toBeVisible();
     await expect(edited.locator('td').nth(6)).toHaveText('erledigt');
     await expect(edited.locator('td').nth(7)).toHaveText('alles klar');
-    await expect(row(page, 'E2E before edit')).toHaveCount(0);
-    expect((await api._request('GET', `/journal/${entry._id}`)).text).toBe('E2E after edit');
+    await expect(row(page, `E2E before edit ${id}`)).toHaveCount(0);
+    expect((await api._request('GET', `/journal/${entry._id}`)).text).toBe(`E2E after edit ${id}`);
 
     // reopen: the audit log lists the changed fields with old and new value
-    await edited.click();
+    await openRow(edited);
     const audit = dialog(page).locator('table');
     await expect(audit.getByRole('columnheader', { name: 'alt' })).toBeVisible();
     const textRow = audit.locator('tr', { has: page.getByRole('cell', { name: 'Eintrag', exact: true }) });
-    await expect(textRow.getByRole('cell').nth(2)).toHaveText('E2E before edit');
-    await expect(textRow.getByRole('cell').nth(3)).toHaveText('E2E after edit');
+    await expect(textRow.getByRole('cell').nth(2)).toHaveText(`E2E before edit ${id}`);
+    await expect(textRow.getByRole('cell').nth(3)).toHaveText(`E2E after edit ${id}`);
     await expect(textRow.getByRole('cell').nth(4)).toHaveText('QA');
     const stateRow = audit.locator('tr', { has: page.getByRole('cell', { name: 'Status', exact: true }) });
     await expect(stateRow.getByRole('cell').nth(2)).toHaveText('offen');
@@ -178,19 +185,19 @@ test.describe('Journal (ETB)', () => {
   });
 
   test('hides the audit log from non-admin dispo users', async ({ browser }) => {
-    const entry = await api.createJournalEntry({ text: 'E2E audit hidden', state: 'offen', priority: 'normal' });
+    const entry = await api.createJournalEntry({ text: `E2E audit hidden ${id}`, state: 'offen', priority: 'normal' });
     // PATCH as admin through the external API to create an audit log entry
-    await api._request('PATCH', `/journal/${entry._id}`, { text: 'E2E audit hidden (edited)' });
+    await api._request('PATCH', `/journal/${entry._id}`, { text: `E2E audit hidden (edited) ${id}` });
     const logged = await api._request('GET', `/journal/${entry._id}`);
     expect(logged.auditLog.length).toBeGreaterThan(0);
 
-    const dispo = await api.createUser({ roles: ['dispo'], name: 'E2E Dispo Audit' });
+    const dispo = await api.createUser({ roles: ['dispo'], name: `E2E Dispo Audit ${id}` });
     const { context, page } = await loginAs(browser, dispo);
     try {
       await page.goto('/journal');
-      await row(page, 'E2E audit hidden (edited)').click();
+      await openRow(row(page, `E2E audit hidden (edited) ${id}`));
       await expect(dialog(page).getByText('ETB-Eintrag bearbeiten')).toBeVisible();
-      await expect(dialog(page).getByLabel('Eintrag', { exact: true })).toHaveValue('E2E audit hidden (edited)');
+      await expect(dialog(page).getByLabel('Eintrag', { exact: true })).toHaveValue(`E2E audit hidden (edited) ${id}`);
       await expect(dialog(page).locator('table')).toHaveCount(0);
     } finally {
       await context.close();
@@ -198,69 +205,69 @@ test.describe('Journal (ETB)', () => {
   });
 
   test('toggles the sort order', async ({ page }) => {
-    await api.createJournalEntry({ text: 'E2E sort older', createdAt: '2020-01-01T10:00:00.000Z' });
-    await api.createJournalEntry({ text: 'E2E sort newer', createdAt: '2020-01-02T10:00:00.000Z' });
+    await api.createJournalEntry({ text: `E2E sort older ${id}`, createdAt: '2020-01-01T10:00:00.000Z' });
+    await api.createJournalEntry({ text: `E2E sort newer ${id}`, createdAt: '2020-01-02T10:00:00.000Z' });
     await page.goto('/journal');
     const texts = async () => (await page.locator('tr.journal-list td:nth-child(2)').allTextContents());
-    await expect(row(page, 'E2E sort newer')).toBeVisible();
+    await expect(row(page, `E2E sort newer ${id}`)).toBeVisible();
 
     // default: newest first
     const toggle = page.locator('th', { hasText: 'Zeitpunkt' }).locator('i.fa-sort-desc');
     await expect(toggle).toBeVisible();
     await expect.poll(async () => {
       const t = await texts();
-      return t.indexOf('E2E sort newer') < t.indexOf('E2E sort older');
+      return t.indexOf(`E2E sort newer ${id}`) < t.indexOf(`E2E sort older ${id}`);
     }).toBe(true);
 
     await toggle.click();
     await expect(page.locator('th', { hasText: 'Zeitpunkt' }).locator('i.fa-sort-asc')).toBeVisible();
     await expect.poll(async () => {
       const t = await texts();
-      return t.indexOf('E2E sort older') < t.indexOf('E2E sort newer');
+      return t.indexOf(`E2E sort older ${id}`) < t.indexOf(`E2E sort newer ${id}`);
     }).toBe(true);
 
     await page.locator('th', { hasText: 'Zeitpunkt' }).locator('i.fa-sort-asc').click();
     await expect(page.locator('th', { hasText: 'Zeitpunkt' }).locator('i.fa-sort-desc')).toBeVisible();
     await expect.poll(async () => {
       const t = await texts();
-      return t.indexOf('E2E sort newer') < t.indexOf('E2E sort older');
+      return t.indexOf(`E2E sort newer ${id}`) < t.indexOf(`E2E sort older ${id}`);
     }).toBe(true);
   });
 
   test('colours rows by priority and state', async ({ page }) => {
-    await api.createJournalEntry({ text: 'E2E colour hoch offen', priority: 'hoch', state: 'offen' });
-    await api.createJournalEntry({ text: 'E2E colour hoch bearb', priority: 'hoch', state: 'bearb.' });
-    await api.createJournalEntry({ text: 'E2E colour hoch erledigt', priority: 'hoch', state: 'erledigt' });
-    await api.createJournalEntry({ text: 'E2E colour normal bearb', priority: 'normal', state: 'bearb.' });
+    await api.createJournalEntry({ text: `E2E colour hoch offen ${id}`, priority: 'hoch', state: 'offen' });
+    await api.createJournalEntry({ text: `E2E colour hoch bearb ${id}`, priority: 'hoch', state: 'bearb.' });
+    await api.createJournalEntry({ text: `E2E colour hoch erledigt ${id}`, priority: 'hoch', state: 'erledigt' });
+    await api.createJournalEntry({ text: `E2E colour normal bearb ${id}`, priority: 'normal', state: 'bearb.' });
     await page.goto('/journal');
-    await expect(row(page, 'E2E colour normal bearb')).toBeVisible();
+    await expect(row(page, `E2E colour normal bearb ${id}`)).toBeVisible();
 
     const prio = r => r.locator('td').nth(5);
     const state = r => r.locator('td').nth(6);
 
-    const openHigh = row(page, 'E2E colour hoch offen');
+    const openHigh = row(page, `E2E colour hoch offen ${id}`);
     await expect(openHigh).toHaveClass(/bg-danger-subtle/);
     await expect(prio(openHigh)).toHaveClass(/bg-danger-subtle/);
     await expect(state(openHigh)).toHaveClass(/bg-danger-subtle/);
 
-    const workingHigh = row(page, 'E2E colour hoch bearb');
+    const workingHigh = row(page, `E2E colour hoch bearb ${id}`);
     await expect(workingHigh).toHaveClass(/bg-danger-subtle/);
     await expect(state(workingHigh)).toHaveClass(/bg-warning-subtle/);
 
     // finished entries lose the row highlight, but keep the cell colours
-    const doneHigh = row(page, 'E2E colour hoch erledigt');
+    const doneHigh = row(page, `E2E colour hoch erledigt ${id}`);
     await expect(doneHigh).not.toHaveClass(/bg-danger-subtle/);
     await expect(prio(doneHigh)).toHaveClass(/bg-danger-subtle/);
     await expect(state(doneHigh)).toHaveClass(/bg-success-subtle/);
 
-    const normal = row(page, 'E2E colour normal bearb');
+    const normal = row(page, `E2E colour normal bearb ${id}`);
     await expect(normal).not.toHaveClass(/bg-danger-subtle/);
     await expect(prio(normal)).not.toHaveClass(/bg-danger-subtle/);
     await expect(state(normal)).toHaveClass(/bg-warning-subtle/);
   });
 
   test('is not available to users without the dispo role', async ({ browser }) => {
-    const user = await api.createUser({ roles: ['transports'], name: 'E2E Transports Only' });
+    const user = await api.createUser({ roles: ['transports'], name: `E2E Transports Only ${id}` });
     const { context, page } = await loginAs(browser, user);
     try {
       await expect(page.getByText('ETB', { exact: true })).toHaveCount(0);
