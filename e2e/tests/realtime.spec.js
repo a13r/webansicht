@@ -42,7 +42,7 @@ test.describe('Real-time Socket.IO Updates', () => {
     });
 
     const authState = path.join(__dirname, '../.auth/admin.json');
-    const baseURL = process.env.E2E_BASE_URL || 'http://localhost:3030';
+    const baseURL = process.env.E2E_BASE_URL;
 
     const context1 = await browser.newContext({ storageState: authState });
     const context2 = await browser.newContext({ storageState: authState });
@@ -76,7 +76,7 @@ test.describe('Real-time Socket.IO Updates', () => {
       state: 0,
     });
 
-    const baseURL = process.env.E2E_BASE_URL || 'http://localhost:3030';
+    const baseURL = process.env.E2E_BASE_URL;
 
     // Create an unauthenticated context (no storageState, no login)
     const context = await browser.newContext({ storageState: undefined });

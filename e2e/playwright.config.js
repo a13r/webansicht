@@ -12,7 +12,8 @@ module.exports = defineConfig({
     ? [['html', { open: 'never' }], ['github']]
     : [['html', { open: 'on-failure' }]],
   use: {
-    baseURL: process.env.E2E_BASE_URL || 'http://localhost:3030',
+    // Set by containerSetup.js to the server it starts on a free port, or by you to use a running server
+    baseURL: process.env.E2E_BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
