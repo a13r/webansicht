@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
+const { io } = require('socket.io-client');
 const { ApiHelper } = require('../helpers/api');
 
 test.describe('Real-time Socket.IO Updates', () => {
@@ -78,46 +79,41 @@ test.describe('Real-time Socket.IO Updates', () => {
 
     const baseURL = process.env.E2E_BASE_URL;
 
-    // Create an unauthenticated context (no storageState, no login)
+    // An unauthenticated browser only sees the login form ...
     const context = await browser.newContext({ storageState: undefined });
     const page = await context.newPage();
     await page.goto(baseURL);
+    await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
+    await expect(page.locator('tr', { hasText: 'UNAUTH-1' })).toHaveCount(0);
 
-    // Connect a raw Socket.IO client without Feathers authentication
-    // and start listening for resource events
-    await page.evaluate(() => {
-      window.__receivedResourceEvents = [];
-      if (window.io) {
-        const sock = window.io();
-        sock.on('resources patched', (data) => {
-          window.__receivedResourceEvents.push(data);
-        });
-        sock.on('resources created', (data) => {
-          window.__receivedResourceEvents.push(data);
-        });
-        window.__testSocket = sock;
-      }
-    });
+    // ... and a raw Socket.IO client without Feathers authentication
+    // must not receive resource events. An authenticated client acts as the
+    // control: once it has seen the event, it has been dispatched to everybody
+    // who is allowed to get it.
+    const anonymous = io(baseURL);
+    const anonymousEvents = [];
+    anonymous.on('resources patched', (data) => anonymousEvents.push(data));
+    anonymous.on('resources created', (data) => anonymousEvents.push(data));
+    const authenticatedEvents = [];
+    const authenticated = await api._getSocketClient();
+    authenticated.service('resources').on('patched', (data) => authenticatedEvents.push(data));
 
-    // Wait for socket to connect
-    await page.waitForTimeout(1000);
+    try {
+      await new Promise((resolve, reject) => {
+        anonymous.once('connect', resolve);
+        anonymous.once('connect_error', reject);
+        if (anonymous.connected) resolve();
+      });
 
-    // Trigger a state change via authenticated API
-    await api.patchResource(resource._id, { state: 1 });
+      await api.patchResource(resource._id, { state: 1 });
+      await expect.poll(() => authenticatedEvents.filter((e) => e._id === resource._id).length).toBe(1);
 
-    // Wait for potential event delivery
-    await page.waitForTimeout(3000);
-
-    // Check received events
-    const events = await page.evaluate(() => {
-      if (window.__testSocket) window.__testSocket.disconnect();
-      return window.__receivedResourceEvents;
-    });
-
-    // The server publishes only to the 'authenticated' channel (src/channels.js:44).
-    // Unauthenticated connections remain in the 'anonymous' channel which has no publisher.
-    expect(events).toHaveLength(0);
-
-    await context.close();
+      // The server publishes only to the 'authenticated' channel (src/channels.js:44).
+      // Unauthenticated connections remain in the 'anonymous' channel which has no publisher.
+      expect(anonymousEvents).toHaveLength(0);
+    } finally {
+      anonymous.disconnect();
+      await context.close();
+    }
   });
 });
