@@ -78,4 +78,7 @@ class OverviewHelper extends ApiHelper {
   }
 }
 
-module.exports = { OverviewHelper };
+/** Short random suffix that makes call signs, texts etc. unique per test, so parallel tests and leftovers never match each other's rows. */
+const uniqueSuffix = () => Math.random().toString(36).slice(2, 8);
+
+module.exports = { OverviewHelper, uniqueSuffix };

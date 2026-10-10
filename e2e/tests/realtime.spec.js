@@ -1,12 +1,15 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 const { io } = require('socket.io-client');
+const { uniqueSuffix } = require('../helpers/overview');
 const { ApiHelper } = require('../helpers/api');
 
 test.describe('Real-time Socket.IO Updates', () => {
   let api;
+  let RUN;
 
   test.beforeEach(async () => {
+    RUN = uniqueSuffix();
     api = new ApiHelper();
     await api.authenticate();
   });
@@ -17,14 +20,14 @@ test.describe('Real-time Socket.IO Updates', () => {
 
   test('updates propagate to authenticated client in real-time', async ({ page }) => {
     const resource = await api.createResource({
-      callSign: 'REALTIME-1',
+      callSign: `REALTIME-1-${RUN}`,
       type: 'RTW',
       tetra: '44001',
       state: 0,
     });
 
     await page.goto('/');
-    const row = page.locator('tr', { hasText: 'REALTIME-1' });
+    const row = page.locator('tr', { hasText: `REALTIME-1-${RUN}` });
     await expect(row.locator('td', { hasText: 'Außer Dienst' })).toBeVisible({ timeout: 10_000 });
 
     // Change state via API (simulating LARDIS)
@@ -36,7 +39,7 @@ test.describe('Real-time Socket.IO Updates', () => {
 
   test('updates propagate across multiple authenticated contexts', async ({ browser }) => {
     const resource = await api.createResource({
-      callSign: 'MULTI-1',
+      callSign: `MULTI-1-${RUN}`,
       type: 'RTW',
       tetra: '44002',
       state: 0,
@@ -53,16 +56,16 @@ test.describe('Real-time Socket.IO Updates', () => {
     await page1.goto(baseURL);
     await page2.goto(baseURL);
 
-    await expect(page1.locator('tr', { hasText: 'MULTI-1' })).toBeVisible({ timeout: 10_000 });
-    await expect(page2.locator('tr', { hasText: 'MULTI-1' })).toBeVisible({ timeout: 10_000 });
+    await expect(page1.locator('tr', { hasText: `MULTI-1-${RUN}` })).toBeVisible({ timeout: 10_000 });
+    await expect(page2.locator('tr', { hasText: `MULTI-1-${RUN}` })).toBeVisible({ timeout: 10_000 });
 
     // Change state via API
     await api.patchResource(resource._id, { state: 5 });
 
     // Both should update in real-time
-    await expect(page1.locator('tr', { hasText: 'MULTI-1' }).locator('td', { hasText: 'am Zielort' }))
+    await expect(page1.locator('tr', { hasText: `MULTI-1-${RUN}` }).locator('td', { hasText: 'am Zielort' }))
       .toBeVisible({ timeout: 10_000 });
-    await expect(page2.locator('tr', { hasText: 'MULTI-1' }).locator('td', { hasText: 'am Zielort' }))
+    await expect(page2.locator('tr', { hasText: `MULTI-1-${RUN}` }).locator('td', { hasText: 'am Zielort' }))
       .toBeVisible({ timeout: 10_000 });
 
     await context1.close();
@@ -71,7 +74,7 @@ test.describe('Real-time Socket.IO Updates', () => {
 
   test('does not send updates to unauthenticated Socket.IO clients', async ({ browser }) => {
     const resource = await api.createResource({
-      callSign: 'UNAUTH-1',
+      callSign: `UNAUTH-1-${RUN}`,
       type: 'RTW',
       tetra: '44003',
       state: 0,
@@ -84,7 +87,7 @@ test.describe('Real-time Socket.IO Updates', () => {
     const page = await context.newPage();
     await page.goto(baseURL);
     await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
-    await expect(page.locator('tr', { hasText: 'UNAUTH-1' })).toHaveCount(0);
+    await expect(page.locator('tr', { hasText: `UNAUTH-1-${RUN}` })).toHaveCount(0);
 
     // ... and a raw Socket.IO client without Feathers authentication
     // must not receive resource events. An authenticated client acts as the

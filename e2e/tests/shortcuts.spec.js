@@ -1,12 +1,14 @@
 const { test, expect } = require('@playwright/test');
-const { OverviewHelper } = require('../helpers/overview');
+const { OverviewHelper, uniqueSuffix } = require('../helpers/overview');
 
 // Keyboard shortcuts are bound in web/stores/index.js for users with the dispo role.
 // Ctrl+E (new journal entry) is covered by journal.spec.js.
 test.describe('Keyboard shortcuts', () => {
   let api;
+  let RUN;
 
   test.beforeEach(async () => {
+    RUN = uniqueSuffix();
     api = new OverviewHelper();
     await api.authenticate();
   });
@@ -21,13 +23,13 @@ test.describe('Keyboard shortcuts', () => {
     { key: 'F3', url: /\/log$/, content: (page) => page.locator('th', { hasText: 'Zeitpunkt' }) },
     { key: 'F4', url: /\/messages$/, content: (page) => page.locator('th', { hasText: 'Nachricht' }) },
     { key: 'F5', url: /\/resourceAdmin$/, content: (page) => page.getByRole('button', { name: /Neue Ressource/ }) },
-    { key: 'F6', url: /\/stations$/, content: (page) => page.getByText('Shortcut Station') },
+    { key: 'F6', url: /\/stations$/, content: (page) => page.getByText(`Shortcut Station ${RUN}`) },
     { key: 'F7', url: /\/transports$/, content: (page) => page.getByRole('button', { name: 'Abtransport anfordern' }) },
     { key: 'F8', url: /\/map$/, content: (page) => page.locator('.openlayers-map') },
   ];
 
   test('F1-F8 navigate through the main pages of a dispo user', async ({ browser }) => {
-    await api.createStation({ name: 'Shortcut Station' });
+    await api.createStation({ name: `Shortcut Station ${RUN}` });
     const { page } = await api.loginAsNewUser(browser, ['dispo']);
     // start somewhere other than the overview, so F1 has something to do
     await page.getByRole('link', { name: /Statusverlauf/ }).click();
@@ -42,9 +44,9 @@ test.describe('Keyboard shortcuts', () => {
 
   test('navigation shortcuts also work while typing in a form field', async ({ browser }) => {
     const { page } = await api.loginAsNewUser(browser, ['dispo']);
-    await api.createResource({ callSign: 'KEY-FIELD', type: 'RTW', tetra: '55001', state: 1 });
+    await api.createResource({ callSign: `KEY-FIELD-${RUN}`, type: 'RTW', tetra: '55001', state: 1 });
 
-    await page.locator('tr', { hasText: 'KEY-FIELD' }).click();
+    await page.locator('tr', { hasText: `KEY-FIELD-${RUN}` }).click();
     await page.getByLabel('Info', { exact: true }).fill('half typed');
     await expect(page.getByLabel('Info', { exact: true })).toBeFocused();
 
@@ -91,8 +93,10 @@ test.describe('Keyboard shortcuts', () => {
 
   test('shortcuts stop working after logout', async ({ browser }) => {
     const { user, page } = await api.loginAsNewUser(browser, ['dispo']);
-    await page.getByText(user.name).click();
-    await page.getByText('Abmelden').click();
+    // Toasts about other tests' status changes pop up in the top right and can cover the user menu,
+    // so trigger the clicks on the elements directly instead of waiting for a free spot
+    await page.getByText(user.name).dispatchEvent('click');
+    await page.getByText('Abmelden').dispatchEvent('click');
     await expect(page.getByRole('button', { name: 'Anmelden' })).toBeVisible();
 
     await page.keyboard.press('F3');
