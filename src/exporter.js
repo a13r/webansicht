@@ -103,79 +103,114 @@ module.exports = function() {
     }
 
     async function restoreDatabase(req, res) {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
+        const db = app.get('mongooseClient').connection.db;
         let extractDir;
+        const staged = new Map(); // collection name -> temporary collection name
         try {
-            const db = app.get('mongooseClient').connection.db;
-            extractDir = fs.mkdtempSync(path.join(uploadDir, 'restore-'));
-
-            await tar.extract({
-                file: req.file.path,
-                cwd: extractDir
-            });
-
-            // Find the database directory (first subdirectory in the extracted TAR)
-            const entries = fs.readdirSync(extractDir);
-            const dbDirName = entries.find(e =>
-                fs.statSync(path.join(extractDir, e)).isDirectory()
-            );
-            if (!dbDirName) {
-                return res.status(400).json({ message: 'Invalid backup: no database directory found' });
+            // 1. Read and decode the whole backup before touching the database
+            let backup;
+            try {
+                extractDir = fs.mkdtempSync(path.join(uploadDir, 'restore-'));
+                backup = await readBackup(req.file.path, extractDir);
+            } catch (error) {
+                return res.status(400).json({ message: `Invalid backup: ${error.message}` });
             }
 
-            const dbDir = path.join(extractDir, dbDirName);
-            const collectionDirs = fs.readdirSync(dbDir).filter(e =>
-                fs.statSync(path.join(dbDir, e)).isDirectory()
-            );
-
-            // Drop all existing collections except users
-            const existingCollections = await db.listCollections().toArray();
-            for (const collInfo of existingCollections) {
-                if (collInfo.name.startsWith('system.') || collInfo.name === 'users') continue;
-                await db.collection(collInfo.name).drop();
-            }
-
-            // Restore collections from backup
-            for (const collName of collectionDirs) {
-                const collDir = path.join(dbDir, collName);
-                const files = fs.readdirSync(collDir).filter(f => f.endsWith('.bson'));
-                if (files.length === 0) continue;
-
-                const docs = files.map(f => {
-                    const data = fs.readFileSync(path.join(collDir, f));
-                    return BSON.deserialize(data);
-                });
-
-                if (collName === 'users') {
-                    // Merge: only insert users that don't already exist
-                    const usersCollection = db.collection('users');
-                    for (const doc of docs) {
-                        const exists = await usersCollection.findOne({ _id: doc._id });
-                        if (!exists) {
-                            await usersCollection.insertOne(doc);
-                        }
-                    }
-                } else {
-                    // Bulk insert in batches of 1000
-                    const collection = db.collection(collName);
-                    for (let i = 0; i < docs.length; i += 1000) {
-                        await collection.insertMany(docs.slice(i, i + 1000));
-                    }
+            // 2. Write the backup into temporary collections. If anything fails here,
+            //    the temporary collections are dropped and the live data is untouched.
+            const suffix = `__restore_${Date.now()}`;
+            for (const [name, docs] of backup) {
+                if (name === 'users') continue;
+                staged.set(name, name + suffix);
+                const collection = db.collection(name + suffix);
+                // Bulk insert in batches of 1000
+                for (let i = 0; i < docs.length; i += 1000) {
+                    await collection.insertMany(docs.slice(i, i + 1000));
                 }
             }
 
+            // 3. Swap the restored collections in, then drop the ones the backup doesn't have
+            for (const [name, tmpName] of staged) {
+                await db.collection(tmpName).rename(name, { dropTarget: true });
+                staged.delete(name);
+            }
+            const existingCollections = await db.listCollections().toArray();
+            for (const { name } of existingCollections) {
+                if (name.startsWith('system.') || name === 'users' || backup.has(name)) continue;
+                await db.collection(name).drop();
+            }
+
+            // 4. Merge users: only insert users that don't already exist
+            if (backup.has('users')) {
+                await mergeUsers(db.collection('users'), backup.get('users'));
+            }
+
             res.status(200).end();
-            app.service('notifications').create({type: 'reloadClient'});
+            // Give the client that started the import time to show its success message before every client reloads
+            setTimeout(() => app.service('notifications').create({type: 'reloadClient'}), 2000).unref();
         } catch (error) {
             console.error('Restore failed:', error);
             if (!res.headersSent) {
                 res.status(500).json({ message: error.message });
             }
         } finally {
+            for (const tmpName of staged.values()) {
+                await db.collection(tmpName).drop().catch(e => console.error(e));
+            }
             if (extractDir) fs.rmSync(extractDir, { recursive: true, force: true });
-            if (req.file) fs.unlink(req.file.path, e => { if (e) console.error(e); });
+            fs.unlink(req.file.path, e => { if (e) console.error(e); });
         }
     }
 };
+
+// Extracts a backup archive and returns a Map of collection name -> documents.
+// Throws if the archive or any document in it can't be read.
+async function readBackup(file, extractDir) {
+    await tar.extract({ file, cwd: extractDir });
+
+    // Find the database directory (first subdirectory in the extracted TAR)
+    const dbDirName = fs.readdirSync(extractDir).find(e =>
+        fs.statSync(path.join(extractDir, e)).isDirectory()
+    );
+    if (!dbDirName) {
+        throw new Error('no database directory found');
+    }
+
+    const dbDir = path.join(extractDir, dbDirName);
+    const backup = new Map();
+    for (const name of fs.readdirSync(dbDir)) {
+        const collDir = path.join(dbDir, name);
+        if (!fs.statSync(collDir).isDirectory()) continue;
+        const docs = fs.readdirSync(collDir)
+            .filter(f => f.endsWith('.bson'))
+            .map(f => {
+                try {
+                    return BSON.deserialize(fs.readFileSync(path.join(collDir, f)));
+                } catch (error) {
+                    throw new Error(`${name}/${f}: ${error.message}`);
+                }
+            });
+        if (docs.length > 0) backup.set(name, docs);
+    }
+    return backup;
+}
+
+async function mergeUsers(usersCollection, docs) {
+    for (const doc of docs) {
+        if (await usersCollection.findOne({ _id: doc._id })) continue;
+        try {
+            await usersCollection.insertOne(doc);
+        } catch (error) {
+            // E.g. a different existing user already has this username or initials; keep the existing one
+            if (error.code !== 11000) throw error;
+            console.warn(`Restore: skipped user ${doc.username}: ${error.message}`);
+        }
+    }
+}
 
 async function jsonToXlsx(rows) {
     const wb = new ExcelJS.Workbook();
