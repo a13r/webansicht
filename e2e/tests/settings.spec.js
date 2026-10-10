@@ -91,8 +91,8 @@ test.describe('Settings: user management', () => {
       method: 'POST',
       headers: { Authorization: `Bearer ${stationApi.token}` },
     });
-    expect(res.status).toBeGreaterThanOrEqual(401);
-    expect(res.status).toBeLessThan(500);
+    // Authenticated but not an admin (see the admin check in src/exporter.js)
+    expect(res.status).toBe(403);
     await context.close();
   });
 
