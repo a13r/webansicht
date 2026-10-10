@@ -24,10 +24,16 @@ module.exports = function () {
     service.find({query: {username: 'admin'}})
         .then(found => {
             if (found.length === 0) {
-                service.create({username: 'admin', name: 'Administrator', password: 'changeme', roles: ['admin','dispo']})
+                service.create({username: 'admin', name: 'Administrator', initials: 'A', password: 'changeme', roles: ['admin','dispo']})
                     .then(adminUser => {
                         console.log('admin user not found, created with password changeme');
                     });
+            } else if (!found[0].initials) {
+                // admin users created before initials were set by default; update the model
+                // directly, the service hooks need an authenticated user
+                service.Model.updateOne({_id: found[0]._id}, {initials: 'A'})
+                    .then(() => console.log('set initials of admin user to A'))
+                    .catch(error => console.error('could not set initials of admin user:', error.message));
             }
         });
 

@@ -92,6 +92,11 @@ describe('Feathers application tests', () => {
       accessToken = data.accessToken;
     });
 
+    it('creates the default admin user with initials', async () => {
+      const [admin] = await app.service('users').find({ query: { username: 'admin' } });
+      assert.equal(admin.initials, 'A');
+    });
+
     it('accesses a protected route with a valid JWT', async () => {
       const res = await fetch(`${baseUrl}/users`, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Connection': 'close' }
