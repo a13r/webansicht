@@ -12,6 +12,7 @@ const fixtures = ['_test-asset.txt', '_test-index.html'];
 
 describe('Static asset serving', () => {
   let server;
+  let baseUrl;
 
   beforeAll(async () => {
     if (!fs.existsSync(publicDir)) {
@@ -19,7 +20,8 @@ describe('Static asset serving', () => {
     }
     fs.writeFileSync(path.join(publicDir, '_test-asset.txt'), 'hello');
     fs.writeFileSync(path.join(publicDir, '_test-index.html'), '<!doctype html><html><body>test</body></html>');
-    server = await app.listen(3031);
+    server = await app.listen(0);
+    baseUrl = `http://localhost:${server.address().port}`;
   });
 
   afterAll(() => {
@@ -31,7 +33,7 @@ describe('Static asset serving', () => {
   });
 
   it('serves a static file', async () => {
-    const res = await fetch('http://localhost:3031/_test-asset.txt', {
+    const res = await fetch(`${baseUrl}/_test-asset.txt`, {
       headers: { 'Connection': 'close' }
     });
     const body = await res.text();
@@ -39,7 +41,7 @@ describe('Static asset serving', () => {
   });
 
   it('serves an HTML file directly', async () => {
-    const res = await fetch('http://localhost:3031/_test-index.html', {
+    const res = await fetch(`${baseUrl}/_test-index.html`, {
       headers: { 'Connection': 'close' }
     });
     const body = await res.text();
@@ -47,7 +49,7 @@ describe('Static asset serving', () => {
   });
 
   it('returns correct content-type for text files', async () => {
-    const res = await fetch('http://localhost:3031/_test-asset.txt', {
+    const res = await fetch(`${baseUrl}/_test-asset.txt`, {
       headers: { 'Connection': 'close' }
     });
     assert.ok(res.headers.get('content-type').includes('text/plain'));

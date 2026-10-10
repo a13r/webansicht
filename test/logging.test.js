@@ -25,6 +25,7 @@ class CaptureTransport extends Transport {
 
 describe('Logging', () => {
   let server;
+  let baseUrl;
   let capture;
   let consoleTransport;
   const savedLevel = logger.level;
@@ -35,7 +36,8 @@ describe('Logging', () => {
     if (consoleTransport) logger.remove(consoleTransport);
     logger.add(capture);
     logger.level = 'info';
-    server = await app.listen(3032);
+    server = await app.listen(0);
+    baseUrl = `http://localhost:${server.address().port}`;
   });
 
   afterEach(() => {
@@ -50,7 +52,7 @@ describe('Logging', () => {
   });
 
   it('logs successful service calls', async () => {
-    await fetch('http://localhost:3032/authentication', {
+    await fetch(`${baseUrl}/authentication`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
       body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'changeme' })
@@ -63,7 +65,7 @@ describe('Logging', () => {
   });
 
   it('logs errors for failed requests', async () => {
-    await fetch('http://localhost:3032/authentication', {
+    await fetch(`${baseUrl}/authentication`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
       body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'wrong' })

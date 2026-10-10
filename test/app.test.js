@@ -13,9 +13,11 @@ const publicExists = fs.existsSync(path.join(__dirname, '..', 'public', 'index.h
 
 describe('Feathers application tests', () => {
   let server;
+  let baseUrl;
 
   beforeAll(async () => {
-    server = await app.listen(3030);
+    server = await app.listen(0);
+    baseUrl = `http://localhost:${server.address().port}`;
     // Wait for the fire-and-forget admin user creation to finish
     const users = app.service('users');
     for (let i = 0; i < 50; i++) {
@@ -32,7 +34,7 @@ describe('Feathers application tests', () => {
   });
 
   (publicExists ? it : it.skip)('starts and shows the index page', async () => {
-    const res = await fetch('http://localhost:3030', {
+    const res = await fetch(baseUrl, {
       headers: { 'Accept': 'text/html', 'Connection': 'close' }
     });
     const body = await res.text();
@@ -41,7 +43,7 @@ describe('Feathers application tests', () => {
 
   describe('404', () => {
     it('shows a 404 HTML page', async () => {
-      const res = await fetch('http://localhost:3030/path/to/nowhere', {
+      const res = await fetch(`${baseUrl}/path/to/nowhere`, {
         headers: { 'Accept': 'text/html', 'Connection': 'close' }
       });
       if (!res.ok) {
@@ -52,7 +54,7 @@ describe('Feathers application tests', () => {
     });
 
     it('shows a 404 JSON error without stack trace', async () => {
-      const res = await fetch('http://localhost:3030/path/to/nowhere', {
+      const res = await fetch(`${baseUrl}/path/to/nowhere`, {
         headers: { 'Connection': 'close' }
       });
       assert.equal(res.status, 404);
@@ -80,7 +82,7 @@ describe('Feathers application tests', () => {
     let accessToken;
 
     it('logs in with the default admin user', async () => {
-      const res = await fetch('http://localhost:3030/authentication', {
+      const res = await fetch(`${baseUrl}/authentication`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
         body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'changeme' })
@@ -91,7 +93,7 @@ describe('Feathers application tests', () => {
     });
 
     it('accesses a protected route with a valid JWT', async () => {
-      const res = await fetch('http://localhost:3030/users', {
+      const res = await fetch(`${baseUrl}/users`, {
         headers: { Authorization: `Bearer ${accessToken}`, 'Connection': 'close' }
       });
       const data = await res.json();
@@ -101,14 +103,14 @@ describe('Feathers application tests', () => {
     });
 
     it('rejects unauthenticated requests', async () => {
-      const res = await fetch('http://localhost:3030/users', {
+      const res = await fetch(`${baseUrl}/users`, {
         headers: { 'Connection': 'close' }
       });
       assert.equal(res.status, 401);
     });
 
     it('rejects invalid credentials', async () => {
-      const res = await fetch('http://localhost:3030/authentication', {
+      const res = await fetch(`${baseUrl}/authentication`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Connection': 'close' },
         body: JSON.stringify({ strategy: 'local', username: 'admin', password: 'wrongpassword' })
