@@ -19,6 +19,29 @@ function freePort() {
   });
 }
 
+// Newest mtime of a file or of anything below a directory (0 if it doesn't exist)
+function newestMtime(target) {
+  let stat;
+  try {
+    stat = fs.statSync(target);
+  } catch {
+    return 0;
+  }
+  if (!stat.isDirectory()) return stat.mtimeMs;
+  return fs.readdirSync(target).reduce(
+    (newest, name) => Math.max(newest, newestMtime(path.join(target, name))),
+    stat.mtimeMs,
+  );
+}
+
+// The build is stale when it is missing or any frontend source is newer than it
+function frontendNeedsBuild() {
+  const built = newestMtime(path.join(ROOT, 'public', 'index.html'));
+  if (!built) return true;
+  const sources = Math.max(newestMtime(path.join(ROOT, 'web')), newestMtime(path.join(ROOT, 'vite.config.js')));
+  return sources > built;
+}
+
 module.exports = async function globalSetup() {
   // Run against an already running server instead of starting one
   if (process.env.E2E_BASE_URL) return;
@@ -29,8 +52,8 @@ module.exports = async function globalSetup() {
 
   const mongoUri = `mongodb://localhost:${mongo.getMappedPort(27017)}/webansicht_e2e`;
 
-  // Build frontend if not already built
-  if (!fs.existsSync(path.join(ROOT, 'public', 'index.html'))) {
+  // Build frontend if not built yet or if web/ changed since the last build
+  if (frontendNeedsBuild()) {
     execSync('npm run web:build', { cwd: ROOT, stdio: 'inherit' });
   }
 
