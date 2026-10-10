@@ -33,7 +33,11 @@ export default class StationStore {
     find() {
         stations
             .find({query: {$sort: {ordering: 1, name: 1}, deleted: this.showDeleted ? undefined : false}})
-            .then(action(list => this.list = list.map(s => new Station(s))));
+            .then(action(list => {
+                // keep stations that were added in the UI but not saved yet
+                const unsaved = this.list.filter(s => s.isNew);
+                this.list = [...list.map(s => new Station(s)), ...unsaved];
+            }));
     }
 
     onCreated = action(entry => {
