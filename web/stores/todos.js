@@ -20,19 +20,27 @@ export class TodoStore {
             edit: action,
         })
         loginReaction(({auth}) => {
+            // remove first so repeated logins never register the handlers twice
+            this.removeListeners();
             if (auth.isDispo) {
                 this.find();
-                todos.on('created', this.onCreated);
-                todos.on('updated', this.onUpdated);
-                todos.on('patched', this.onUpdated);
-                todos.on('removed', this.onRemoved);
-            } else {
-                todos.off('created', this.onCreated);
-                todos.off('updated', this.onUpdated);
-                todos.off('patched', this.onUpdated);
-                todos.off('removed', this.onRemoved);
+                this.addListeners();
             }
-        })
+        }, () => this.removeListeners());
+    }
+
+    addListeners() {
+        todos.on('created', this.onCreated);
+        todos.on('updated', this.onUpdated);
+        todos.on('patched', this.onUpdated);
+        todos.on('removed', this.onRemoved);
+    }
+
+    removeListeners() {
+        todos.off('created', this.onCreated);
+        todos.off('updated', this.onUpdated);
+        todos.off('patched', this.onUpdated);
+        todos.off('removed', this.onRemoved);
     }
 
     find() {

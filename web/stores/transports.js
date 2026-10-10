@@ -19,12 +19,12 @@ export class TransportStore {
         });
         loginReaction(({auth}) => {
             this.find();
+            // remove first so repeated logins never register the handler twice
+            transports.off('created', this.showNotification);
             if (auth.isDispo) {
                 transports.on('created', this.showNotification);
-            } else {
-                transports.off('created', this.showNotification);
             }
-        });
+        }, () => transports.off('created', this.showNotification));
         transports.on('created', this.onCreated);
         transports.on('updated', this.onUpdated);
         transports.on('patched', this.onUpdated);

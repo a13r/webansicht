@@ -26,14 +26,29 @@ export class MapStore {
             mls: computed,
         });
         loginReaction(() => {
+            // remove first so repeated logins never register the handlers twice
+            this.removeListeners();
             this.find();
-            positions.on('created', this.onPositionCreated);
-            positions.on('updated', this.onPositionUpdated);
-            positions.on('patched', this.onPositionUpdated);
-            positions.on('removed', this.onPositionRemoved);
-            resources.on('updated', this.onResourceUpdated);
-            resources.on('patched', this.onResourceUpdated);
-        });
+            this.addListeners();
+        }, () => this.removeListeners());
+    }
+
+    addListeners() {
+        positions.on('created', this.onPositionCreated);
+        positions.on('updated', this.onPositionUpdated);
+        positions.on('patched', this.onPositionUpdated);
+        positions.on('removed', this.onPositionRemoved);
+        resources.on('updated', this.onResourceUpdated);
+        resources.on('patched', this.onResourceUpdated);
+    }
+
+    removeListeners() {
+        positions.off('created', this.onPositionCreated);
+        positions.off('updated', this.onPositionUpdated);
+        positions.off('patched', this.onPositionUpdated);
+        positions.off('removed', this.onPositionRemoved);
+        resources.off('updated', this.onResourceUpdated);
+        resources.off('patched', this.onResourceUpdated);
     }
 
     find() {

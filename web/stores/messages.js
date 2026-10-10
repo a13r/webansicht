@@ -14,19 +14,27 @@ export class MessageStore {
             onUpdated: action,
         });
         loginReaction(({auth}) => {
+            // remove first so repeated logins never register the handlers twice
+            this.removeListeners();
             if (auth.isDispo) {
                 this.find();
-                messages.on('created', this.onCreated);
-                messages.on('updated', this.onUpdated);
-                messages.on('patched', this.onUpdated);
-                messages.on('removed', this.onRemoved);
-            } else {
-                messages.off('created', this.onCreated);
-                messages.off('updated', this.onUpdated);
-                messages.off('patched', this.onUpdated);
-                messages.off('removed', this.onRemoved);
+                this.addListeners();
             }
-        })
+        }, () => this.removeListeners());
+    }
+
+    addListeners() {
+        messages.on('created', this.onCreated);
+        messages.on('updated', this.onUpdated);
+        messages.on('patched', this.onUpdated);
+        messages.on('removed', this.onRemoved);
+    }
+
+    removeListeners() {
+        messages.off('created', this.onCreated);
+        messages.off('updated', this.onUpdated);
+        messages.off('patched', this.onUpdated);
+        messages.off('removed', this.onRemoved);
     }
 
     find() {

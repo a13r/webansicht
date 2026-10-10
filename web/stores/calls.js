@@ -20,15 +20,23 @@ export class CallStore {
             onRemoved: action,
         })
         loginReaction(({auth}) => {
+            // remove first so repeated logins never register the handlers twice
+            this.removeListeners();
             if (auth.isDispo) {
                 this.find();
-                calls.on('created', this.onCreated);
-                calls.on('removed', this.onRemoved);
-            } else {
-                calls.off('created', this.onCreated);
-                calls.off('removed', this.onRemoved);
+                this.addListeners();
             }
-        });
+        }, () => this.removeListeners());
+    }
+
+    addListeners() {
+        calls.on('created', this.onCreated);
+        calls.on('removed', this.onRemoved);
+    }
+
+    removeListeners() {
+        calls.off('created', this.onCreated);
+        calls.off('removed', this.onRemoved);
     }
 
     find() {

@@ -19,24 +19,38 @@ export default class ManageUserStore {
         });
         this.form = new ManageUserForm();
         loginReaction(({auth}) => {
+            // remove first so repeated logins never register the handlers twice
+            this.removeListeners();
             if (auth.isAdmin) {
                 users.find().then(action(users => this.userList = users));
-                users.on('created', this.addUser);
-                users.on('patched', this.updateUser);
-                users.on('updated', this.updateUser);
-                users.on('removed', this.removeUser);
+                this.addListeners();
             } else {
-                this.userList = [];
-                users.off('created', this.addUser);
-                users.off('patched', this.updateUser);
-                users.off('updated', this.updateUser);
-                users.off('removed', this.removeUser);
+                this.clearUserList();
             }
+        }, () => {
+            this.removeListeners();
+            this.clearUserList();
         });
         reaction(() => this.form.$('_id').value, id => {
             this.selectUser(id);
         });
     }
+
+    addListeners() {
+        users.on('created', this.addUser);
+        users.on('patched', this.updateUser);
+        users.on('updated', this.updateUser);
+        users.on('removed', this.removeUser);
+    }
+
+    removeListeners() {
+        users.off('created', this.addUser);
+        users.off('patched', this.updateUser);
+        users.off('updated', this.updateUser);
+        users.off('removed', this.removeUser);
+    }
+
+    clearUserList = action(() => this.userList = []);
 
     addUser = user => this.userList.push(user);
 
