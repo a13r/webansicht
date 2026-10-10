@@ -9,27 +9,32 @@ const uploadDir = './uploads';
 const upload = require('multer')({ dest: uploadDir });
 const stringsPromise = import('../web/shared/strings.js');
 
-function jwtMiddleware(app) {
+function jwtMiddleware(app, roles = []) {
     return async (req, res, next) => {
+        let user;
         try {
-            const token = req.body.accessToken || req.headers.authorization?.replace('Bearer ', '');
+            const token = req.body?.accessToken || req.headers.authorization?.replace('Bearer ', '');
             if (!token) return res.status(401).json({ message: 'Not authenticated' });
-            await app.service('authentication').verifyAccessToken(token);
-            next();
+            ({ user } = await app.service('authentication').authenticate({ strategy: 'jwt', accessToken: token }, {}, 'jwt'));
         } catch (e) {
-            res.status(401).json({ message: 'Not authenticated' });
+            return res.status(401).json({ message: 'Not authenticated' });
         }
+        if (roles.length && !roles.some(role => user?.roles?.includes(role))) {
+            return res.status(403).json({ message: 'Forbidden' });
+        }
+        next();
     };
 }
 
 module.exports = function() {
     const app = this;
     const jwt = jwtMiddleware(app);
+    const jwtAdmin = jwtMiddleware(app, ['admin']);
     // needs Authorization header or accessToken in body
     app.post('/export.xlsx', jwt, sendExcel);
     app.post('/transports.xlsx', jwt, sendTransports);
-    app.post('/export.tar', jwt, sendBackup);
-    app.post('/import.tar', jwt, upload.single('import'), restoreDatabase);
+    app.post('/export.tar', jwtAdmin, sendBackup);
+    app.post('/import.tar', jwtAdmin, upload.single('import'), restoreDatabase);
 
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
