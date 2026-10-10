@@ -71,9 +71,9 @@ export default class ResourceAdminStore extends ResourceStore {
             resources.create(newResource)
                 .then(action(r => {
                     notification.success(`Die Ressource ${r.callSign} wurde erstellt`);
-                    this.form.clear();
-                }));
-            this.createResource();
+                    this.createResource();
+                }))
+                .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
         }
     };
 
