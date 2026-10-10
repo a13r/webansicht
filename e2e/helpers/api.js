@@ -14,6 +14,7 @@ class ApiHelper {
     this._createdStations = [];
     this._createdTransports = [];
     this._createdJournalEntries = [];
+    this._createdMessages = [];
   }
 
   async authenticate(username = 'admin', password = 'changeme') {
@@ -140,6 +141,17 @@ class ApiHelper {
     return transport;
   }
 
+  // Messages
+  async createMessage(data) {
+    const message = await this._request('POST', '/messages', {
+      message: 'Test message',
+      destination: 'E2E-DEST',
+      ...data,
+    });
+    this._createdMessages.push(message._id);
+    return message;
+  }
+
   // Log
   async getLog(query = {}) {
     const params = new URLSearchParams(query);
@@ -165,6 +177,9 @@ class ApiHelper {
     for (const id of this._createdJournalEntries) {
       await this._request('DELETE', `/journal/${id}`).catch(() => {});
     }
+    for (const id of this._createdMessages) {
+      await this._request('DELETE', `/messages/${id}`).catch(() => {});
+    }
     if (this._socket) {
       this._socket.disconnect();
       this._socket = null;
@@ -175,6 +190,7 @@ class ApiHelper {
     this._createdStations = [];
     this._createdTransports = [];
     this._createdJournalEntries = [];
+    this._createdMessages = [];
   }
 }
 
