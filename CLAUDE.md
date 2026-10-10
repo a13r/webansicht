@@ -28,6 +28,7 @@ npm run api:dev        # Start backend in dev mode
 npm run web:dev        # Start Vite dev server (HMR)
 npm run web:build      # Build frontend → /public
 npm test               # Run unit tests (Vitest)
+npm run coverage       # Unit tests with v8 coverage of src/ and web/ (text + html report in coverage/)
 npm run e2e            # Run Playwright e2e tests (starts MongoDB + app via testcontainers)
 ```
 
@@ -36,11 +37,10 @@ npm run e2e            # Run Playwright e2e tests (starts MongoDB + app via test
 E2E tests use testcontainers to start an ephemeral MongoDB and the app server automatically:
 
 ```bash
-npm run web:build       # Rebuild frontend if you changed web/ files
 npm run e2e             # Run Playwright e2e tests
 ```
 
-The frontend is built once and cached in `public/`. Rebuild with `web:build` after changing frontend code.
+The frontend is built into `public/` and cached. The e2e setup rebuilds it automatically when anything under `web/` (or `vite.config.js`) is newer than `public/index.html`; run `npm run web:build` manually only to force it.
 
 The app server is started on a free port, so several e2e runs (e.g. from different worktrees) can run at the same time. Set `E2E_BASE_URL` to run the tests against an already running server instead; then no MongoDB or app server is started.
 
