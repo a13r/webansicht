@@ -81,6 +81,68 @@ test.describe('Resource Administration', () => {
     api._createdResources = api._createdResources.filter(id => id !== resource._id);
   });
 
+  test('"ausblenden" checkbox saves immediately without pressing Speichern', async ({ page }) => {
+    const callSign = `HIDE-${Math.random().toString(36).slice(2, 8)}`;
+    const resource = await api.createResource({ callSign, type: 'KTW', tetra: '55005', hidden: false });
+    const hiddenOf = async () => (await api.getResources()).find(r => r._id === resource._id).hidden;
+
+    await page.goto('/resourceAdmin');
+    const row = page.locator('tr', { hasText: callSign });
+    await row.click();
+    await expect(page.getByText('Ressource bearbeiten')).toBeVisible();
+    await expect(row.locator('.fa-eye-slash')).toHaveCount(0);
+
+    await page.getByLabel('ausblenden').check();
+    await expect.poll(hiddenOf).toBe(true);
+    await expect(row.locator('.fa-eye-slash')).toBeVisible();
+
+    await page.getByLabel('ausblenden').uncheck();
+    await expect.poll(hiddenOf).toBe(false);
+    await expect(row.locator('.fa-eye-slash')).toHaveCount(0);
+  });
+
+  test('Speichern is disabled while the form is invalid', async ({ page }) => {
+    const save = page.getByRole('button', { name: 'Speichern' });
+
+    await page.goto('/resourceAdmin');
+    await page.getByRole('button', { name: 'Neue Ressource' }).click();
+    await expect(save).toBeDisabled();
+
+    // Kennung and Typ are both required
+    await page.getByLabel('Kennung').fill('INVALID-1');
+    await expect(save).toBeDisabled();
+    await page.getByLabel('Typ').fill('RTW');
+    await expect(save).toBeEnabled();
+
+    await page.getByLabel('Kennung').fill('');
+    await expect(save).toBeDisabled();
+    await page.getByLabel('Kennung').fill('INVALID-1');
+    await expect(save).toBeEnabled();
+
+    // Reihung is required too
+    await page.getByLabel('Reihung').fill('');
+    await expect(save).toBeDisabled();
+  });
+
+  test('Speichern is disabled when a required field of an existing resource is cleared', async ({ page }) => {
+    const callSign = `REQ-${Math.random().toString(36).slice(2, 8)}`;
+    await api.createResource({ callSign, type: 'KTW', tetra: '55006' });
+
+    await page.goto('/resourceAdmin');
+    await page.locator('tr', { hasText: callSign }).click();
+    const save = page.getByRole('button', { name: 'Speichern' });
+    await expect(save).toBeEnabled();
+
+    await page.getByLabel('Typ').fill('');
+    await expect(save).toBeDisabled();
+    await page.getByLabel('Typ').fill('RTW');
+    await expect(save).toBeEnabled();
+  });
+
+  // Not covered: the error toast when creating/saving fails. The server accepts every payload the
+  // form can produce (no unique constraints, validation mirrors the client), so there is no
+  // realistic way to provoke a server error from the UI. The unit test from #107 covers it.
+
   test('hides delete button for non-admin dispo user', async ({ browser }) => {
     const suffix = Math.random().toString(36).slice(2, 8);
     const username = `dispoonly-${suffix}`;
