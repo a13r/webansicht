@@ -119,4 +119,21 @@ test.describe('LARDIS Status Simulation', () => {
     await expect(row.locator('td', { hasText: 'Einsatzbereit' })).toBeVisible({ timeout: 10_000 });
     await expect(row.locator('.fa-tower-broadcast')).not.toBeVisible();
   });
+  test('repeating the same state does not create another log entry or change the row', async ({ page }) => {
+    const resource = await api.createResource({
+      callSign: 'DEDUP-1',
+      type: 'RTW',
+      tetra: '88007',
+      state: 0,
+    });
+    await api.patchResource(resource._id, { state: 1 });
+    await api.patchResource(resource._id, { state: 1 });
+    await api.patchResource(resource._id, { state: 2 });
+
+    // Entries: creation (0), 1, 2 -- the second patch to 1 was a duplicate
+    await expect.poll(async () => (await api.getLog({ resource_id: resource._id })).length).toBe(3);
+
+    await page.goto('/log');
+    await expect(page.locator('tr.logRow', { hasText: 'DEDUP-1' })).toHaveCount(3);
+  });
 });
