@@ -51,4 +51,28 @@ describe('StationStore', () => {
     store.find();
     await vi.waitFor(() => expect(store.list.map(s => s._id)).toEqual(['b']));
   });
+
+  it('does not let a station created by another client take over an unsaved card', () => {
+    store.create();
+    const pending = store.list[0];
+    pending.form.$('name').set('Mine');
+
+    store.onCreated({ _id: 'x', name: 'Theirs', currentPatients: 0, maxPatients: 1 });
+
+    expect(store.list).toHaveLength(2);
+    expect(pending.isNew).toBe(true);
+    expect(store.list.find(s => s._id === 'x').name).toBe('Theirs');
+  });
+
+  it('adopts the created event of the unsaved card that is being submitted', () => {
+    store.create();
+    const pending = store.list[0];
+    pending.form.$('name').set('Mine');
+    pending.form.$submitting = true;
+
+    store.onCreated({ _id: 'x', name: 'Mine', currentPatients: 0, maxPatients: 1 });
+
+    expect(store.list).toHaveLength(1);
+    expect(store.list[0]._id).toBe('x');
+  });
 });

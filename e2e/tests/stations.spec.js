@@ -128,7 +128,7 @@ test.describe('Stations', () => {
   });
 
   test('creating a station via UI shows exactly one entry', async ({ page }) => {
-    const stationName = `UI Station ${Date.now()}`;
+    const stationName = `UI Station ${uniqueSuffix()}`;
     await page.goto('/stations');
     await expect(page.getByRole('button', { name: 'hinzufügen' })).toBeVisible({ timeout: 10_000 });
 

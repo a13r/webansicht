@@ -45,7 +45,10 @@ export default class StationStore {
         if (existing) {
             existing.update(entry);
         } else {
-            const pending = this.list.find(s => !s._id);
+            // Only adopt an unsaved card that is being submitted right now with the same name:
+            // 'created' events also come from other clients and must not take over a card
+            // the user is still editing.
+            const pending = this.list.find(s => s.isNew && s.form.submitting && s.form.$('name').value === entry.name);
             if (pending) {
                 pending._id = entry._id;
                 pending.update(entry);

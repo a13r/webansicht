@@ -41,17 +41,28 @@ async function loginInFreshContext(browser, { username, password, name }) {
  * Toggles the "ausgeblendete anzeigen" checkbox via keyboard. At the default
  * viewport the checkbox sits partly below the fixed navbar (which wraps to two
  * lines) and under the toast container, so a pointer click is intercepted.
+ *
+ * Station cards use autoFocus: whenever a card mounts (e.g. a station created by
+ * a test running in parallel arrives via socket) it steals the focus, so a key press
+ * can land on a card input instead of the checkbox. Focus is therefore verified right
+ * before pressing Space and the whole step is retried until the state has changed.
  */
 async function setShowDeleted(page, checked) {
   const toggle = page.getByLabel('ausgeblendete anzeigen');
-  if ((await toggle.isChecked()) !== checked) {
-    await toggle.press('Space');
-  }
-  if (checked) {
-    await expect(toggle).toBeChecked();
-  } else {
-    await expect(toggle).not.toBeChecked();
-  }
+  await expect(toggle).toBeVisible();
+  await expect(toggle).toBeEnabled();
+  await expect(async () => {
+    if ((await toggle.isChecked()) !== checked) {
+      await toggle.focus();
+      await expect(toggle).toBeFocused({ timeout: 1_000 });
+      await page.keyboard.press('Space');
+    }
+    if (checked) {
+      await expect(toggle).toBeChecked({ timeout: 2_000 });
+    } else {
+      await expect(toggle).not.toBeChecked({ timeout: 2_000 });
+    }
+  }).toPass({ timeout: 15_000 });
 }
 
 module.exports = { setShowDeleted, uniqueSuffix, createStationUser, loginInFreshContext };
