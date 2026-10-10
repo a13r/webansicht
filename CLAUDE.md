@@ -42,6 +42,8 @@ npm run e2e             # Run Playwright e2e tests
 
 The frontend is built once and cached in `public/`. Rebuild with `web:build` after changing frontend code.
 
+The app server is started on a free port, so several e2e runs (e.g. from different worktrees) can run at the same time. Set `E2E_BASE_URL` to run the tests against an already running server instead; then no MongoDB or app server is started.
+
 ## Key Patterns
 
 - **Store pattern**: MobX stores subscribe to Feathers service events (`on('created')`, `on('updated')`, etc.) for real-time sync. Stores use `makeObservable()` with explicit annotations.

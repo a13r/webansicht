@@ -5,7 +5,7 @@ const { io } = require('socket.io-client');
 
 class ApiHelper {
   constructor(baseURL) {
-    this.baseURL = baseURL || process.env.E2E_BASE_URL || 'http://localhost:3030';
+    this.baseURL = baseURL || process.env.E2E_BASE_URL;
     this.token = null;
     this._socketClient = null;
     this._socket = null;
