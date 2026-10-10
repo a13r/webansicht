@@ -311,4 +311,56 @@ test.describe('Stations', () => {
       await context.close();
     }
   });
+
+  test.describe('unsaved edits on a station card', () => {
+    test('survive another station arriving, and the input keeps the focus', async ({ page }) => {
+      const name = `Edit SanHiSt ${uniqueSuffix()}`;
+      await api.createStation({ name, currentPatients: 3, maxPatients: 15 });
+      await page.goto('/stations');
+      const card = page.locator('.card', { hasText: name });
+      const input = card.getByLabel('Patienten aktuell');
+      await expect(input).toHaveValue('3');
+
+      await input.fill('7');
+      await expect(input).toBeFocused();
+
+      // a station created elsewhere arrives via socket and mounts a new card
+      const other = `Other SanHiSt ${uniqueSuffix()}`;
+      await api.createStation({ name: other, currentPatients: 0, maxPatients: 5 });
+      await expect(page.locator('.card', { hasText: other })).toBeVisible();
+
+      await expect(input).toHaveValue('7');
+      await expect(input).toBeFocused();
+      await expect(card).toHaveClass(/bg-warning-subtle/);
+    });
+
+    test('survive a reload of the list and a change by someone else, and saving keeps both', async ({ page }) => {
+      const name = `Merge SanHiSt ${uniqueSuffix()}`;
+      const station = await api.createStation({ name, currentPatients: 3, maxPatients: 15 });
+      await page.goto('/stations');
+      const card = page.locator('.card', { hasText: name });
+      const input = card.getByLabel('Patienten aktuell');
+      await expect(input).toHaveValue('3');
+      await input.fill('7');
+
+      // another dispatcher changes other fields; the header shows the new name once it has arrived
+      await api.patchStation(station._id, { name: `${name} neu`, maxPatients: 20 });
+      await expect(card.locator('.card-header')).toHaveText(`${name} neu`);
+      await expect(input).toHaveValue('7');
+
+      // toggling "ausgeblendete anzeigen" reloads the whole list
+      await setShowDeleted(page, true);
+      await setShowDeleted(page, false);
+      await expect(input).toHaveValue('7');
+
+      await card.getByRole('button', { name: 'speichern' }).click();
+      await expect(card).not.toHaveClass(/bg-warning-subtle/);
+      await expect(card.getByRole('progressbar')).toHaveText('7/20');
+
+      // only the edited field was saved; the other change was not overwritten
+      const saved = await api._request('GET', `/stations/${station._id}`);
+      expect(saved).toMatchObject({ name: `${name} neu`, currentPatients: 7, maxPatients: 20 });
+    });
+  });
 });
+

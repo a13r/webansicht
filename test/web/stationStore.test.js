@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const find = vi.fn(() => Promise.resolve([]));
+const patch = vi.fn();
 
 vi.mock('~/app', () => ({
   stations: {
     on: () => {},
     find: (...args) => find(...args),
+    patch: (...args) => patch(...args),
   },
 }));
 vi.mock('~/stores', () => ({
@@ -74,5 +76,68 @@ describe('StationStore', () => {
 
     expect(store.list).toHaveLength(1);
     expect(store.list[0]._id).toBe('x');
+  });
+
+  describe('unsaved edits on a saved station', () => {
+    const saved = { _id: 'a', name: 'A', currentPatients: 1, maxPatients: 5 };
+    let station;
+
+    beforeEach(async () => {
+      find.mockResolvedValueOnce([saved]);
+      store.find();
+      await vi.waitFor(() => expect(store.list).toHaveLength(1));
+      station = store.list[0];
+      station.form.$('currentPatients').set(3);
+    });
+
+    it('survive a find()', async () => {
+      find.mockResolvedValueOnce([{ ...saved }]);
+      store.find();
+      await vi.waitFor(() => expect(find).toHaveBeenCalledTimes(2));
+      await Promise.resolve();
+
+      expect(store.list[0]).toBe(station);
+      expect(station.form.$('currentPatients').value).toBe(3);
+      expect(station.form.changed).toBeTruthy();
+    });
+
+    it('survive an update of the station by another client', () => {
+      store.onUpdated({ ...saved, maxPatients: 8 });
+
+      expect(station.maxPatients).toBe(8);
+      expect(station.form.$('currentPatients').value).toBe(3);
+    });
+
+    it('are replaced by the saved values after the own save', async () => {
+      patch.mockResolvedValueOnce({ ...saved, currentPatients: 3 });
+      await station.form.submit();
+
+      // only the changed field is sent
+      expect(patch).toHaveBeenCalledWith('a', { currentPatients: 3 });
+      expect(station.currentPatients).toBe(3);
+      expect(station.form.changed).toBeFalsy();
+    });
+  });
+
+  it('refreshes the form of a station without unsaved edits', async () => {
+    find.mockResolvedValueOnce([{ _id: 'a', name: 'A', currentPatients: 1, maxPatients: 5 }]);
+    store.find();
+    await vi.waitFor(() => expect(store.list).toHaveLength(1));
+
+    store.onUpdated({ _id: 'a', name: 'A', currentPatients: 4, maxPatients: 5 });
+
+    expect(store.list[0].form.$('currentPatients').value).toBe(4);
+  });
+
+  it('gives every station a stable key', async () => {
+    store.create();
+    const pending = store.list[0];
+    const key = pending.key;
+    find.mockResolvedValueOnce([{ _id: 'a', name: 'A' }]);
+    store.find();
+    await vi.waitFor(() => expect(store.list).toHaveLength(2));
+
+    expect(pending.key).toBe(key);
+    expect(new Set(store.list.map(s => s.key)).size).toBe(2);
   });
 });

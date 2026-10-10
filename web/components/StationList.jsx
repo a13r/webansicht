@@ -18,7 +18,7 @@ const Station = inject('auth', 'stations')(observer(({auth, stations: store, sta
                     <fieldset disabled={!station.canWrite}>
                         <Row>
                             <Col lg={6}>
-                                <TextInput field={station.form.$('currentPatients')} min={0} autoFocus/>
+                                <TextInput field={station.form.$('currentPatients')} min={0} autoFocus={station.isNew}/>
                             </Col>
                             <Col lg={6}>
                                 <TextInput field={station.form.$('maxPatients')} min={0}/>
@@ -42,5 +42,5 @@ const Station = inject('auth', 'stations')(observer(({auth, stations: store, sta
 
 export default inject('stations')(observer(({stations}) =>
     <Row>
-        {stations.list.map(s => <Station key={s._id || Math.random()} station={s}/>)}
+        {stations.list.map(s => <Station key={s.key} station={s}/>)}
     </Row>));

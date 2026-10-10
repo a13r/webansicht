@@ -34,9 +34,15 @@ export default class StationStore {
         stations
             .find({query: {$sort: {ordering: 1, name: 1}, deleted: this.showDeleted ? undefined : false}})
             .then(action(list => {
-                // keep stations that were added in the UI but not saved yet
+                // Reuse the stations already shown, so unsaved edits on their cards survive,
+                // and keep stations that were added in the UI but not saved yet
                 const unsaved = this.list.filter(s => s.isNew);
-                this.list = [...list.map(s => new Station(s)), ...unsaved];
+                this.list = [...list.map(entry => {
+                    const existing = this.list.find(s => s._id === entry._id);
+                    if (!existing) return new Station(entry);
+                    existing.update(entry);
+                    return existing;
+                }), ...unsaved];
             }));
     }
 
@@ -100,6 +106,8 @@ export default class StationStore {
 
 export class Station {
     form;
+    // stable React key, also for stations that are not saved yet
+    key = _.uniqueId('station-');
     _id;
     name;
     contact;
@@ -127,9 +135,13 @@ export class Station {
         this.form = new StationForm(this, values);
     }
 
-    update(values) {
+    // Applies values from the server. While the card has unsaved changes, its form is kept so
+    // the user's input isn't lost; pass {replaceForm: true} after the user's own save.
+    update(values, {replaceForm = false} = {}) {
         _.assign(this, values);
-        this.form = new StationForm(this, values);
+        if (replaceForm || !this.form.changed) {
+            this.form = new StationForm(this, values);
+        }
     }
 
     reset = () => {
@@ -171,13 +183,16 @@ export class StationForm extends BaseForm {
                     return stations.create(data)
                         .then(action(result => {
                             this.station._id = result._id;
-                            this.station.update(result);
+                            this.station.update(result, {replaceForm: true});
                         }))
                         .catch(error => notification.error(error.message, 'Fehler beim Erstellen'));
                 } else {
-                    return stations.patch(this.station._id, form.values())
+                    // Only send what the user changed, so concurrent changes to other fields of
+                    // this station (e.g. by another dispatcher) aren't overwritten with stale values
+                    const changes = _.pickBy(form.values(), (value, name) => form.$(name).changed);
+                    return stations.patch(this.station._id, changes)
                         .then(action(result => {
-                            this.station.update(result);
+                            this.station.update(result, {replaceForm: true});
                         }))
                         .catch(error => notification.error(error.message, 'Fehler beim Speichern'));
                 }
